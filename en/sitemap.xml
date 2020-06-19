@@ -3,44 +3,44 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://gopherhub.org/en/categories/</loc>
+    <loc>https://blog.gopherhub.org/en/categories/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="zh-cn"
-                href="https://gopherhub.org/categories/"
+                href="https://blog.gopherhub.org/categories/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://gopherhub.org/en/categories/"
+                href="https://blog.gopherhub.org/en/categories/"
                 />
   </url>
   
   <url>
-    <loc>https://gopherhub.org/en/</loc>
+    <loc>https://blog.gopherhub.org/en/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="zh-cn"
-                href="https://gopherhub.org/"
+                href="https://blog.gopherhub.org/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://gopherhub.org/en/"
+                href="https://blog.gopherhub.org/en/"
                 />
   </url>
   
   <url>
-    <loc>https://gopherhub.org/en/tags/</loc>
+    <loc>https://blog.gopherhub.org/en/tags/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="zh-cn"
-                href="https://gopherhub.org/tags/"
+                href="https://blog.gopherhub.org/tags/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://gopherhub.org/en/tags/"
+                href="https://blog.gopherhub.org/en/tags/"
                 />
   </url>
   

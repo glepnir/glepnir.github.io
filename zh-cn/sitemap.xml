@@ -3,61 +3,61 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://gopherhub.org/about/</loc>
+    <loc>https://blog.gopherhub.org/about/</loc>
     <lastmod>2019-02-28T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://gopherhub.org/categories/</loc>
+    <loc>https://blog.gopherhub.org/categories/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://gopherhub.org/en/categories/"
+                href="https://blog.gopherhub.org/en/categories/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="zh-cn"
-                href="https://gopherhub.org/categories/"
+                href="https://blog.gopherhub.org/categories/"
                 />
   </url>
   
   <url>
-    <loc>https://gopherhub.org/contact/</loc>
+    <loc>https://blog.gopherhub.org/contact/</loc>
   </url>
   
   <url>
-    <loc>https://gopherhub.org/tags/index/</loc>
+    <loc>https://blog.gopherhub.org/tags/index/</loc>
   </url>
   
   <url>
-    <loc>https://gopherhub.org/blog/</loc>
+    <loc>https://blog.gopherhub.org/blog/</loc>
   </url>
   
   <url>
-    <loc>https://gopherhub.org/</loc>
+    <loc>https://blog.gopherhub.org/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://gopherhub.org/en/"
+                href="https://blog.gopherhub.org/en/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="zh-cn"
-                href="https://gopherhub.org/"
+                href="https://blog.gopherhub.org/"
                 />
   </url>
   
   <url>
-    <loc>https://gopherhub.org/tags/</loc>
+    <loc>https://blog.gopherhub.org/tags/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://gopherhub.org/en/tags/"
+                href="https://blog.gopherhub.org/en/tags/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="zh-cn"
-                href="https://gopherhub.org/tags/"
+                href="https://blog.gopherhub.org/tags/"
                 />
   </url>
   
