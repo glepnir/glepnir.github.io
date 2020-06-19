@@ -1,0 +1,175 @@
+# For a description of these parameters, please visit the theme wiki.
+# https://github.com/pacollins/hugo-future-imperfect-slim/wiki/config.toml
+baseurl                 = "https://blog.gopherhub.org/"
+defaultContentLanguage  = "zh-cn"
+title                   = "Raphael blog"
+theme                   = "hugo-future-imperfect-slim"
+paginate                = 3
+disqusShortname         = ""
+googleAnalytics         = ""
+pluralizeListTitles     = false
+disableLanguages        = [""]
+
+[outputs]
+  home                  = ["html", "json"]
+
+[params]
+  enableCDN             = false
+  cssFiles              = ["default"]
+  jsFiles               = ["default"]
+  highlightjs           = true
+  highlightjsTheme      = "github"
+  highlightjsLang       = ["html", "css", "js", "toml"]
+  viewMorePostsLink     = "/blog/"
+  readingTime           = true
+  socialShare           = ["twitter", "facebook", "reddit", "linkedin", "pinterest", "email"]
+
+  [params.meta]
+    description         = "My Personal Blog."
+    author              = "HTML5UP and Hugo"
+    favicon             = false
+    svg                 = true
+    faviconVersion      = "1"
+    msColor             = "#ffffff"
+    iOSColor            = "#ffffff"
+
+  [params.header]
+    navbarTitle         = "GopherHub"
+    dynamicTitles       = true
+    searchMenu          = true
+    shareMenu           = true
+    languageMenu        = true
+
+  [params.intro]
+    header                = "Raphael"
+    paragraph             = "A full-stack develope Love Vim Go Rust Typescript"
+    rssIntro              = true
+    socialIntro           = true
+    hideWhenSingleColumn  = false
+    alwaysOnHomepage      = false
+
+    [params.intro.pic]
+      src                 = "img/main/logo.jpg"
+      shape               = "circle"
+      width               = ""
+      alt                 = "Personal blog"
+
+  [params.sidebar]
+    about               = "This theme was developed for Hugo static site generator."
+    postAmount          = 5
+    categories          = true
+    categoriesByCount   = true
+
+  [params.footer]
+    rssFooter           = true
+    socialFooter        = true
+
+  [params.staticman]
+    enabled             = true
+    api                 = ""  # No Trailing Slash
+    gitProvider         = ""
+    username            = ""
+    repo                = ""
+    branch              = ""
+
+    [params.staticman.recaptcha]
+      siteKey           = ""
+      encryptedKey      = ""
+
+[menu]
+
+  [[menu.main]]
+    name              = "Home"
+    identifier        = "home"
+    url               = "/"
+    pre               = "<i class='fa fa-home'></i>"
+    weight            = 1
+
+  [[menu.main]]
+    name              = "About"
+    identifier        = "about"
+    url               = "/about/"
+    pre               = "<i class='far fa-id-card'></i>"
+    weight            = 2
+
+  [[menu.main]]
+    name              = "Blog"
+    identifier        = "blog"
+    url               = "/blog/"
+    pre               = "<i class='far fa-newspaper'></i>"
+    weight            = 3
+
+  [[menu.main]]
+    name              = "Categories"
+    identifier        = "categories"
+    url               = "/categories/"
+    pre               = "<i class='fas fa-sitemap'></i>"
+    weight            = 5
+
+  [[menu.main]]
+    name              = "Contact"
+    identifier        = "contact"
+    url               = "/contact/"
+    pre               = "<i class='far fa-envelope'></i>"
+    weight            = 6
+
+[Languages]
+
+  [Languages.zh-cn]
+    LanguageCode        = "zh-cn"
+    LanguageName        = "中文"
+    weight              = 2
+
+  [Languages.en]
+    LanguageCode        = "en"
+    LanguageName        = "English"
+    weight              = 1
+
+[social]
+  # Coding Communities
+  github                = "glepnir"
+  # stackoverflow         = "" # User Number
+  # bitbucket             = ""
+  # jsfiddle              = ""
+  # codepen               = ""
+  # # Visual Art Communities
+  # deviantart            = ""
+  # # flickr                = "example"
+  # behance               = ""
+  # dribbble              = ""
+  # # Publishing Communities
+  # wordpress             = ""
+  # medium                = ""
+  # # Professional/Business Oriented Communities
+  # linkedin              = "example"
+  # # linkedin_company      = "examplebusiness"
+  # foursquare            = ""
+  # xing                  = ""
+  # slideshare            = ""
+  # # Social Networks
+  # facebook              = "example"
+  # googleplus            = ""
+  # reddit                = "example"
+  quora                 = ""
+  youtube               = ""
+  vimeo                 = ""
+  whatsapp              = "" # WhatsApp Number
+    # WeChat and QQ need testing.
+    wechat              = ""
+    qq                  = "" # User ID Number
+  # instagram             = "example"
+  # tumblr                = ""
+  # twitter               = "example"
+  # strava                = ""
+  # skype                 = ""
+  # snapchat              = ""
+  # pinterest             = "example"
+  # telegram              = "example"
+  # vine                  = ""
+  # googlescholar         = ""
+  # orcid                 = ""
+  # researchgate          = "example"
+  # keybase               = "example"
+  # mastodon              = "example.com/@example"
+  # Email
+  email                 = "sawakitaeiji233@gmail.com"
