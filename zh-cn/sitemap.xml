@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <url>
+    <loc>https://glepnir.github.io/about/</loc>
+    <lastmod>2019-02-28T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://glepnir.github.io/categories/</loc>
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="https://glepnir.github.io/en/categories/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh-cn"
+                href="https://glepnir.github.io/categories/"
+                />
+  </url>
+  
+  <url>
+    <loc>https://glepnir.github.io/contact/</loc>
+  </url>
+  
+  <url>
+    <loc>https://glepnir.github.io/tags/index/</loc>
+  </url>
+  
+  <url>
+    <loc>https://glepnir.github.io/blog/</loc>
+  </url>
+  
+  <url>
+    <loc>https://glepnir.github.io/</loc>
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="https://glepnir.github.io/en/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh-cn"
+                href="https://glepnir.github.io/"
+                />
+  </url>
+  
+  <url>
+    <loc>https://glepnir.github.io/tags/</loc>
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="https://glepnir.github.io/en/tags/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh-cn"
+                href="https://glepnir.github.io/tags/"
+                />
+  </url>
+  
+</urlset>
