@@ -3,61 +3,61 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://glepnir.github.io/about/</loc>
+    <loc>https://gopherhub.org/about/</loc>
     <lastmod>2019-02-28T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://glepnir.github.io/categories/</loc>
+    <loc>https://gopherhub.org/categories/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://glepnir.github.io/en/categories/"
+                href="https://gopherhub.org/en/categories/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="zh-cn"
-                href="https://glepnir.github.io/categories/"
+                href="https://gopherhub.org/categories/"
                 />
   </url>
   
   <url>
-    <loc>https://glepnir.github.io/contact/</loc>
+    <loc>https://gopherhub.org/contact/</loc>
   </url>
   
   <url>
-    <loc>https://glepnir.github.io/tags/index/</loc>
+    <loc>https://gopherhub.org/tags/index/</loc>
   </url>
   
   <url>
-    <loc>https://glepnir.github.io/blog/</loc>
+    <loc>https://gopherhub.org/blog/</loc>
   </url>
   
   <url>
-    <loc>https://glepnir.github.io/</loc>
+    <loc>https://gopherhub.org/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://glepnir.github.io/en/"
+                href="https://gopherhub.org/en/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="zh-cn"
-                href="https://glepnir.github.io/"
+                href="https://gopherhub.org/"
                 />
   </url>
   
   <url>
-    <loc>https://glepnir.github.io/tags/</loc>
+    <loc>https://gopherhub.org/tags/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://glepnir.github.io/en/tags/"
+                href="https://gopherhub.org/en/tags/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="zh-cn"
-                href="https://glepnir.github.io/tags/"
+                href="https://gopherhub.org/tags/"
                 />
   </url>
   

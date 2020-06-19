@@ -3,44 +3,44 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://glepnir.github.io/en/categories/</loc>
+    <loc>https://gopherhub.org/en/categories/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="zh-cn"
-                href="https://glepnir.github.io/categories/"
+                href="https://gopherhub.org/categories/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://glepnir.github.io/en/categories/"
+                href="https://gopherhub.org/en/categories/"
                 />
   </url>
   
   <url>
-    <loc>https://glepnir.github.io/en/</loc>
+    <loc>https://gopherhub.org/en/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="zh-cn"
-                href="https://glepnir.github.io/"
+                href="https://gopherhub.org/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://glepnir.github.io/en/"
+                href="https://gopherhub.org/en/"
                 />
   </url>
   
   <url>
-    <loc>https://glepnir.github.io/en/tags/</loc>
+    <loc>https://gopherhub.org/en/tags/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="zh-cn"
-                href="https://glepnir.github.io/tags/"
+                href="https://gopherhub.org/tags/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://glepnir.github.io/en/tags/"
+                href="https://gopherhub.org/en/tags/"
                 />
   </url>
   
