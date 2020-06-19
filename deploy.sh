@@ -25,7 +25,12 @@ hugo # if using a theme, replace with `hugo -t <YOURTHEME>`
 
 echo "Updating master branch"
 # Go To Public folder and add changes to git.
-cd public && git add --all
+cd public
+
+# Add CNAME file
+touch CNAME && echo 'blog.gopherhub.org' > CNAME
+
+git add --all
 
 # Commit changes.
 msg="rebuilding site `date`"
