@@ -1,7 +1,7 @@
 # For a description of these parameters, please visit the theme wiki.
 # https://github.com/pacollins/hugo-future-imperfect-slim/wiki/config.toml
 baseurl                 = "https://blog.gopherhub.org/"
-defaultContentLanguage  = "zh-cn"
+defaultContentLanguage  = ""
 title                   = "Raphael blog"
 theme                   = "hugo-future-imperfect-slim"
 paginate                = 3
@@ -18,7 +18,7 @@ disableLanguages        = [""]
   cssFiles              = ["default"]
   jsFiles               = ["default"]
   highlightjs           = true
-  highlightjsTheme      = "github"
+  highlightjsTheme      = "atom-one-dark"
   highlightjsLang       = ["html", "css", "js", "toml"]
   viewMorePostsLink     = "/blog/"
   readingTime           = true
@@ -55,7 +55,7 @@ disableLanguages        = [""]
       alt                 = "Personal blog"
 
   [params.sidebar]
-    about               = "This theme was developed for Hugo static site generator."
+    about               = "some information about me"
     postAmount          = 5
     categories          = true
     categoriesByCount   = true
@@ -75,6 +75,12 @@ disableLanguages        = [""]
     [params.staticman.recaptcha]
       siteKey           = ""
       encryptedKey      = ""
+
+[markup]
+  defaultMarkdownHandler = "goldmark"
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
 
 [menu]
 

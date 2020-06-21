@@ -1,26 +1,60 @@
 +++
 title = "About"
 layout = "about"
-description = "Hugo, the world’s fastest framework for building websites"
+description = "Some information about me"
 date = "2019-02-28"
-aliases = ["about-us","about-hugo"]
-author = "Hugo Authors"
+aliases = ["about-me"]
+author = "huan"
 +++
 
-Written in Go, Hugo is an open source static site generator available under the [Apache Licence 2.0.](https://github.com/gohugoio/hugo/blob/master/LICENSE) Hugo supports TOML, YAML and JSON data file types, Markdown and HTML content files and uses shortcodes to add rich content. Other notable features are taxonomies, multilingual mode, image processing, custom output formats, HTML/CSS/JS minification and support for Sass SCSS workflows.
+ <center>
+     <h1>Raphael</h1>
+     <div>
+         <span>
+             <img src="/assets/phone-solid.svg" width="18px">
+             1564827xxxx
+         </span>
+         ·
+         <span>
+             <img src="/assets/envelope-solid.svg" width="18px">
+             sawakitaeiji233@gmail.com
+         </span>
+         ·
+         <span>
+             <img src="/assets/github-brands.svg" width="18px">
+             <a href="https://github.com/glepnir">glepnir</a>
+         </span>
+         ·
+         <span>
+             <img src="/assets/rss-solid.svg" width="18px">
+             <a href="#">My Blog</a>
+         </span>
+     </div>
+ </center>
 
-Hugo makes use of a variety of open source projects including:
+## <img src="/assets/info-circle-solid.svg" width="30px"> 个人信息
 
-* https://github.com/yuin/goldmark
-* https://github.com/alecthomas/chroma
-* https://github.com/muesli/smartcrop
-* https://github.com/spf13/cobra
-* https://github.com/spf13/viper
+- 男，1991 年出生
+- 求职意向：Go 开发
+- 工作经验：2014-至今
+- 期望薪资：12k
 
-Hugo is ideal for blogs, corporate websites, creative portfolios, online magazines, single page applications or even a website with thousands of pages.
+## <img src="/assets/graduation-cap-solid.svg" width="30px"> 教育经历
 
-Hugo is for people who want to hand code their own website without worrying about setting up complicated runtimes, dependencies and databases.
+- 学士，重庆邮电大学，计算机科学与技术，2013
 
-Websites built with Hugo are extremelly fast, secure and can be deployed anywhere including, AWS, GitHub Pages, Heroku, Netlify and any other hosting provider.
+## <img src="/assets/briefcase-solid.svg" width="30px"> 工作经历
 
-Learn more and contribute on [GitHub](https://github.com/gohugoio).
+- 有点多，有空填吧
+
+## <img src="/assets/project-diagram-solid.svg" width="30px"> 项目经历
+
+- 个人所有项目 github 开源
+
+## <img src="/assets/tools-solid.svg" width="30px"> 技能清单
+
+- ★★★ Go Rust Typescript
+- ★★★ MySQL Redis MongoDB
+- ★★☆ Python JavaScript Dart
+- ★★☆ RabbitMQ Etcd
+- ★★☆ React Flutter
