@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Go on Raphael blog</title>
+    <link>https://blog.gopherhub.org/categories/go/</link>
+    <description>Recent content in Go on Raphael blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Mon, 15 Jun 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://blog.gopherhub.org/categories/go/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Go 的 graceful shutdown</title>
+      <link>https://blog.gopherhub.org/blog/go-graceful-shutdown/</link>
+      <pubDate>Mon, 15 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.gopherhub.org/blog/go-graceful-shutdown/</guid>
+      <description>一个简单的 Http 服务 package main import ( &amp;#34;log&amp;#34; &amp;#34;net/http&amp;#34; &amp;#34;time&amp;#34; &amp;#34;github.com/gin-gonic/gin&amp;#34; ) func main() { router := gin.Default() router.GET(&amp;#34;/&amp;#34;, func(c *gin.Context) { time.Sleep(5 * time.Second) c.String(http.StatusOK, &amp;#34;Welcome Gin Server&amp;#34;) }) srv := &amp;amp;http.Server{ Addr: &amp;#34;:8080&amp;#34;, Handler: router, } // service connections  if err := srv.ListenAndServe(); err != nil &amp;amp;&amp;amp; err != http.ErrServerClosed { log.Fatalf(&amp;#34;listen: %s\n&amp;#34;, err) } log.Println(&amp;#34;Server exiting&amp;#34;) } 上述的代码很简单，但是有个问题如果客户端还在发起请求服务端直接关闭，就会导致丢失数据，如果是一些交易网站 等等包含重要数据的传输就会出现一些问题。Go 在 1.8 添加了一个shutdown 那么使用这个方法就可以实现更优雅的关闭。
+改进 需要理清楚一些思路才能写好代码，怎么做到优雅的关闭.
+ 关闭之后需要确保没有新的使用者连接 确保处理完所有的 http 连接才会正常的关闭  // +build go1.</description>
+    </item>
+    
+  </channel>
+</rss>

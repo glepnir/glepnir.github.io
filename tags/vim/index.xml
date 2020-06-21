@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>vim on Raphael blog</title>
+    <link>https://blog.gopherhub.org/tags/vim/</link>
+    <description>Recent content in vim on Raphael blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Wed, 10 Jun 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://blog.gopherhub.org/tags/vim/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Dashboard vim plugin</title>
+      <link>https://blog.gopherhub.org/blog/dashboard-nvim/</link>
+      <pubDate>Wed, 10 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.gopherhub.org/blog/dashboard-nvim/</guid>
+      <description>&lt;h2 id=&#34;dashboard&#34;&gt;Dashboard&lt;/h2&gt;
+&lt;p&gt;Dashboard-nvim 是一个 vim/neovim 的首屏启动插件。灵感来源于 doom emacs。
+功能也很丰富。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Spaceline vim</title>
+      <link>https://blog.gopherhub.org/blog/spaceline.vim/</link>
+      <pubDate>Fri, 05 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.gopherhub.org/blog/spaceline.vim/</guid>
+      <description>Spaceline 一直很喜欢 spacemacs 的 spaceline。也曾经尝试使用 emacs 例如 spacemacs 和 doom 奈何 emacs 给我的体验真的是非常糟糕。放弃了 emacs。还是 vim 香。所以我就在 vim 中实现了一个类似的不过照着我的喜欢进行了修改和添加。
+安装 使用 vim 插件管理器
+Plug &amp;#39;hardcoreplayers/spaceline.vim&amp;#39;必要插件 coc.nvim 插件里的 git 的分支和 git 的 diff 都是使用了 coc 的扩展 coc-git 所以需要安装 coc.
+TODO   支持 nvim-lsp (已经支持了在 0.4.2)
+  移除 coc-git 的依赖(git 的分支已经支持了，git 的 diff 还在进行中)
+  </description>
+    </item>
+    
+  </channel>
+</rss>
