@@ -7,13 +7,13 @@ tags = ["Go"]
 categories = ["Go"]
 +++
 
-## 简单的 Go http 请求使用 context 包的例子
-
 ## Intro
 
 For the longest time I have wanted to see an easy to understand example (read newbie) of how to add data to the “new” golang 1.7 request context object. Since I wasted more than 2 days looking for something like that and never really found anything I decided to figure it out from the docs and write something up for others like me that wanted something simple. The example below is trivial and does not put anything useful in the context it’s just there to get your own juices flowing.
 
 Let’s start with the main function that will really only create the router and the routes.
+
+<!--more-->
 
 ```go
 func main() {
