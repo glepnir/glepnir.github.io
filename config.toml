@@ -917,11 +917,12 @@ enableEmoji = true
       # Utterances comment 评论系统设置 (https://utteranc.es/)
       [params.page.comment.utterances]
         enable = true
-        owner= "glepnir"
-        repo = "glepnir.github.io"
+        # owner/repo
+        repo = "glepnir/glepnir.github.io"
         issueTerm = "pathname"
+        label = ""
         lightTheme = "github-light"
-        # darkTheme = "github-dark"
+        darkTheme = "github-dark"
     # Third-party library config
     # 第三方库配置
     [params.page.library]
