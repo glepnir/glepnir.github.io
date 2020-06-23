@@ -4,12 +4,12 @@
   
   <url>
     <loc>https://blog.gopherhub.org/blog/</loc>
-    <lastmod>2020-06-15T00:00:00+00:00</lastmod>
+    <lastmod>2020-06-23T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://blog.gopherhub.org/categories/</loc>
-    <lastmod>2020-06-15T00:00:00+00:00</lastmod>
+    <lastmod>2020-06-23T00:00:00+00:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="zh-cn"
@@ -20,6 +20,51 @@
                 hreflang="en"
                 href="https://blog.gopherhub.org/categories/"
                 />
+  </url>
+  
+  <url>
+    <loc>https://blog.gopherhub.org/blog/singlelinedlist-go/</loc>
+    <lastmod>2020-06-23T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://blog.gopherhub.org/</loc>
+    <lastmod>2020-06-23T00:00:00+00:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh-cn"
+                href="https://blog.gopherhub.org/zh-cn/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="https://blog.gopherhub.org/"
+                />
+  </url>
+  
+  <url>
+    <loc>https://blog.gopherhub.org/tags/</loc>
+    <lastmod>2020-06-23T00:00:00+00:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh-cn"
+                href="https://blog.gopherhub.org/zh-cn/tags/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="https://blog.gopherhub.org/tags/"
+                />
+  </url>
+  
+  <url>
+    <loc>https://blog.gopherhub.org/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/</loc>
+    <lastmod>2020-06-23T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://blog.gopherhub.org/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/</loc>
+    <lastmod>2020-06-23T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -35,36 +80,6 @@
   <url>
     <loc>https://blog.gopherhub.org/blog/go-graceful-shutdown/</loc>
     <lastmod>2020-06-15T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://blog.gopherhub.org/</loc>
-    <lastmod>2020-06-15T00:00:00+00:00</lastmod>
-    <xhtml:link
-                rel="alternate"
-                hreflang="zh-cn"
-                href="https://blog.gopherhub.org/zh-cn/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="en"
-                href="https://blog.gopherhub.org/"
-                />
-  </url>
-  
-  <url>
-    <loc>https://blog.gopherhub.org/tags/</loc>
-    <lastmod>2020-06-15T00:00:00+00:00</lastmod>
-    <xhtml:link
-                rel="alternate"
-                hreflang="zh-cn"
-                href="https://blog.gopherhub.org/zh-cn/tags/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="en"
-                href="https://blog.gopherhub.org/tags/"
-                />
   </url>
   
   <url>

@@ -1,0 +1,599 @@
+<!doctype html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8">
+<title>Go数据结构与算法-单链表 - Raphael blog</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<meta name="generator" content="Hugo 0.72.0" /><meta itemprop="name" content="Go数据结构与算法-单链表">
+<meta itemprop="description" content="Go 单链表">
+<meta itemprop="datePublished" content="2020-06-23T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2020-06-23T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="131">
+<meta itemprop="image" content="https://blog.gopherhub.org/img/datastructure/logo.svg">
+
+
+
+<meta itemprop="keywords" content="数据结构与算法," /><meta property="og:title" content="Go数据结构与算法-单链表" />
+<meta property="og:description" content="Go 单链表" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://blog.gopherhub.org/blog/singlelinedlist-go/" />
+<meta property="og:image" content="https://blog.gopherhub.org/img/datastructure/logo.svg" />
+<meta property="article:published_time" content="2020-06-23T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-06-23T00:00:00+00:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://blog.gopherhub.org/img/datastructure/logo.svg"/>
+
+<meta name="twitter:title" content="Go数据结构与算法-单链表"/>
+<meta name="twitter:description" content="Go 单链表"/>
+<link rel="stylesheet" href="/css/bundle.min.7fe15f34d82f840e583a2cd097e13aab4af11ecf580b56a9a0f061ba338c933b.css" integrity="sha256-f&#43;FfNNgvhA5YOizQl&#43;E6q0rxHs9YC1apoPBhujOMkzs="><link rel="stylesheet" href="/css/add-on.css">
+</head>
+
+  <body>
+    
+
+<header id="site-header">
+  <nav id="site-nav">
+    <h1 class="nav-title">
+      <a href="/" class="nav">
+        
+          
+            Blog
+          
+        
+      </a>
+    </h1>
+    <menu id="site-nav-menu" class="flyout-menu menu">
+      
+        
+          
+          
+            <a href="/" class="nav link"><i class='fa fa-home'></i> Home</a>
+          
+        
+      
+        
+          
+          
+            <a href="/about/" class="nav link"><i class='far fa-id-card'></i> About</a>
+          
+        
+      
+        
+          
+          
+            <a href="/blog/" class="nav link"><i class='far fa-newspaper'></i> Blog</a>
+          
+        
+      
+        
+          
+          
+            <a href="/categories/" class="nav link"><i class='fas fa-sitemap'></i> Categories</a>
+          
+        
+      
+        
+          
+          
+            <a href="/contact/" class="nav link"><i class='far fa-envelope'></i> Contact</a>
+          
+        
+      
+      <a href="#share-menu" class="nav share-toggle"><i class="fas fa-share-alt">&nbsp;</i>Share</a>
+      <a href="#search-input" class="nav search-toggle"><i class="fas fa-search">&nbsp;</i>Search</a>
+    </menu>
+    <a href="#search-input" class="nav search-toggle"><i class="fas fa-search fa-2x">&nbsp;</i></a>
+    <a href="#share-menu" class="nav share-toggle"><i class="fas fa-share-alt fa-2x">&nbsp;</i></a>
+    <a href="#lang-menu" class="nav lang-toggle" lang="en">en</a>
+    <a href="#site-nav" class="nav nav-toggle"><i class="fas fa-bars fa-2x"></i></a>
+  </nav>
+  <menu id="search" class="menu"><input id="search-input" class="search-input menu"></input><div id="search-results" class="search-results menu"></div></menu>
+  <menu id="lang-menu" class="flyout-menu menu">
+  <a href="#" lang="en" class="nav link active">English (en)</a>
+  
+    
+      
+    
+      
+        <a href="/zh-cn" lang="zh-cn" class="nav no-lang link">中文 (zh-cn)</a>
+      
+    
+  
+</menu>
+
+  
+    <menu id="share-menu" class="flyout-menu menu">
+      <h1>Share Post</h1>
+      
+
+
+
+
+  
+    
+    <a href="//twitter.com/share?text=Go%e6%95%b0%e6%8d%ae%e7%bb%93%e6%9e%84%e4%b8%8e%e7%ae%97%e6%b3%95-%e5%8d%95%e9%93%be%e8%a1%a8&amp;url=https%3a%2f%2fblog.gopherhub.org%2fblog%2fsinglelinedlist-go%2f" target="_blank" rel="noopener" class="nav share-btn twitter">
+        <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
+      </a>
+  
+
+  
+      <a href="//www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fblog.gopherhub.org%2fblog%2fsinglelinedlist-go%2f" target="_blank" rel="noopener" class="nav share-btn facebook">
+        <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
+        </a>
+  
+
+  
+    <a href="//www.reddit.com/submit?url=https%3a%2f%2fblog.gopherhub.org%2fblog%2fsinglelinedlist-go%2f&amp;title=Go%e6%95%b0%e6%8d%ae%e7%bb%93%e6%9e%84%e4%b8%8e%e7%ae%97%e6%b3%95-%e5%8d%95%e9%93%be%e8%a1%a8" target="_blank" rel="noopener" class="nav share-btn reddit">
+          <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
+        </a>
+  
+
+  
+        <a href="//www.linkedin.com/shareArticle?url=https%3a%2f%2fblog.gopherhub.org%2fblog%2fsinglelinedlist-go%2f&amp;title=Go%e6%95%b0%e6%8d%ae%e7%bb%93%e6%9e%84%e4%b8%8e%e7%ae%97%e6%b3%95-%e5%8d%95%e9%93%be%e8%a1%a8" target="_blank" rel="noopener" class="nav share-btn linkedin">
+            <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
+          </a>
+  
+
+  
+        <a href="//www.pinterest.com/pin/create/button/?url=https%3a%2f%2fblog.gopherhub.org%2fblog%2fsinglelinedlist-go%2f&amp;description=Go%e6%95%b0%e6%8d%ae%e7%bb%93%e6%9e%84%e4%b8%8e%e7%ae%97%e6%b3%95-%e5%8d%95%e9%93%be%e8%a1%a8" target="_blank" rel="noopener" class="nav share-btn pinterest">
+          <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
+        </a>
+  
+
+  
+        <a href="mailto:?subject=Check%20out%20this%20post%20by raphael&amp;body=https%3a%2f%2fblog.gopherhub.org%2fblog%2fsinglelinedlist-go%2f" target="_blank" class="nav share-btn email" data-proofer-ignore>
+          <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
+        </a>
+  
+
+
+    </menu>
+  
+</header>
+
+    <div id="wrapper">
+      <section id="site-intro" >
+  <a href="/"><img src="https://blog.gopherhub.org/img/main/logo.jpg" class="circle" width="" alt="Personal blog" /></a>
+  <header>
+    <h1>Raphael</h1>
+  </header>
+  <main>
+    <p>A full-stack develope Love Vim Go Rust Typescript</p>
+  </main>
+  
+    <footer>
+      <ul class="socnet-icons">
+        
+
+        <li><a href="//github.com/glepnir" target="_blank" rel="noopener" title="GitHub" class="fab fa-github"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="mailto:sawakitaeiji233@gmail.com" target="_blank" title="Email" class="far fa-envelope"></a></li>
+
+      </ul>
+    </footer>
+  
+</section>
+
+      <main id="site-main">
+        
+  <article class="post">
+    <header>
+  <div class="title">
+    
+      <h2><a href="/blog/singlelinedlist-go/">Go数据结构与算法-单链表</a></h2>
+    
+    
+      <p>Go 单链表</p>
+    
+  </div>
+  <div class="meta">
+    <time class="published" datetime="2020-06-23 00:00:00 &#43;0000 UTC">
+      June 23, 2020
+    </time>
+    <span class="author">raphael</span>
+    
+      <p>1 minute read</p>
+    
+  </div>
+</header>
+
+    <section id="socnet-share">
+      
+
+
+
+
+  
+    
+    <a href="//twitter.com/share?text=Go%e6%95%b0%e6%8d%ae%e7%bb%93%e6%9e%84%e4%b8%8e%e7%ae%97%e6%b3%95-%e5%8d%95%e9%93%be%e8%a1%a8&amp;url=https%3a%2f%2fblog.gopherhub.org%2fblog%2fsinglelinedlist-go%2f" target="_blank" rel="noopener" class="nav share-btn twitter">
+        <i class="fab fa-twitter"></i><p>&nbsp;Twitter</p>
+      </a>
+  
+
+  
+      <a href="//www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fblog.gopherhub.org%2fblog%2fsinglelinedlist-go%2f" target="_blank" rel="noopener" class="nav share-btn facebook">
+        <i class="fab fa-facebook"></i><p>&nbsp;Facebook</p>
+        </a>
+  
+
+  
+    <a href="//www.reddit.com/submit?url=https%3a%2f%2fblog.gopherhub.org%2fblog%2fsinglelinedlist-go%2f&amp;title=Go%e6%95%b0%e6%8d%ae%e7%bb%93%e6%9e%84%e4%b8%8e%e7%ae%97%e6%b3%95-%e5%8d%95%e9%93%be%e8%a1%a8" target="_blank" rel="noopener" class="nav share-btn reddit">
+          <i class="fab fa-reddit-alien"></i><p>&nbsp;Reddit</p>
+        </a>
+  
+
+  
+        <a href="//www.linkedin.com/shareArticle?url=https%3a%2f%2fblog.gopherhub.org%2fblog%2fsinglelinedlist-go%2f&amp;title=Go%e6%95%b0%e6%8d%ae%e7%bb%93%e6%9e%84%e4%b8%8e%e7%ae%97%e6%b3%95-%e5%8d%95%e9%93%be%e8%a1%a8" target="_blank" rel="noopener" class="nav share-btn linkedin">
+            <i class="fab fa-linkedin"></i><p>&nbsp;LinkedIn</p>
+          </a>
+  
+
+  
+        <a href="//www.pinterest.com/pin/create/button/?url=https%3a%2f%2fblog.gopherhub.org%2fblog%2fsinglelinedlist-go%2f&amp;description=Go%e6%95%b0%e6%8d%ae%e7%bb%93%e6%9e%84%e4%b8%8e%e7%ae%97%e6%b3%95-%e5%8d%95%e9%93%be%e8%a1%a8" target="_blank" rel="noopener" class="nav share-btn pinterest">
+          <i class="fab fa-pinterest-p"></i><p>&nbsp;Pinterest</p>
+        </a>
+  
+
+  
+        <a href="mailto:?subject=Check%20out%20this%20post%20by raphael&amp;body=https%3a%2f%2fblog.gopherhub.org%2fblog%2fsinglelinedlist-go%2f" target="_blank" class="nav share-btn email" data-proofer-ignore>
+          <i class="fas fa-envelope"></i><p>&nbsp;Email</p>
+        </a>
+  
+
+
+    </section>
+    
+  <a href="/blog/singlelinedlist-go/" class="image featured">
+    
+      <img src="https://blog.gopherhub.org/img/datastructure/logo.svg" alt="">
+    
+  </a>
+
+
+    <div class="content">
+      <h2 id="前言">前言</h2>
+<p>谈到链表之前，先说一下线性表。线性表是最基本、最简单、也是最常用的一种数据结构。线性表中数据元素之间</p>
+<p>的关系是一对一的关系，即除了第一个和最后一个数据元素之外，其它数据元素都是首尾相接的。线性表有两种存</p>
+<p>储方式，一种是顺序存储结构，另一种是链式存储结构。顺序存储结构就是两个相邻的元素在内存中也是相邻的。</p>
+<p>这种存储方式的优点是查询的时间复杂度为 O(1)，通过首地址和偏移量就可以直接访问到某元素，关于查找的适</p>
+<p>配算法很多，最快可以达到 O(logn)。缺点是插入和删除的时间复杂度最坏能达到 O(n)，如果你在第一个位置插入</p>
+<p>一个元素，你需要把数组的每一个元素向后移动一位，如果你在第一个位置删除一个元素，你需要把数组的每一个</p>
+<p>元素向前移动一位。还有一个缺点，就是当你不确定元素的数量时，你开的数组必须保证能够放下元素最大数量，</p>
+<p>遗憾的是如果实际数量比最大数量少很多时，你开的数组没有用到的内存就只能浪费掉了。链式存储结构就是两个</p>
+<p>相邻的元素在内存中可能不是相邻的，每一个元素都有一个指针域，指针域一般是存储着到下一个元素的指针。这</p>
+<p>种存储方式的优点是插入和删除的时间复杂度为 O(1)，不会浪费太多内存，添加元素的时候才会申请内存，删除</p>
+<p>元素会释放内存。缺点是访问的时间复杂度最坏为 O(n)，关于查找的算法很少，一般只能遍历，这样时间复杂度</p>
+<p>也是线性（O(n)）的了,频繁的申请和释放内存也会消耗时间。顺序表的特性是随机读取，也就是访问一个元素的</p>
+<p>时间复杂度是 O(1)，链式表的特性是插入和删除的时间复杂度为 O(1)。要根据实际情况去选取适合自己的存储结</p>
+<p>构。</p>
+<h2 id="链表">链表</h2>
+<p>链表是用于存储项目列表的有序元素的集合，链式存储的线性表。 与数组不同，链表可以动态扩展和收缩。链表</p>
+<p>还可以用作其他数据结构（例如堆栈和队列）的基础。 列表可用于存储用户，汽车零件，原料，待办事项和各种</p>
+<p>其他此类元素的列表。 链表是最常用的线性数据结构。根据指针域的不同，链表分为单向链表、双向链表、循环</p>
+<p>链表等等。</p>
+<h2 id="单链表-linked-list">单链表 Linked List</h2>
+<p>单链表的特点是链表的链接方向是单向的，对链表的访问要通过从头部开始，依序往下读取。一个单链表的节点被</p>
+<p>分为两个部分。第一个部分保存或者显示关于节点的信息，第二个部分存储下一个节点的地址，单链表只可向一个</p>
+<p>方向遍历。不同操作在单链表的时间复杂度</p>
+<pre><code>Access(存取) ---- O(n)
+Search(搜索) ---- O(n)
+Insert(插入) ---- O(1)
+Delete(删除) ---- O(1)
+</code></pre><h3 id="node-节点">Node 节点</h3>
+<p>Node 节点是一个结构体 Struct，结构体的第一个成员是个整形 int 的字段 property，这里根据你的需求来不一</p>
+<p>定是整形也不一定要叫 property:)。第二个成员是指向下一个节点的指针。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-Go" data-lang="Go"><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Node</span> <span style="color:#66d9ef">struct</span>{
+  <span style="color:#a6e22e">property</span> <span style="color:#66d9ef">int</span>
+  <span style="color:#a6e22e">nextNode</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">node</span>
+}
+</code></pre></div><h3 id="定义单链表">定义单链表</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-GO" data-lang="GO"><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">LinkedList</span> <span style="color:#66d9ef">struct</span>{
+  <span style="color:#75715e">// 单链表的首节点
+</span><span style="color:#75715e"></span>  <span style="color:#a6e22e">headNode</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">Node</span>
+}
+</code></pre></div><p>下面列出 LinkedList 的一些方法，例如 AddtoHead，IterateList，LastNode，AddtoEnd，NodeWithValue，AddAfter</p>
+<h3 id="addtohead-方法">AddToHead 方法</h3>
+<p>AddToHead 方法将节点添加到单链表的开头。单链表的 AddToHead 方法具有参数 integer 属性。该属性用于初始</p>
+<p>化节点。 实例化一个新节点，并将其属性设置为传递的属性参数。 nextNode 指向链表的当前 headNode，并将</p>
+<p>headNode 设置为所创建的新节点的指针，如以下代码所示：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// 添加到头部方法
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">linkedList</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">LinkedList</span>) <span style="color:#a6e22e">AddToHead</span>(<span style="color:#a6e22e">property</span> <span style="color:#66d9ef">int</span>) {
+	<span style="color:#a6e22e">node</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">Node</span>{}
+	<span style="color:#a6e22e">node</span>.<span style="color:#a6e22e">property</span> = <span style="color:#a6e22e">property</span>
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">node</span>.<span style="color:#a6e22e">nextNode</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#a6e22e">node</span>.<span style="color:#a6e22e">nextNode</span> = <span style="color:#a6e22e">linkedList</span>.<span style="color:#a6e22e">headNode</span>
+	}
+	<span style="color:#a6e22e">linkedList</span>.<span style="color:#a6e22e">headNode</span> = <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">node</span>
+}
+
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+	<span style="color:#a6e22e">linkedList</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">LinkedList</span>{}
+	<span style="color:#a6e22e">linkedList</span>.<span style="color:#a6e22e">AddToHead</span>(<span style="color:#ae81ff">1</span>)
+	<span style="color:#a6e22e">linkedList</span>.<span style="color:#a6e22e">AddToHead</span>(<span style="color:#ae81ff">3</span>)
+	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">linkedList</span>.<span style="color:#a6e22e">headNode</span>.<span style="color:#a6e22e">property</span>)
+}
+
+</code></pre></div>
+    </div>
+    <footer>
+      <ul class="stats">
+  <li class="categories">
+    <ul>
+    
+      
+        
+          <li><a class="article-terms-link" href="/categories/%e6%95%b0%e6%8d%ae%e7%bb%93%e6%9e%84%e4%b8%8e%e7%ae%97%e6%b3%95/">数据结构与算法</a></li>
+        
+      
+    
+    </ul>
+  </li>
+  <li class="tags">
+    <ul>
+    
+      
+        
+          <li><a class="article-terms-link" href="/tags/%e6%95%b0%e6%8d%ae%e7%bb%93%e6%9e%84%e4%b8%8e%e7%ae%97%e6%b3%95/">数据结构与算法</a></li>
+        
+      
+    
+    </ul>
+  </li>
+</ul>
+
+    </footer>
+  </article>
+  
+
+<div class="post">
+  <script
+    src="https://utteranc.es/client.js"
+    repo="glepnir/glepnir.github.io"
+    issue-term="pathname"
+    theme="github-light"
+    crossorigin="anonymous"
+    async
+  ></script>
+  <noscript
+    >Please enable JavaScript to view the
+    <a href="https://github.com/utterance"
+      >comments powered by utterances.</a
+    ></noscript
+  >
+</div>
+
+
+  <div class="pagination">
+  
+    <a href="/blog/go-graceful-shutdown/" class="button"><div class="previous"><div>Go 的 graceful shutdown</div></div></a>
+  
+  
+</div>
+
+
+      </main>
+      <section id="site-sidebar">
+  
+    <section id="recent-posts">
+      <header>
+        <h1>Recent posts</h1>
+      </header>
+      
+      <article class="mini-post">
+        <section>
+          
+  <a href="/blog/singlelinedlist-go/" class="image featured">
+    
+      <img src="https://blog.gopherhub.org/img/datastructure/logo.svg" alt="">
+    
+  </a>
+
+
+        </section>
+        <header>
+          <h2><a href="/blog/singlelinedlist-go/">Go数据结构与算法-单链表</a></h2>
+          <time class="published" datetime="">June 23, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+
+        </section>
+        <header>
+          <h2><a href="/blog/go-graceful-shutdown/">Go 的 graceful shutdown</a></h2>
+          <time class="published" datetime="">June 15, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+  <a href="/blog/dashboard-nvim/" class="image featured">
+    
+      <img src="https://blog.gopherhub.org/img/dashboard/dashboard.png" alt="">
+    
+  </a>
+
+
+        </section>
+        <header>
+          <h2><a href="/blog/dashboard-nvim/">Dashboard vim plugin</a></h2>
+          <time class="published" datetime="">June 10, 2020</time>
+        </header>
+      </article>
+      
+      <article class="mini-post">
+        <section>
+          
+  <a href="/blog/spaceline.vim/" class="image featured">
+    
+      <img src="https://blog.gopherhub.org/img/spaceline/spaceline.png" alt="">
+    
+  </a>
+
+
+        </section>
+        <header>
+          <h2><a href="/blog/spaceline.vim/">Spaceline vim</a></h2>
+          <time class="published" datetime="">June 5, 2020</time>
+        </header>
+      </article>
+      
+      
+    </section>
+  
+
+  
+    
+      <section id="categories">
+        <header>
+          <h1><a href="/categories">Categories</a></h1>
+        </header>
+        <ul>
+          
+            
+          
+          
+          <li>
+            
+              <a href="/categories/vim/">vim<span class="count">2</span></a>
+            
+          
+          <li>
+            
+              <a href="/categories/go/">go<span class="count">1</span></a>
+            
+          
+          <li>
+            
+              <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/">数据结构与算法<span class="count">1</span></a>
+            
+          
+          </li>
+        </ul>
+      </section>
+    
+  
+
+  
+    <section id="mini-bio">
+      <header>
+        <h1>About</h1>
+      </header>
+      <p>some information about me</p>
+      <footer>
+        <a href="/about" class="button">Learn More</a>
+      </footer>
+    </section>
+  
+</section>
+
+      <footer id="site-footer">
+  
+      <ul class="socnet-icons">
+        
+
+        <li><a href="//github.com/glepnir" target="_blank" rel="noopener" title="GitHub" class="fab fa-github"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="mailto:sawakitaeiji233@gmail.com" target="_blank" title="Email" class="far fa-envelope"></a></li>
+
+      </ul>
+  
+  <p class="copyright">
+    
+      &copy; 2020
+      
+        Raphael blog
+      
+    . <br>
+    Theme: <a href='https://github.com/pacollins/hugo-future-imperfect-slim' target='_blank' rel='noopener'>Hugo Future Imperfect Slim</a><br>A <a href='https://html5up.net/future-imperfect' target='_blank' rel='noopener'>HTML5 UP port</a> | Powered by <a href='https://gohugo.io/' title='0.72.0' target='_blank' rel='noopener'>Hugo</a>
+  </p>
+</footer>
+<a id="back-to-top" href="#" class="fas fa-arrow-up fa-2x"></a>
+
+      <script src="/js/highlight.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script><script src="/js/bundle.min.0e4ef360adb40707eb6951c3d6067773e8b08be7f2f5f1db3604f2db699e2b09.js" integrity="sha256-Dk7zYK20BwfraVHD1gZ3c&#43;iwi&#43;fy9fHbNgTy22meKwk="></script>
+    <script src="/js/add-on.js"></script>
+    </div>
+  </body>
+</html>
