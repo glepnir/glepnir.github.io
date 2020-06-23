@@ -3,7 +3,8 @@
         <title>Raphael Blog</title>
         <link>https://example.com/</link>
         <description>Raphael的个人blog,专注Golang Vim Rust Typescript React Dart Flutter Mysql Redis Nosql</description>
-        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Tue, 23 Jun 2020 00:00:00 &#43;0000</lastBuildDate>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>sawakitaeiji233@gmail.com (Raphael)</managingEditor>
+            <webMaster>sawakitaeiji233@gmail.com (Raphael)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Tue, 23 Jun 2020 00:00:00 &#43;0000</lastBuildDate>
             <atom:link href="https://example.com/index.xml" rel="self" type="application/rss+xml" />
         <item>
     <title>Go 如何在http中使用context包</title>
