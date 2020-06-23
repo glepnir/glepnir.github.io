@@ -866,8 +866,7 @@ Theme Grid
         display: flex;
         align-items: center;
         font-family: "Font Awesome 5 Free";
-        font-weight: 900;
-        max-width: 50%; }
+        font-weight: 900; }
         .post > footer .stats li:hover ul li, .post > footer .stats li:active ul li {
           visibility: visible;
           opacity: 1;

@@ -76,12 +76,6 @@ disableLanguages        = [""]
       siteKey           = ""
       encryptedKey      = ""
 
-[markup]
-  defaultMarkdownHandler = "goldmark"
-  [markup.goldmark]
-    [markup.goldmark.renderer]
-      unsafe = true
-
 [menu]
 
   [[menu.main]]
@@ -130,6 +124,18 @@ disableLanguages        = [""]
     LanguageCode        = "en"
     LanguageName        = "English"
     weight              = 1
+
+[markup]
+  defaultMarkdownHandler = "goldmark"
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+
+[params.utterances]         # utteranc is a comment system based on GitHub issues. see https://utteranc.es
+  owner = "glepnir" # github用户名
+  repo = "glepnir.github.io"    # 仓库地址The repo to store comments
+  issueTerm = "pathname"
+  theme = "github-light"
 
 [social]
   # Coding Communities

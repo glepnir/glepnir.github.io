@@ -1,11 +1,19 @@
-{{ if ne .Site.DisqusShortname "" }}
-  <article class="post">
-    {{ template "_internal/disqus.html" . }}
-  </article>
-
-{{/* Backwards compatibility for deprecated parameter ".Site.Params.staticman.staticman" */}}
-{{ else if or .Site.Params.staticman.enabled .Site.Params.staticman.staticman }}
-  <article class="post">
-    {{ .Render "staticman" }}
-  </article>
+<!-- utterances -->
+{{ if .Site.Params.utterances.owner}}
+<div class="post">
+  <script
+    src="https://utteranc.es/client.js"
+    repo="{{ .Site.Params.utterances.owner }}/{{ .Site.Params.utterances.repo }}"
+    issue-term="{{ .Site.Params.utterances.issueTerm }}"
+    theme="{{ .Site.Params.utterances.theme }}"
+    crossorigin="anonymous"
+    async
+  ></script>
+  <noscript
+    >Please enable JavaScript to view the
+    <a href="https://github.com/utterance"
+      >comments powered by utterances.</a
+    ></noscript
+  >
+</div>
 {{ end }}
