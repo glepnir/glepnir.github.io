@@ -10,7 +10,7 @@
 <meta itemprop="description" content="Simple Go http request context example">
 <meta itemprop="datePublished" content="2020-06-23T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-06-23T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="172">
+<meta itemprop="wordCount" content="791">
 
 
 
@@ -228,7 +228,7 @@
     </time>
     <span class="author">raphael</span>
     
-      <p>1 minute read</p>
+      <p>4 minute read</p>
     
   </div>
 </header>
@@ -282,6 +282,92 @@
 
     <div class="content">
       <h2 id="简单的-go-http-请求使用-context-包的例子">简单的 Go http 请求使用 context 包的例子</h2>
+<h2 id="intro">Intro</h2>
+<p>For the longest time I have wanted to see an easy to understand example (read newbie) of how to add data to the “new” golang 1.7 request context object. Since I wasted more than 2 days looking for something like that and never really found anything I decided to figure it out from the docs and write something up for others like me that wanted something simple. The example below is trivial and does not put anything useful in the context it’s just there to get your own juices flowing.</p>
+<p>Let’s start with the main function that will really only create the router and the routes.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+	<span style="color:#a6e22e">mux</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">NewServeMux</span>()
+
+	<span style="color:#a6e22e">mux</span>.<span style="color:#a6e22e">HandleFunc</span>(<span style="color:#e6db74">&#34;/&#34;</span>, <span style="color:#a6e22e">StatusPage</span>)
+	<span style="color:#a6e22e">mux</span>.<span style="color:#a6e22e">HandleFunc</span>(<span style="color:#e6db74">&#34;/login&#34;</span>, <span style="color:#a6e22e">LoginPage</span>)
+	<span style="color:#a6e22e">mux</span>.<span style="color:#a6e22e">HandleFunc</span>(<span style="color:#e6db74">&#34;/logout&#34;</span>, <span style="color:#a6e22e">LogoutPage</span>)
+
+	<span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;Start server on port :8085&#34;</span>)
+	<span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Fatal</span>(<span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">ListenAndServe</span>(<span style="color:#e6db74">&#34;:8085&#34;</span>, <span style="color:#a6e22e">mux</span>))
+ }
+</code></pre></div><p>Our example will allow you to login and logout and once logged in we will put a “hardcoded” username in the context to flow to the StatusPage handler. So this is 3 routes:</p>
+<ul>
+<li>/login</li>
+<li>/logout</li>
+<li>/</li>
+</ul>
+<p>Login and Logout are simply done by visiting the route where we add and remove a cookie. Now to cerate the skeletons of the 3 handlers:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">StatusPage</span>(<span style="color:#a6e22e">w</span> <span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">ResponseWriter</span>, <span style="color:#a6e22e">r</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">Request</span>) {
+	<span style="color:#a6e22e">w</span>.<span style="color:#a6e22e">Write</span>([]byte(<span style="color:#e6db74">&#34;This Page will show the context username once the context is added.&#34;</span>))
+
+}
+
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">LoginPage</span>(<span style="color:#a6e22e">w</span> <span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">ResponseWriter</span>, <span style="color:#a6e22e">r</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">Request</span>) {
+	<span style="color:#a6e22e">expiration</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Now</span>().<span style="color:#a6e22e">Add</span>(<span style="color:#ae81ff">365</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">24</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Hour</span>)  <span style="color:#75715e">////Set to expire in 1 year
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">cookie</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">Cookie</span>{<span style="color:#a6e22e">Name</span>: <span style="color:#e6db74">&#34;username&#34;</span>, <span style="color:#a6e22e">Value</span>: <span style="color:#e6db74">&#34;alice_cooper@gmail.com&#34;</span>, <span style="color:#a6e22e">Expires</span>: <span style="color:#a6e22e">expiration</span>}
+	<span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">SetCookie</span>(<span style="color:#a6e22e">w</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">cookie</span>)
+}
+
+
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">LogoutPage</span>(<span style="color:#a6e22e">w</span> <span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">ResponseWriter</span>, <span style="color:#a6e22e">r</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">Request</span>) {
+	<span style="color:#a6e22e">expiration</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Now</span>().<span style="color:#a6e22e">AddDate</span>(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>, <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>)	<span style="color:#75715e">//Set to expire in the past
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">cookie</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">Cookie</span>{<span style="color:#a6e22e">Name</span>: <span style="color:#e6db74">&#34;username&#34;</span>, <span style="color:#a6e22e">Value</span>: <span style="color:#e6db74">&#34;alice_cooper@gmail.com&#34;</span>, <span style="color:#a6e22e">Expires</span>: <span style="color:#a6e22e">expiration</span>}
+	<span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">SetCookie</span>(<span style="color:#a6e22e">w</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">cookie</span>)
+}
+</code></pre></div><p>Now the fun part to add context to the requests… First we’ll need to create middleware and use it in the router. Middleware is simply a function that accepts an http handler and returns an http.handler. In this simple example I will call the middleware component “AddContext” and in the returned handler I will first check to make sure we are logged by looking for the login cookie and if it is set then we place the data we want in the request’s context and call the next handler which was passed in as an argument…</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">AddContext</span>(<span style="color:#a6e22e">next</span> <span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">Handler</span>) <span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">Handler</span> {
+	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">HandlerFunc</span>(<span style="color:#66d9ef">func</span>(<span style="color:#a6e22e">w</span> <span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">ResponseWriter</span>, <span style="color:#a6e22e">r</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">Request</span>) {
+		<span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">r</span>.<span style="color:#a6e22e">Method</span>, <span style="color:#e6db74">&#34;-&#34;</span>, <span style="color:#a6e22e">r</span>.<span style="color:#a6e22e">RequestURI</span>)
+		<span style="color:#a6e22e">cookie</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">r</span>.<span style="color:#a6e22e">Cookie</span>(<span style="color:#e6db74">&#34;username&#34;</span>)
+		<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">cookie</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+			<span style="color:#75715e">//Add data to context
+</span><span style="color:#75715e"></span>			<span style="color:#a6e22e">ctx</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">WithValue</span>(<span style="color:#a6e22e">r</span>.<span style="color:#a6e22e">Context</span>(), <span style="color:#e6db74">&#34;Username&#34;</span>, <span style="color:#a6e22e">cookie</span>.<span style="color:#a6e22e">Value</span>)
+			<span style="color:#a6e22e">next</span>.<span style="color:#a6e22e">ServeHTTP</span>(<span style="color:#a6e22e">w</span>, <span style="color:#a6e22e">r</span>.<span style="color:#a6e22e">WithContext</span>(<span style="color:#a6e22e">ctx</span>))
+		} <span style="color:#66d9ef">else</span> {
+			<span style="color:#a6e22e">next</span>.<span style="color:#a6e22e">ServeHTTP</span>(<span style="color:#a6e22e">w</span>, <span style="color:#a6e22e">r</span>)
+		}
+	})
+}
+</code></pre></div><p>As well we need to use that new middleware in the router and we do that in 1 or 2 ways…</p>
+<p>First we can add the context only to specific routes, like so:</p>
+<ul>
+<li>mux.HandleFunc(“/”, StatusPage)</li>
+</ul>
+<p>becomes:</p>
+<ul>
+<li>mux.Handle(“/”, AddContext(http.HandlerFunc(StatusPage)))</li>
+</ul>
+<p>Or second, we can add it to the router itself:</p>
+<ul>
+<li>log.Println(“Start server on port :8085”)</li>
+<li>log.Fatal(http.ListenAndServe(”:8085”, mux))</li>
+</ul>
+<p>becomes</p>
+<ul>
+<li>log.Println(“Start server on port :8085”)</li>
+<li>contextedMux := AddContext(mux)</li>
+<li>log.Fatal(http.ListenAndServe(”:8085”, contextedMux))
+Once you have done all this we can now modify the ‘StatusPage’ handler to look for and react to the data that is now in the context.</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">StatusPage</span>(<span style="color:#a6e22e">w</span> <span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">ResponseWriter</span>, <span style="color:#a6e22e">r</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">Request</span>) {
+	<span style="color:#75715e">//Get data from context
+</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">username</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">r</span>.<span style="color:#a6e22e">Context</span>().<span style="color:#a6e22e">Value</span>(<span style="color:#e6db74">&#34;Username&#34;</span>); <span style="color:#a6e22e">username</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#a6e22e">w</span>.<span style="color:#a6e22e">WriteHeader</span>(<span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">StatusOK</span>)
+		<span style="color:#a6e22e">w</span>.<span style="color:#a6e22e">Write</span>([]byte(<span style="color:#e6db74">&#34;Hello &#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">username</span>.(<span style="color:#66d9ef">string</span>) <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;\n&#34;</span>))
+	} <span style="color:#66d9ef">else</span> {
+		<span style="color:#a6e22e">w</span>.<span style="color:#a6e22e">WriteHeader</span>(<span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">StatusNotFound</span>)
+		<span style="color:#a6e22e">w</span>.<span style="color:#a6e22e">Write</span>([]byte(<span style="color:#e6db74">&#34;Not Logged in&#34;</span>))
+	}
+}
+</code></pre></div><p>It’s good to note that once we get the data out of the context we need to (cast) it to the proper type to use it. This is because the context Value() function returns an interface{} type. ( – See: ‘username.(string)’ )</p>
+<p>I hope this quick intro to usign the Context object is useful, also I might write in the future about context With Cancel, Deadline and Timeout as they can also be useful in many scenarios.</p>
+<p>Check out the entire code for this article below…</p>
+<p>Happy GOing!!</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">
 <span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
 

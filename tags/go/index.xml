@@ -17,7 +17,7 @@
       <pubDate>Tue, 23 Jun 2020 00:00:00 +0000</pubDate>
       
       <guid>https://blog.gopherhub.org/blog/go-context/</guid>
-      <description>简单的 Go http 请求使用 context 包的例子 package main import ( &amp;#34;context&amp;#34; &amp;#34;log&amp;#34; &amp;#34;net/http&amp;#34; &amp;#34;time&amp;#34; ) func AddContext(next http.Handler) http.Handler { return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { log.Println(r.Method, &amp;#34;-&amp;#34;, r.RequestURI) cookie, _ := r.Cookie(&amp;#34;username&amp;#34;) if cookie != nil { //Add data to context 	ctx := context.WithValue(r.Context(), &amp;#34;Username&amp;#34;, cookie.Value) next.ServeHTTP(w, r.WithContext(ctx)) } else { next.ServeHTTP(w, r) } }) } func StatusPage(w http.ResponseWriter, r *http.Request) { //Get data from context 	if username := r.</description>
+      <description>简单的 Go http 请求使用 context 包的例子 Intro For the longest time I have wanted to see an easy to understand example (read newbie) of how to add data to the “new” golang 1.7 request context object. Since I wasted more than 2 days looking for something like that and never really found anything I decided to figure it out from the docs and write something up for others like me that wanted something simple.</description>
     </item>
     
     <item>
