@@ -15,10 +15,10 @@
 <p>Let’s start with the main function that will really only create the router and the routes.</p>]]></description>
 </item><item>
     <title>Go数据结构与算法-单链表</title>
-    <link>https://example.com/singlelinedlist-go/</link>
+    <link>https://example.com/singlylinkedlist-go/</link>
     <pubDate>Tue, 23 Jun 2020 00:00:00 &#43;0000</pubDate>
     <author>作者</author>
-    <guid>https://example.com/singlelinedlist-go/</guid>
+    <guid>https://example.com/singlylinkedlist-go/</guid>
     <description><![CDATA[前言 谈到链表之前，先说一下线性表。线性表是最基本、最简单、也是最常用的一种数据结构。线性表中数据元素之间 的关系是一对一的关系，即除了第一个和]]></description>
 </item><item>
     <title>Go 的 graceful shutdown</title>
@@ -43,5 +43,12 @@
     <author>作者</author>
     <guid>https://example.com/spaceline.vim/</guid>
     <description><![CDATA[Spaceline 一直很喜欢 spacemacs 的 spaceline。也曾经尝试使用 emacs 例如 spacemacs 和 doom 奈何 emacs 给我的体验真的是非常糟糕。放弃了 emacs。还是 vim 香。所以我就在 vim 中实现]]></description>
+</item><item>
+    <title></title>
+    <link>https://example.com/doublylinkedlist-go/</link>
+    <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
+    <author>作者</author>
+    <guid>https://example.com/doublylinkedlist-go/</guid>
+    <description><![CDATA[]]></description>
 </item></channel>
 </rss>
