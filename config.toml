@@ -18,7 +18,7 @@ title = "Raphael Blog"
 enableRobotsTXT = true
 # whether to use git commit log
 # 是否使用 git 信息
-enableGitInfo = true
+enableGitInfo = false
 # whether to use emoji code
 # 是否使用 emoji 代码
 enableEmoji = true
@@ -268,13 +268,13 @@ enableEmoji = true
         url = "/categories/"
         title = ""
         weight = 3
-      [[languages.zh-cn.menu.main]]
-        identifier = "documentation"
-        pre = ""
-        name = "文档"
-        url = "/categories/documentation/"
-        title = ""
-        weight = 4
+      # [[languages.zh-cn.menu.main]]
+      #   identifier = "documentation"
+      #   pre = ""
+      #   name = "文档"
+      #   url = "/categories/documentation/"
+      #   title = ""
+      #   weight = 4
       [[languages.zh-cn.menu.main]]
         identifier = "about"
         pre = ""
@@ -314,7 +314,7 @@ enableEmoji = true
       [languages.zh-cn.params.search]
         enable = true
         # 搜索引擎的类型 ("lunr", "algolia")
-        type = "algolia"
+        type = "lunr"
         # 文章内容最长索引长度
         contentLength = 4000
         # 搜索框的占位提示语
@@ -629,7 +629,7 @@ enableEmoji = true
   defaultTheme = "dark"
   # public git repo url only then enableGitInfo is true
   # 公共 git 仓库路径，仅在 enableGitInfo 设为 true 时有效
-  gitRepo = "https://github.com/glepnir/"
+  gitRepo = "https://github.com/glepnir/glepnir.github.io"
   # which hash function used for SRI, when empty, no SRI is used ("sha256", "sha384", "sha512", "md5")
   # 哪种哈希函数用来 SRI, 为空时表示不使用 SRI ("sha256", "sha384", "sha512", "md5")
   fingerprint = ""
@@ -945,8 +945,8 @@ enableEmoji = true
       # Publisher info
       # 出版者信息
       [params.page.seo.publisher]
-        name = "xxxx"
-        logoUrl = "/images/avatar.png"
+        name = "Raphael"
+        logoUrl = "/img/avatar.png"
 
   # TypeIt config
   # TypeIt 配置
@@ -1073,9 +1073,9 @@ enableEmoji = true
 # Author config
 # 作者配置
 [author]
-  name = "xxxx"
-  email = ""
-  link = ""
+  name = "Raphael"
+  email = "sawakitaeiji233@gmail.com"
+  link = "https://github.com/glepnir"
 
 # Sitemap config
 # 网站地图配置
