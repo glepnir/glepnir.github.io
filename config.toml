@@ -921,8 +921,8 @@ enableEmoji = true
         repo = "glepnir/glepnir.github.io"
         issueTerm = "pathname"
         label = ""
-        # lightTheme = "github-light"
-        darkTheme = "github-dark"
+        lightTheme = "github-light"
+        # darkTheme = "github-dark"
     # Third-party library config
     # 第三方库配置
     [params.page.library]
