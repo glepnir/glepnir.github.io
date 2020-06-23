@@ -6,10 +6,19 @@
     <description>Recent content in Go on Raphael blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Mon, 15 Jun 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 23 Jun 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://blog.gopherhub.org/categories/go/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Go 如何在http中使用context包</title>
+      <link>https://blog.gopherhub.org/blog/go-context/</link>
+      <pubDate>Tue, 23 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.gopherhub.org/blog/go-context/</guid>
+      <description>简单的 Go http 请求使用 context 包的例子 package main import ( &amp;#34;context&amp;#34; &amp;#34;log&amp;#34; &amp;#34;net/http&amp;#34; &amp;#34;time&amp;#34; ) func AddContext(next http.Handler) http.Handler { return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { log.Println(r.Method, &amp;#34;-&amp;#34;, r.RequestURI) cookie, _ := r.Cookie(&amp;#34;username&amp;#34;) if cookie != nil { //Add data to context 	ctx := context.WithValue(r.Context(), &amp;#34;Username&amp;#34;, cookie.Value) next.ServeHTTP(w, r.WithContext(ctx)) } else { next.ServeHTTP(w, r) } }) } func StatusPage(w http.ResponseWriter, r *http.Request) { //Get data from context 	if username := r.</description>
+    </item>
     
     <item>
       <title>Go 的 graceful shutdown</title>
