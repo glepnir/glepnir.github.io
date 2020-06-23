@@ -1,0 +1,14 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>数据结构 - 分类 - Raphael Blog</title>
+        <link>https://example.com/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/</link>
+        <description>数据结构 - 分类 - Raphael Blog</description>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Tue, 23 Jun 2020 00:00:00 &#43;0000</lastBuildDate><atom:link href="https://example.com/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="self" type="application/rss+xml" /><item>
+    <title>Go数据结构与算法-单链表</title>
+    <link>https://example.com/singlelinedlist-go/</link>
+    <pubDate>Tue, 23 Jun 2020 00:00:00 &#43;0000</pubDate>
+    <author>作者</author>
+    <guid>https://example.com/singlelinedlist-go/</guid>
+    <description><![CDATA[前言 谈到链表之前，先说一下线性表。线性表是最基本、最简单、也是最常用的一种数据结构。线性表中数据元素之间 的关系是一对一的关系，即除了第一个和]]></description>
+</item></channel>
+</rss>
