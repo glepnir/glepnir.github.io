@@ -341,7 +341,24 @@ quit 就会取到值，那么 main 函数就会继续往下执行了。</p>
 可以看到传了一个 context 进 Shutdown，目的就是让程式最多等待 5 秒时间，如果超过 5 秒就强制关闭所有连线
 所以您需要根据 server 处理的资料时间来决定等待时间，设定太短就会造成强制关闭，建议依照自己的业务来设定
 至于服务 shutdown 后可以处理哪些事情就看开发者决定。</p>
-</div><div class="post-footer" id="post-footer">
+</div><div style="padding: 10px 0; margin: 20px auto; width: 100%; font-size:16px; text-align: center;">
+    <span>如果您喜欢这篇文章或者对您有帮助欢迎打赏😘</span>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+        <span>打赏</span></button>
+    <div id="QR" style="display: none;">
+        <div id="wechat" style="display: inline-block">
+            <a class="fancybox" rel="group">
+                <img id="wechat_qr" src="/img/donate/wechat.png" alt="WeChat Pay"></a>
+            <p>微信打赏</p>
+        </div>
+        <div id="alipay" style="display: inline-block">
+            <a class="fancybox" rel="group">
+                <img id="alipay_qr" src="/img/donate/alipay.png" alt="Alipay"></a>
+            <p>支付宝打赏</p>
+        </div>
+    </div>
+</div>
+<div class="post-footer" id="post-footer">
     <div class="post-info">
         <div class="post-info-line">
             <div class="post-info-mod">
