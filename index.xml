@@ -45,12 +45,5 @@
     <author>作者</author>
     <guid>https://example.com/spaceline.vim/</guid>
     <description><![CDATA[Spaceline 一直很喜欢 spacemacs 的 spaceline。也曾经尝试使用 emacs 例如 spacemacs 和 doom 奈何 emacs 给我的体验真的是非常糟糕。放弃了 emacs。还是 vim 香。所以我就在 vim 中实现]]></description>
-</item><item>
-    <title></title>
-    <link>https://example.com/doublylinkedlist-go/</link>
-    <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-    <author>作者</author>
-    <guid>https://example.com/doublylinkedlist-go/</guid>
-    <description><![CDATA[]]></description>
 </item></channel>
 </rss>
