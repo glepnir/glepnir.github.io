@@ -2,3 +2,8 @@
 // Custom style
 // 自定义样式
 // ==============================
+body {
+  background: url(/img/bg.png) no-repeat right,
+              url(/img/bg2.png) no-repeat left top 10px;
+	background-size:400px 400px;
+}
