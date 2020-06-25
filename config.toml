@@ -374,7 +374,7 @@ enableEmoji = true
         Quora = ""
         Keybase = ""
         Pinterest = ""
-        Reddit = ""
+        Reddit = "glephunter"
         Codepen = ""
         FreeCodeCamp = ""
         Bitbucket = ""
@@ -416,7 +416,7 @@ enableEmoji = true
         Researchgate = ""
         Mastodon = ""
         Thingiverse = ""
-        Devto = "xxxx"
+        Devto = ""
         Gitea = ""
         XMPP = ""
         Matrix = ""
@@ -677,7 +677,7 @@ enableEmoji = true
     custom = ''
     # whether to show Hugo and theme info
     # 是否显示 Hugo 和主题信息
-    hugo = true
+    hugo = false
     # whether to show copyright info
     # 是否显示版权信息
     copyright = true
