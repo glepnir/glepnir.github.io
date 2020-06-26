@@ -16,7 +16,7 @@
 <p>For the longest time I have wanted to see an easy to understand example (read newbie) of how to add data to the “new” golang 1.7 request context object. Since I wasted more than 2 days looking for something like that and never really found anything I decided to figure it out from the docs and write something up for others like me that wanted something simple. The example below is trivial and does not put anything useful in the context it’s just there to get your own juices flowing.</p>
 <p>Let’s start with the main function that will really only create the router and the routes.</p>]]></description>
 </item><item>
-    <title>Go数据结构与算法-单链表</title>
+    <title>Go 数据结构与算法-单链表</title>
     <link>https://example.com/singlylinkedlist-go/</link>
     <pubDate>Tue, 23 Jun 2020 00:00:00 &#43;0000</pubDate>
     <author>作者</author>

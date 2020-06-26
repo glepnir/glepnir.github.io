@@ -1,4 +1,4 @@
-# Go数据结构与算法-单链表
+# Go 数据结构与算法-单链表
 
 
 ## 链表
@@ -339,5 +339,5 @@ func ReverseList(headNode *Node) *Node {
 
 ### 实例练习
 
-实例联系在我的 [github:DataStructuresAndAlgorithms-Go](https://github.com/glepnir/DataStructuresAndAlgorithms-Go)
+实例练习在我的 [github:DataStructuresAndAlgorithms-Go](https://github.com/glepnir/DataStructuresAndAlgorithms-Go)
 
