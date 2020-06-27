@@ -344,5 +344,5 @@ func ReverseList(headNode *Node) *Node {
 ### 实例练习
 
 实例练习和完整的代码在我的 [github:DataStructuresAndAlgorithms-Go](https://github.com/glepnir/DataStructuresAndAlgorithms-Go)
-如果喜欢这个项目请 Start。
+如果喜欢这个项目请 Star。
 
