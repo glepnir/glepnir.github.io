@@ -17,6 +17,15 @@
                 </div>
             {{- end -}}
 
+            <i class="fas fa-eye fa-fw"></i>
+            <span id="busuanzi_container_site_pv">
+                本站总访问量<span id="busuanzi_value_site_pv"></span>次
+            </span>
+            <span id="busuanzi_container_site_uv">
+                您是本站第 <span id="busuanzi_value_site_uv"></span> 位访问者
+            </span>
+            <i class="fas fa-user-circle fa-fw"></i>
+
             <div class="footer-line">
                 {{- /* Copyright year */ -}}
                 {{- if ne .Site.Params.footer.copyright false -}}
