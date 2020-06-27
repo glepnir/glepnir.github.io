@@ -25,11 +25,15 @@ categories = ["数据结构"]
 
 方向遍历。
 
-![](/img/datastructures/03.png)
+<div align="center">
+<img src="/img/datastructures/03.png">
+</div>
 
 不同操作在单链表的时间复杂度和空间复杂度
 
-![](/img/datastructures/04.png)
+<div align="center">
+<img src="/img/datastructures/04.png">
+</div>
 
 ### Node 节点
 
