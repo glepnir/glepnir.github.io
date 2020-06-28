@@ -29,7 +29,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/example.com\/doublylinkedlist-go\/"
-        },"image": ["https:\/\/example.com\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "数据结构","wordcount":  797 ,
+        },"image": ["https:\/\/example.com\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "数据结构","wordcount":  978 ,
         "url": "https:\/\/example.com\/doublylinkedlist-go\/","datePublished": "2020-06-27T00:00:00+00:00","dateModified": "2020-06-27T00:00:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
             "@type": "Organization",
             "name": "Raphael","logo": "https:\/\/example.com\/img\/avatar.png"},"author": {
@@ -110,7 +110,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">Go 数据结构与算法-双链表</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="https://github.com/glepnir" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>raphael</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/"><i class="far fa-folder fa-fw"></i>数据结构</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-06-27">2020-06-27</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 797 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-06-27">2020-06-27</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 978 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 2 分钟&nbsp;
                 <i class="far fa-eye fa-fw"></i>
                   <span id="busuanzi_container_page_pv">
@@ -129,6 +129,7 @@
     <li><a href="#nodebetweenvalues">NodeBetweenValues</a></li>
     <li><a href="#nodewithvalue">NodeWithValue</a></li>
     <li><a href="#addafter">AddAfter</a></li>
+    <li><a href="#lastnode">LastNode</a></li>
     <li><a href="#addtoend">AddToEnd</a></li>
   </ul>
 </nav></div>
@@ -197,6 +198,8 @@
 </span><span class="lnt">14
 </span><span class="lnt">15
 </span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// 添加到头部方法
@@ -205,15 +208,17 @@
   <span class="c1">// 判断是否为空
 </span><span class="c1"></span>	<span class="k">if</span> <span class="nx">l</span><span class="p">.</span><span class="nx">headNode</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
 		<span class="nx">l</span><span class="p">.</span><span class="nx">headNode</span> <span class="p">=</span> <span class="nx">node</span>
-	<span class="p">}</span>
-  <span class="c1">// 新的头结点的nextNode指向下一个节点的指针指向现在双链表的
-</span><span class="c1"></span>  <span class="c1">// 的头结点，现在双链表的prevNode指向这个新节点。
-</span><span class="c1"></span>	<span class="nx">node</span><span class="p">.</span><span class="nx">nextNode</span> <span class="p">=</span> <span class="nx">l</span><span class="p">.</span><span class="nx">headNode</span>
-	<span class="nx">l</span><span class="p">.</span><span class="nx">headNode</span><span class="p">.</span><span class="nx">prevNode</span> <span class="p">=</span> <span class="nx">node</span>
-  <span class="c1">// 将新节点赋值给头结点
-</span><span class="c1"></span>	<span class="nx">l</span><span class="p">.</span><span class="nx">headNode</span> <span class="p">=</span> <span class="nx">node</span>
-  <span class="c1">// 双链表长度加1
-</span><span class="c1"></span>	<span class="nx">l</span><span class="p">.</span><span class="nx">len</span><span class="o">++</span>
+    <span class="nx">l</span><span class="p">.</span><span class="nx">len</span><span class="o">++</span>
+	<span class="p">}</span><span class="k">else</span> <span class="p">{</span>
+    <span class="c1">// 新的头结点的nextNode指向下一个节点的指针指向现在双链表的
+</span><span class="c1"></span>    <span class="c1">// 的头结点，现在双链表的prevNode指向这个新节点。
+</span><span class="c1"></span>    <span class="nx">node</span><span class="p">.</span><span class="nx">nextNode</span> <span class="p">=</span> <span class="nx">l</span><span class="p">.</span><span class="nx">headNode</span>
+    <span class="nx">l</span><span class="p">.</span><span class="nx">headNode</span><span class="p">.</span><span class="nx">prevNode</span> <span class="p">=</span> <span class="nx">node</span>
+    <span class="c1">// 将新节点赋值给头结点
+</span><span class="c1"></span>    <span class="nx">l</span><span class="p">.</span><span class="nx">headNode</span> <span class="p">=</span> <span class="nx">node</span>
+    <span class="c1">// 双链表长度加1
+</span><span class="c1"></span>    <span class="nx">l</span><span class="p">.</span><span class="nx">len</span><span class="o">++</span>
+  <span class="p">}</span>
 <span class="p">}</span>
 </code></pre></td></tr></table>
 </div>
@@ -235,19 +240,15 @@
 </span><span class="lnt"> 9
 </span><span class="lnt">10
 </span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">l</span> <span class="o">*</span><span class="nx">LinkedList</span><span class="p">)</span> <span class="nf">NodeBetweenValues</span><span class="p">(</span><span class="nx">firstProperty</span><span class="p">,</span> <span class="nx">secondProperty</span> <span class="kt">int</span><span class="p">)</span> <span class="o">*</span><span class="nx">Node</span> <span class="p">{</span>
 	<span class="kd">var</span> <span class="nx">node</span> <span class="o">*</span><span class="nx">Node</span>
-	<span class="k">if</span> <span class="nx">l</span><span class="p">.</span><span class="nx">len</span> <span class="p">&lt;</span> <span class="mi">3</span> <span class="p">{</span>
-		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;链表长度小于3&#34;</span><span class="p">)</span>
-		<span class="k">return</span> <span class="kc">nil</span>
-	<span class="p">}</span>
 	<span class="k">for</span> <span class="nx">node</span> <span class="p">=</span> <span class="nx">l</span><span class="p">.</span><span class="nx">headNode</span><span class="p">;</span> <span class="nx">node</span> <span class="o">!=</span> <span class="kc">nil</span><span class="p">;</span> <span class="nx">node</span> <span class="p">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">nextNode</span> <span class="p">{</span>
-		<span class="k">if</span> <span class="nx">node</span><span class="p">.</span><span class="nx">prevNode</span><span class="p">.</span><span class="nx">property</span> <span class="o">==</span> <span class="nx">firstProperty</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="p">.</span><span class="nx">nextNode</span><span class="p">.</span><span class="nx">property</span> <span class="o">==</span> <span class="nx">secondProperty</span> <span class="p">{</span>
-			<span class="k">break</span>
+		<span class="k">if</span> <span class="nx">node</span><span class="p">.</span><span class="nx">prevNode</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="p">.</span><span class="nx">nextNode</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="k">if</span> <span class="nx">node</span><span class="p">.</span><span class="nx">prevNode</span><span class="p">.</span><span class="nx">property</span> <span class="o">==</span> <span class="nx">firstProperty</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="p">.</span><span class="nx">nextNode</span><span class="p">.</span><span class="nx">property</span> <span class="o">==</span> <span class="nx">secondProperty</span> <span class="p">{</span>
+				<span class="k">break</span>
+			<span class="p">}</span>
 		<span class="p">}</span>
 	<span class="p">}</span>
 	<span class="k">return</span> <span class="nx">node</span>
@@ -310,8 +311,73 @@
 <span class="p">}</span>
 </code></pre></td></tr></table>
 </div>
+</div><h2 id="lastnode">LastNode</h2>
+<ul>
+<li>返回最后一个节点。这个方法其实和单链表是一样的这里不再多做说明了，理解了单链表的查找最后一个节点，</li>
+<li>双链表的也就理解了。</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-GO" data-lang="GO"><span class="kd">func</span> <span class="p">(</span><span class="nx">l</span> <span class="o">*</span><span class="nx">LinkedList</span><span class="p">)</span> <span class="nf">LastNode</span><span class="p">()</span> <span class="o">*</span><span class="nx">Node</span> <span class="p">{</span>
+	<span class="nx">node</span> <span class="o">:=</span> <span class="nb">new</span><span class="p">(</span><span class="nx">Node</span><span class="p">)</span>
+	<span class="k">switch</span> <span class="nx">l</span><span class="p">.</span><span class="nx">len</span> <span class="p">{</span>
+	<span class="k">case</span> <span class="mi">0</span><span class="p">:</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;linked list is empty&#34;</span><span class="p">)</span>
+		<span class="k">return</span> <span class="kc">nil</span>
+	<span class="k">case</span> <span class="mi">1</span><span class="p">:</span>
+		<span class="k">return</span> <span class="nx">l</span><span class="p">.</span><span class="nx">headNode</span>
+	<span class="p">}</span>
+	<span class="k">for</span> <span class="nx">node</span> <span class="p">=</span> <span class="nx">l</span><span class="p">.</span><span class="nx">headNode</span><span class="p">;</span> <span class="nx">node</span> <span class="o">!=</span> <span class="kc">nil</span><span class="p">;</span> <span class="nx">node</span> <span class="p">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">nextNode</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="nx">node</span><span class="p">.</span><span class="nx">nextNode</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="k">break</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="nx">node</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
 </div><h2 id="addtoend">AddToEnd</h2>
-</div><div style="padding: 10px 0; margin: 20px auto; width: 100%; font-size:16px; text-align: center;">
+<ul>
+<li>通过上面的 LastNode 获得最后一个节点，然后将最后一个节点的 nextNode 指向新节点，将新节点的 prevNode</li>
+<li>指向当前的最后一个节点就完成了尾部插入</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">l</span> <span class="o">*</span><span class="nx">LinkedList</span><span class="p">)</span> <span class="nf">AddToEnd</span><span class="p">(</span><span class="nx">property</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">node</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">Node</span><span class="p">{</span><span class="nx">property</span><span class="p">:</span> <span class="nx">property</span><span class="p">}</span>
+	<span class="nx">lastNode</span> <span class="o">:=</span> <span class="nx">l</span><span class="p">.</span><span class="nf">LastNode</span><span class="p">()</span>
+	<span class="nx">lastNode</span><span class="p">.</span><span class="nx">nextNode</span> <span class="p">=</span> <span class="nx">node</span>
+	<span class="nx">node</span><span class="p">.</span><span class="nx">prevNode</span> <span class="p">=</span> <span class="nx">lastNode</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div></div><div style="padding: 10px 0; margin: 20px auto; width: 100%; font-size:16px; text-align: center;">
     <span>如果您喜欢这篇文章或者对您有帮助欢迎打赏😘</span>
     <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
         <span>打赏</span></button>
