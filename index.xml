@@ -4,15 +4,22 @@
         <link>https://example.com/</link>
         <description>Raphael的个人blog,专注Golang Vim Rust Typescript React Dart Flutter Mysql Redis Nosql</description>
         <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>sawakitaeiji233@gmail.com (Raphael)</managingEditor>
-            <webMaster>sawakitaeiji233@gmail.com (Raphael)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Sun, 28 Jun 2020 00:00:00 &#43;0000</lastBuildDate>
+            <webMaster>sawakitaeiji233@gmail.com (Raphael)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Mon, 29 Jun 2020 00:00:00 &#43;0000</lastBuildDate>
             <atom:link href="https://example.com/index.xml" rel="self" type="application/rss+xml" />
         <item>
     <title>Go 数据结构与算法-Sets(集合)</title>
     <link>https://example.com/04-sets-go/</link>
-    <pubDate>Sun, 28 Jun 2020 00:00:00 &#43;0000</pubDate>
+    <pubDate>Mon, 29 Jun 2020 00:00:00 &#43;0000</pubDate>
     <author>作者</author>
     <guid>https://example.com/04-sets-go/</guid>
     <description><![CDATA[Set 集合 Set 是线性数据结构，特点在于 Set 的 item 是不能重复的。那么如何在 Go 中实现？联想到 Go 的 map，当我们在 map 中 定义重复的 key 时，会得到错误提示重复的 k]]></description>
+</item><item>
+    <title>Go 数据结构与算法-环形链表</title>
+    <link>https://example.com/03-circularlinkedlist-go/</link>
+    <pubDate>Sun, 28 Jun 2020 00:00:00 &#43;0000</pubDate>
+    <author>作者</author>
+    <guid>https://example.com/03-circularlinkedlist-go/</guid>
+    <description><![CDATA[CircularLinkedList 环形链表 环形链表可以是单链表也可以是双链表，单链表的最后一个节点的 nextNode 是指向 nil 的，如果将它指向首节点 那么久形成了一个简单的环形链表，对于双向]]></description>
 </item><item>
     <title>Go 数据结构与算法-双链表</title>
     <link>https://example.com/02-doublylinkedlist-go/</link>
