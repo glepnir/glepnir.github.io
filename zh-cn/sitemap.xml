@@ -50,7 +50,7 @@
             <loc>https://example.com/categories/go/</loc><lastmod>2020-06-23T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
             <loc>https://example.com/go-context/</loc><lastmod>2020-06-23T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
             <loc>https://example.com/01-singlylinkedlist-go/</loc><lastmod>2020-06-23T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
-            <loc>https://example.com/go-graceful-shutdown/</loc><lastmod>2020-06-15T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url><url>
+            <loc>https://example.com/go-graceful-shutdown/</loc><lastmod>2020-06-15T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url><url>
             <loc>https://example.com/dashboard-nvim/</loc><lastmod>2020-06-10T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url><url>
             <loc>https://example.com/tags/vim/</loc><lastmod>2020-06-10T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url><url>
             <loc>https://example.com/categories/vim/</loc><lastmod>2020-06-10T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url><url>

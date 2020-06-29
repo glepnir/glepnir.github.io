@@ -29,7 +29,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/example.com\/03-sets-go\/"
-        },"image": ["https:\/\/example.com\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "数据结构","wordcount":  4 ,
+        },"image": ["https:\/\/example.com\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "数据结构","wordcount":  1153 ,
         "url": "https:\/\/example.com\/03-sets-go\/","datePublished": "2020-06-28T00:00:00+00:00","dateModified": "2020-06-28T00:00:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
             "@type": "Organization",
             "name": "Raphael","logo": "https:\/\/example.com\/img\/avatar.png"},"author": {
@@ -110,8 +110,8 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">Go 数据结构与算法-Sets(集合)</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="https://github.com/glepnir" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>raphael</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/"><i class="far fa-folder fa-fw"></i>数据结构</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-06-28">2020-06-28</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 4 字&nbsp;
-                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 1 分钟&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-06-28">2020-06-28</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1153 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 3 分钟&nbsp;
                 <i class="far fa-eye fa-fw"></i>
                   <span id="busuanzi_container_page_pv">
                     本文总阅读量<span id="busuanzi_value_page_pv"></span>次
@@ -124,11 +124,338 @@
                 </div>
                 <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
   <ul>
-    <li><a href="#sets----集合">Sets &ndash; 集合</a></li>
+    <li><a href="#set-集合">Set 集合</a></li>
+    <li><a href="#实现">实现</a></li>
+    <li><a href="#验证空结构体">验证空结构体</a></li>
+    <li><a href="#优化">优化</a></li>
+    <li><a href="#实现常用的方法">实现常用的方法</a>
+      <ul>
+        <li><a href="#add-添加方法">Add 添加方法</a></li>
+        <li><a href="#new-简单工厂初始化">New 简单工厂初始化</a></li>
+        <li><a href="#contains-包含">Contains 包含</a></li>
+        <li><a href="#size">Size</a></li>
+        <li><a href="#clear-清除">Clear 清除</a></li>
+        <li><a href="#equal-相等">Equal 相等</a></li>
+        <li><a href="#issubset-子集">IsSubSet 子集</a></li>
+      </ul>
+    </li>
   </ul>
 </nav></div>
-            </div><div class="content" id="content"><h2 id="sets----集合">Sets &ndash; 集合</h2>
-</div><div style="padding: 10px 0; margin: 20px auto; width: 100%; font-size:16px; text-align: center;">
+            </div><div class="content" id="content"><h2 id="set-集合">Set 集合</h2>
+<p>Set 是线性数据结构，特点在于 Set 的 item 是不能重复的。那么如何在 Go 中实现？联想到 Go 的 map，当我们在 map 中
+定义重复的 key 时，会得到错误提示重复的 key。这样就比较符合 Set 的特性了。</p>
+<h2 id="实现">实现</h2>
+<p>我们可以通过定义一个 map key 来存储我们的值，value 是 bool 类型来判断是否存在。一个空的 Set 结构会使这样的</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-GO" data-lang="GO"><span class="c1">// 空的Set结构
+</span><span class="c1"></span><span class="nx">set</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">bool</span><span class="p">)</span>
+<span class="c1">// 进行赋值
+</span><span class="c1"></span><span class="nx">set</span><span class="p">[</span><span class="s">&#34;Foo&#34;</span><span class="p">]</span> <span class="p">=</span> <span class="kc">true</span>
+<span class="c1">// 遍历Set结构
+</span><span class="c1"></span><span class="k">for</span> <span class="nx">k</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">set</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">k</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="c1">// 删除
+</span><span class="c1"></span><span class="nb">delete</span><span class="p">(</span><span class="nx">set</span><span class="p">,</span> <span class="s">&#34;Foo&#34;</span><span class="p">)</span>
+<span class="c1">// 获得Set结构的大小也就是长度
+</span><span class="c1"></span><span class="nx">size</span> <span class="o">:=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">set</span><span class="p">)</span>
+<span class="c1">// 通过获取value 的bool值判断是否存在
+</span><span class="c1"></span><span class="nx">exists</span> <span class="o">:=</span> <span class="nx">set</span><span class="p">[</span><span class="s">&#34;Foo&#34;</span><span class="p">]</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>通过上面的代码使用 map 很简单的实现了 Set 结构。但是 value 的 bool 类型会使用内存。这里要引出 go 中
+一个比较特殊的知识点空结构体，空间结构体并不占用内存，经常能看到空间结构体配合 channel 使用。</p>
+<h2 id="验证空结构体">验证空结构体</h2>
+<ul>
+<li>可以使用 unsafe 包。 <code>unsafe.Sizeof</code> 会返回参数所占据的字节数。</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// 定义非空结构体
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">S</span> <span class="kd">struct</span> <span class="p">{</span>
+        <span class="nx">a</span> <span class="kt">uint16</span>
+        <span class="nx">b</span> <span class="kt">uint32</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="kd">var</span> <span class="nx">s</span> <span class="nx">S</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Sizeof</span><span class="p">(</span><span class="nx">s</span><span class="p">))</span> <span class="c1">// 输出8
+</span><span class="c1"></span>	<span class="kd">var</span> <span class="nx">s2</span> <span class="kd">struct</span><span class="p">{}</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Sizeof</span><span class="p">(</span><span class="nx">s2</span><span class="p">))</span> <span class="c1">// 输出0
+</span><span class="c1"></span><span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>由此可见空结构体的内存占用是 0 字节。</p>
+<ul>
+<li>那么 2 个空结构体的内存地址是多少呢？</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">a</span> <span class="o">:=</span> <span class="kd">struct</span><span class="p">{}{}</span>
+<span class="nx">b</span> <span class="o">:=</span> <span class="kd">struct</span><span class="p">{}{}</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">a</span> <span class="o">==</span> <span class="nx">b</span><span class="p">)</span> <span class="c1">// 输出true
+</span><span class="c1"></span><span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%p, %p\n&#34;</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">a</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">b</span><span class="p">)</span> <span class="c1">// 相同的内存地址
+</span></code></pre></td></tr></table>
+</div>
+</div><p>通过输出也看到它们是指向相同的内存地址。</p>
+<h2 id="优化">优化</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">void</span> <span class="kd">struct</span><span class="p">{}</span>
+<span class="kd">var</span> <span class="nx">member</span> <span class="nx">void</span>
+
+<span class="nx">set</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="nx">void</span><span class="p">)</span>
+<span class="nx">set</span><span class="p">[</span><span class="s">&#34;Foo&#34;</span><span class="p">]</span> <span class="p">=</span> <span class="nx">member</span>
+<span class="k">for</span> <span class="nx">k</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">set</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">k</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="nb">delete</span><span class="p">(</span><span class="nx">set</span><span class="p">,</span> <span class="s">&#34;Foo&#34;</span><span class="p">)</span>
+<span class="nx">size</span> <span class="o">:=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">set</span><span class="p">)</span>
+<span class="nx">_</span><span class="p">,</span> <span class="nx">exists</span> <span class="o">:=</span> <span class="nx">set</span><span class="p">[</span><span class="s">&#34;Foo&#34;</span><span class="p">]</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="实现常用的方法">实现常用的方法</h2>
+<p>接下来实现一些常用的方法。</p>
+<h3 id="add-添加方法">Add 添加方法</h3>
+<ul>
+<li>通过可变长的参数我们可以添加多个值到 Set 中，实现也很简单，通过 for range 可变长的参数切片，将参数</li>
+<li>赋值到 map 的 key 中。value 的值赋予 Exists 空结构体。</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">var</span> <span class="nx">Exists</span> <span class="p">=</span> <span class="kd">struct</span><span class="p">{}{}</span>
+
+<span class="kd">type</span> <span class="nx">Set</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">m</span> <span class="kd">map</span><span class="p">[</span><span class="kd">interface</span><span class="p">{}]</span><span class="kd">struct</span><span class="p">{}</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="o">*</span><span class="nx">Set</span><span class="p">)</span> <span class="nf">Add</span><span class="p">(</span><span class="nx">items</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span> <span class="kt">error</span> <span class="p">{</span>
+	<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">item</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">items</span> <span class="p">{</span>
+		<span class="nx">s</span><span class="p">.</span><span class="nx">m</span><span class="p">[</span><span class="nx">item</span><span class="p">]</span> <span class="p">=</span> <span class="nx">Exists</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="kc">nil</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="new-简单工厂初始化">New 简单工厂初始化</h3>
+<ul>
+<li>结合 Add 方法。构造一个简单工厂函数 New 返回一个初始化的 Set</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">New</span><span class="p">(</span><span class="nx">items</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span> <span class="o">*</span><span class="nx">Set</span> <span class="p">{</span>
+    <span class="c1">// 获取Set的地址
+</span><span class="c1"></span>	<span class="nx">s</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">Set</span><span class="p">{}</span>
+	<span class="c1">// 声明map类型的数据结构
+</span><span class="c1"></span>	<span class="nx">s</span><span class="p">.</span><span class="nx">m</span> <span class="p">=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kd">interface</span><span class="p">{}]</span><span class="kd">struct</span><span class="p">{})</span>
+	<span class="nx">s</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="nx">items</span><span class="o">...</span><span class="p">)</span>
+	<span class="k">return</span> <span class="nx">s</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="contains-包含">Contains 包含</h3>
+<ul>
+<li>Contains 操作其实就是查询操作，看看有没有对应的 Item 存在，可以利用 Map 的特性来实现，但是由于不需</li>
+<li>要 Value 的数值，所以可以用 <code>_,ok</code> 来达到目的。</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="o">*</span><span class="nx">Set</span><span class="p">)</span> <span class="nf">Contains</span><span class="p">(</span><span class="nx">item</span> <span class="kd">interface</span><span class="p">{})</span> <span class="kt">bool</span> <span class="p">{</span>
+	<span class="nx">_</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">s</span><span class="p">.</span><span class="nx">m</span><span class="p">[</span><span class="nx">item</span><span class="p">]</span>
+	<span class="k">return</span> <span class="nx">ok</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="size">Size</h3>
+<ul>
+<li>返回 Set 结构体的长度</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="o">*</span><span class="nx">Set</span><span class="p">)</span> <span class="nf">Size</span><span class="p">()</span> <span class="kt">int</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nx">m</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="clear-清除">Clear 清除</h3>
+<ul>
+<li>清除操作可以通过重新初始化一个 Set 来实现。</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="o">*</span><span class="nx">Set</span><span class="p">)</span> <span class="nf">Clear</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">s</span><span class="p">.</span><span class="nx">m</span> <span class="p">=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kd">interface</span><span class="p">{}]</span><span class="kd">struct</span><span class="p">{})</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="equal-相等">Equal 相等</h3>
+<ul>
+<li>判断两个 Set 是否相等，可以通过循环遍历来实现，即将 A 中的每一个元素，查询在 B 中是否存在，只要有一</li>
+<li>个不存在，A 和 B 就不相等，实现方式如下所示：</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-GO" data-lang="GO"><span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="o">*</span><span class="nx">Set</span><span class="p">)</span> <span class="nf">Equal</span><span class="p">(</span><span class="nx">other</span> <span class="o">*</span><span class="nx">Set</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+  <span class="c1">// 如果两者Size不相等，就不用比较了
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">s</span><span class="p">.</span><span class="nf">Size</span><span class="p">()</span> <span class="o">!=</span> <span class="nx">other</span><span class="p">.</span><span class="nf">Size</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="kc">false</span>
+	<span class="p">}</span>
+
+   <span class="c1">// 迭代查询遍历
+</span><span class="c1"></span>	<span class="k">for</span> <span class="nx">key</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">s</span><span class="p">.</span><span class="nx">m</span> <span class="p">{</span>
+        <span class="c1">// 只要有一个不存在就返回false
+</span><span class="c1"></span>		<span class="k">if</span> <span class="p">!</span><span class="nx">other</span><span class="p">.</span><span class="nf">Contains</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+			<span class="k">return</span> <span class="kc">false</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="kc">true</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="issubset-子集">IsSubSet 子集</h3>
+<ul>
+<li>判断 A 是不是 B 的子集，也是循环遍历的过程，具体分析在上面已经讲述过，实现方式如下所示：</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-GO" data-lang="GO"><span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="o">*</span><span class="nx">Set</span><span class="p">)</span> <span class="nf">IsSubset</span><span class="p">(</span><span class="nx">other</span> <span class="o">*</span><span class="nx">Set</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+	<span class="c1">// s的size长于other，不用说了
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">s</span><span class="p">.</span><span class="nf">Size</span><span class="p">()</span> <span class="p">&gt;</span> <span class="nx">other</span><span class="p">.</span><span class="nf">Size</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="kc">false</span>
+	<span class="p">}</span>
+    <span class="c1">// 迭代遍历
+</span><span class="c1"></span>	<span class="k">for</span> <span class="nx">key</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">s</span><span class="p">.</span><span class="nx">m</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="p">!</span><span class="nx">other</span><span class="p">.</span><span class="nf">Contains</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+			<span class="k">return</span> <span class="kc">false</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="kc">true</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div></div><div style="padding: 10px 0; margin: 20px auto; width: 100%; font-size:16px; text-align: center;">
     <span>如果您喜欢这篇文章或者对您有帮助欢迎打赏😘</span>
     <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
         <span>打赏</span></button>
