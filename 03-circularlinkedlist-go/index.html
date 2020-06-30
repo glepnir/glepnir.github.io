@@ -29,7 +29,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/example.com\/03-circularlinkedlist-go\/"
-        },"image": ["https:\/\/example.com\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "数据结构","wordcount":  938 ,
+        },"image": ["https:\/\/example.com\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "数据结构","wordcount":  955 ,
         "url": "https:\/\/example.com\/03-circularlinkedlist-go\/","datePublished": "2020-06-28T00:00:00+00:00","dateModified": "2020-06-28T00:00:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
             "@type": "Organization",
             "name": "Raphael","logo": "https:\/\/example.com\/img\/avatar.png"},"author": {
@@ -110,7 +110,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">Go 数据结构与算法-环形链表</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="https://github.com/glepnir" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>raphael</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/"><i class="far fa-folder fa-fw"></i>数据结构</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-06-28">2020-06-28</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 938 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-06-28">2020-06-28</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 955 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 2 分钟&nbsp;
                 <i class="far fa-eye fa-fw"></i>
                   <span id="busuanzi_container_page_pv">
@@ -140,7 +140,8 @@
 那么久形成了一个简单的环形链表，对于双向链表将首节点的 prevNode 指向最后一个节点，将最后一个节点的
 nextNode 指向首节点，也就形成了环形的双向链表。</p>
 <h2 id="环形单链表">环形单链表</h2>
-<p>首先定义一个环形单链表,这里和第一节的单链表定义并无区别。</p>
+<p>首先定义一个环形单链表,这里和第一节的单链表定义并无区别。注意的是当环形链表只有一个节点的时候，它指
+向的是自己。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code><span class="lnt"> 1
@@ -207,29 +208,35 @@ nextNode 指向首节点，也就形成了环形的双向链表。</p>
 </span><span class="lnt">19
 </span><span class="lnt">20
 </span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-GO" data-lang="GO"><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">CircularSingleList</span><span class="p">)</span> <span class="nf">AddToHead</span><span class="p">(</span><span class="nx">property</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
 	<span class="nx">node</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">Node</span><span class="p">{</span><span class="nx">property</span><span class="p">:</span> <span class="nx">property</span><span class="p">}</span>
 	<span class="k">if</span> <span class="nx">c</span><span class="p">.</span><span class="nx">len</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
 		<span class="nx">c</span><span class="p">.</span><span class="nx">headNode</span> <span class="p">=</span> <span class="nx">node</span>
+		<span class="nx">c</span><span class="p">.</span><span class="nx">headNode</span><span class="p">.</span><span class="nx">nextNode</span> <span class="p">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">headNode</span>
 		<span class="nx">c</span><span class="p">.</span><span class="nx">len</span><span class="o">++</span>
 	<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-		<span class="nx">node</span><span class="p">.</span><span class="nx">nextNode</span> <span class="p">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">headNode</span>
-		<span class="nx">c</span><span class="p">.</span><span class="nx">headNode</span> <span class="p">=</span> <span class="nx">node</span>
-    <span class="c1">// 区别在于这里需要找到最后一个节点
-</span><span class="c1"></span>		<span class="nx">lastNode</span> <span class="o">:=</span> <span class="nb">new</span><span class="p">(</span><span class="nx">Node</span><span class="p">)</span>
-		<span class="k">for</span> <span class="nx">lastNode</span> <span class="p">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">headNode</span><span class="p">;</span> <span class="p">;</span> <span class="nx">lastNode</span> <span class="p">=</span> <span class="nx">lastNode</span><span class="p">.</span><span class="nx">nextNode</span> <span class="p">{</span>
-      <span class="c1">// 判断的条件就是一个节点的时候nextNode是nil 2个以上时最后一个节点的 nextNode
-</span><span class="c1"></span>      <span class="c1">// 是指向当前头节点
-</span><span class="c1"></span>			<span class="k">if</span> <span class="nx">lastNode</span><span class="p">.</span><span class="nx">nextNode</span> <span class="o">==</span> <span class="kc">nil</span> <span class="o">||</span> <span class="nx">lastNode</span><span class="p">.</span><span class="nx">nextNode</span> <span class="o">==</span> <span class="nx">c</span><span class="p">.</span><span class="nx">headNode</span> <span class="p">{</span>
+		<span class="nx">lastNode</span> <span class="o">:=</span> <span class="nb">new</span><span class="p">(</span><span class="nx">Node</span><span class="p">)</span>
+    <span class="c1">// 找到最后一个节点
+</span><span class="c1"></span>		<span class="k">for</span> <span class="nx">lastNode</span> <span class="p">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">headNode</span><span class="p">;</span> <span class="p">;</span> <span class="nx">lastNode</span> <span class="p">=</span> <span class="nx">lastNode</span><span class="p">.</span><span class="nx">nextNode</span> <span class="p">{</span>
+			<span class="k">if</span> <span class="nx">lastNode</span><span class="p">.</span><span class="nx">nextNode</span> <span class="o">==</span> <span class="nx">c</span><span class="p">.</span><span class="nx">headNode</span> <span class="p">{</span>
 				<span class="k">break</span>
 			<span class="p">}</span>
 		<span class="p">}</span>
-		<span class="nx">lastNode</span><span class="p">.</span><span class="nx">nextNode</span> <span class="p">=</span> <span class="nx">node</span>
+    <span class="c1">// 新节点的下一个节点指向当前的头结点
+</span><span class="c1"></span>		<span class="nx">node</span><span class="p">.</span><span class="nx">nextNode</span> <span class="p">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">headNode</span>
+    <span class="c1">// 最后一个节点指向新的节点
+</span><span class="c1"></span>		<span class="nx">lastNode</span><span class="p">.</span><span class="nx">nextNode</span> <span class="p">=</span> <span class="nx">node</span>
+    <span class="c1">// 将新节点赋值到首节点完成插入到头部
+</span><span class="c1"></span>		<span class="nx">c</span><span class="p">.</span><span class="nx">headNode</span> <span class="p">=</span> <span class="nx">node</span>
 		<span class="nx">c</span><span class="p">.</span><span class="nx">len</span><span class="o">++</span>
 	<span class="p">}</span>
 <span class="p">}</span>
+
 </code></pre></td></tr></table>
 </div>
 </div><ul>
@@ -295,7 +302,7 @@ nextNode 指向首节点，也就形成了环形的双向链表。</p>
 		<span class="k">return</span> <span class="kc">nil</span>
 	<span class="p">}</span>
 	<span class="k">for</span> <span class="nx">node</span> <span class="p">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">headNode</span><span class="p">;</span> <span class="p">;</span> <span class="nx">node</span> <span class="p">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">nextNode</span> <span class="p">{</span>
-		<span class="k">if</span> <span class="nx">node</span><span class="p">.</span><span class="nx">nextNode</span> <span class="o">==</span> <span class="kc">nil</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">nextNode</span> <span class="o">==</span> <span class="nx">c</span><span class="p">.</span><span class="nx">headNode</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="nx">node</span><span class="p">.</span><span class="nx">nextNode</span> <span class="o">==</span> <span class="nx">c</span><span class="p">.</span><span class="nx">headNode</span> <span class="p">{</span>
 			<span class="k">break</span>
 		<span class="p">}</span>
 	<span class="p">}</span>
