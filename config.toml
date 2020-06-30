@@ -640,6 +640,11 @@ enableEmoji = true
   # 网站图片, 用于 Open Graph 和 Twitter Cards
   images = ["/logo.png"]
 
+  # 自定义的分享设置
+  share_style = true
+  custom_css = ["/css/share.min.css"]
+  custom_js = ["/js/social-share.min.js"]
+
   # Header config
   # 页面头部导航栏配置
   [params.header]
@@ -816,7 +821,7 @@ enableEmoji = true
     # Social share links in post page
     # 文章页面的分享信息设置
     [params.page.share]
-      enable = true
+      enable = false
       Twitter = true
       Facebook = true
       Linkedin = false

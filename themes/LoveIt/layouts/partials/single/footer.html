@@ -39,7 +39,11 @@
             </div>
             <div class="post-info-share">
                 <span>
-                    {{- partial "plugin/share.html" . -}}
+                    <!-- {{- partial "plugin/share.html" . -}} -->
+                     <!-- use my custom share -->
+                    {{ if .Site.Params.share_style }}
+                        {{- partial "single/share.html" . -}}
+                    {{ end }}
                 </span>
             </div>
         </div>
