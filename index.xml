@@ -7,12 +7,12 @@
             <webMaster>sawakitaeiji233@gmail.com (Raphael)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Tue, 30 Jun 2020 00:00:00 &#43;0000</lastBuildDate>
             <atom:link href="https://blog.gopherhub.org/index.xml" rel="self" type="application/rss+xml" />
         <item>
-    <title>Go 数据结构与算法-Tuples(元组)</title>
-    <link>https://blog.gopherhub.org/05-tuples-go/</link>
+    <title>Go 数据结构与算法-Queues(队列)</title>
+    <link>https://blog.gopherhub.org/05-queues-go/</link>
     <pubDate>Tue, 30 Jun 2020 00:00:00 &#43;0000</pubDate>
     <author>作者</author>
-    <guid>https://blog.gopherhub.org/05-tuples-go/</guid>
-    <description><![CDATA[Tuples 元组 元组是对象的有限有序序列。 它们可以包含其他数据类型的混合，并用于将相关数据分组为数据结构。 在关系数 据库中，元组是表的一行。 与列表相比，]]></description>
+    <guid>https://blog.gopherhub.org/05-queues-go/</guid>
+    <description><![CDATA[Queues 队列 队列是一种特殊的线性表，特殊之处在于它只允许在表的前端（front）进行删除操作，而在表的后端（rear）进行 插入操作也称 FiFo 队列(Fi]]></description>
 </item><item>
     <title>Go 数据结构与算法-Sets(集合)</title>
     <link>https://blog.gopherhub.org/04-sets-go/</link>
