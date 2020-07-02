@@ -1,10 +1,10 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
         <title>Raphael Blog</title>
-        <link>https://example.com/fr/</link>
+        <link>https://blog.gopherhub.org/fr/</link>
         <description>À propos du thème LoveIt</description>
         <generator>Hugo -- gohugo.io</generator><language>fr</language><managingEditor>sawakitaeiji233@gmail.com (Raphael)</managingEditor>
             <webMaster>sawakitaeiji233@gmail.com (Raphael)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright>
-            <atom:link href="https://example.com/fr/index.xml" rel="self" type="application/rss+xml" />
+            <atom:link href="https://blog.gopherhub.org/fr/index.xml" rel="self" type="application/rss+xml" />
         </channel>
 </rss>

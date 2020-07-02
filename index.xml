@@ -1,77 +1,77 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
         <title>Raphael Blog</title>
-        <link>https://example.com/</link>
+        <link>https://blog.gopherhub.org/</link>
         <description>Raphael的个人blog,专注Golang Vim Rust Typescript React Dart Flutter Mysql Redis Nosql</description>
         <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>sawakitaeiji233@gmail.com (Raphael)</managingEditor>
             <webMaster>sawakitaeiji233@gmail.com (Raphael)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Tue, 30 Jun 2020 00:00:00 &#43;0000</lastBuildDate>
-            <atom:link href="https://example.com/index.xml" rel="self" type="application/rss+xml" />
+            <atom:link href="https://blog.gopherhub.org/index.xml" rel="self" type="application/rss+xml" />
         <item>
     <title>Go 数据结构与算法-Tuples(元组)</title>
-    <link>https://example.com/05-tuples-go/</link>
+    <link>https://blog.gopherhub.org/05-tuples-go/</link>
     <pubDate>Tue, 30 Jun 2020 00:00:00 &#43;0000</pubDate>
     <author>作者</author>
-    <guid>https://example.com/05-tuples-go/</guid>
+    <guid>https://blog.gopherhub.org/05-tuples-go/</guid>
     <description><![CDATA[Tuples 元组 元组是对象的有限有序序列。 它们可以包含其他数据类型的混合，并用于将相关数据分组为数据结构。 在关系数 据库中，元组是表的一行。 与列表相比，]]></description>
 </item><item>
     <title>Go 数据结构与算法-Sets(集合)</title>
-    <link>https://example.com/04-sets-go/</link>
+    <link>https://blog.gopherhub.org/04-sets-go/</link>
     <pubDate>Mon, 29 Jun 2020 00:00:00 &#43;0000</pubDate>
     <author>作者</author>
-    <guid>https://example.com/04-sets-go/</guid>
+    <guid>https://blog.gopherhub.org/04-sets-go/</guid>
     <description><![CDATA[Set 集合 Set 是线性数据结构，特点在于 Set 的 item 是不能重复的。那么如何在 Go 中实现？联想到 Go 的 map，当我们在 map 中 定义重复的 key 时，会得到错误提示重复的 k]]></description>
 </item><item>
     <title>Go 数据结构与算法-环形链表</title>
-    <link>https://example.com/03-circularlinkedlist-go/</link>
+    <link>https://blog.gopherhub.org/03-circularlinkedlist-go/</link>
     <pubDate>Sun, 28 Jun 2020 00:00:00 &#43;0000</pubDate>
     <author>作者</author>
-    <guid>https://example.com/03-circularlinkedlist-go/</guid>
+    <guid>https://blog.gopherhub.org/03-circularlinkedlist-go/</guid>
     <description><![CDATA[CircularLinkedList 环形链表 环形链表可以是单链表也可以是双链表，单链表的最后一个节点的 nextNode 是指向 nil 的，如果将它指向首节点 那么久形成了一个简单的环形链表，对于双向]]></description>
 </item><item>
     <title>Go 数据结构与算法-双链表</title>
-    <link>https://example.com/02-doublylinkedlist-go/</link>
+    <link>https://blog.gopherhub.org/02-doublylinkedlist-go/</link>
     <pubDate>Sat, 27 Jun 2020 00:00:00 &#43;0000</pubDate>
     <author>作者</author>
-    <guid>https://example.com/02-doublylinkedlist-go/</guid>
+    <guid>https://blog.gopherhub.org/02-doublylinkedlist-go/</guid>
     <description><![CDATA[双链表 双链表是在单链表的基础上再 node 节点添加一个指向前一个节点的指针。在双向链表中，所有节点在列表的任一 侧都有指向它们所连接的节点的指针。 这意]]></description>
 </item><item>
     <title>Go 如何在http中使用context包</title>
-    <link>https://example.com/go-context/</link>
+    <link>https://blog.gopherhub.org/go-context/</link>
     <pubDate>Tue, 23 Jun 2020 00:00:00 &#43;0000</pubDate>
     <author>作者</author>
-    <guid>https://example.com/go-context/</guid>
+    <guid>https://blog.gopherhub.org/go-context/</guid>
     <description><![CDATA[<h2 id="intro">Intro</h2>
 <p>For the longest time I have wanted to see an easy to understand example (read newbie) of how to add data to the “new” golang 1.7 request context object. Since I wasted more than 2 days looking for something like that and never really found anything I decided to figure it out from the docs and write something up for others like me that wanted something simple. The example below is trivial and does not put anything useful in the context it’s just there to get your own juices flowing.</p>
 <p>Let’s start with the main function that will really only create the router and the routes.</p>]]></description>
 </item><item>
     <title>Go 数据结构与算法-单链表</title>
-    <link>https://example.com/01-singlylinkedlist-go/</link>
+    <link>https://blog.gopherhub.org/01-singlylinkedlist-go/</link>
     <pubDate>Tue, 23 Jun 2020 00:00:00 &#43;0000</pubDate>
     <author>作者</author>
-    <guid>https://example.com/01-singlylinkedlist-go/</guid>
+    <guid>https://blog.gopherhub.org/01-singlylinkedlist-go/</guid>
     <description><![CDATA[链表 链表是用于存储项目列表的有序元素的集合，链式存储的线性表。 与数组不同，链表可以动态扩展和收缩。链表 还可以用作其他数据结构（例如堆栈和队列]]></description>
 </item><item>
     <title>Go 的 graceful shutdown</title>
-    <link>https://example.com/go-graceful-shutdown/</link>
+    <link>https://blog.gopherhub.org/go-graceful-shutdown/</link>
     <pubDate>Mon, 15 Jun 2020 00:00:00 &#43;0000</pubDate>
     <author>作者</author>
-    <guid>https://example.com/go-graceful-shutdown/</guid>
+    <guid>https://blog.gopherhub.org/go-graceful-shutdown/</guid>
     <description><![CDATA[一个简单的 Http 服务 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 package main import ( &#34;log&#34; &#34;net/http&#34; &#34;time&#34; &#34;github.com/gin-gonic/gin&#34; ) func main() { router := gin.Default() router.GET(&#34;/&#34;, func(c *gin.Context) { time.Sleep(5 * time.Second) c.String(http.StatusOK, &#34;Welcome Gin Server&#34;) }) srv := &amp;http.Server{ Addr: &#34;:8080&#34;, Handler:]]></description>
 </item><item>
     <title>Dashboard vim plugin</title>
-    <link>https://example.com/dashboard-nvim/</link>
+    <link>https://blog.gopherhub.org/dashboard-nvim/</link>
     <pubDate>Wed, 10 Jun 2020 00:00:00 &#43;0000</pubDate>
     <author>作者</author>
-    <guid>https://example.com/dashboard-nvim/</guid>
+    <guid>https://blog.gopherhub.org/dashboard-nvim/</guid>
     <description><![CDATA[<h2 id="dashboard">Dashboard</h2>
 <p>Dashboard-nvim 是一个 vim/neovim 的首屏启动插件。灵感来源于 doom emacs。
 功能也很丰富。</p>]]></description>
 </item><item>
     <title>Spaceline vim</title>
-    <link>https://example.com/spaceline.vim/</link>
+    <link>https://blog.gopherhub.org/spaceline.vim/</link>
     <pubDate>Fri, 05 Jun 2020 00:00:00 &#43;0000</pubDate>
     <author>作者</author>
-    <guid>https://example.com/spaceline.vim/</guid>
+    <guid>https://blog.gopherhub.org/spaceline.vim/</guid>
     <description><![CDATA[Spaceline 一直很喜欢 spacemacs 的 spaceline。也曾经尝试使用 emacs 例如 spacemacs 和 doom 奈何 emacs 给我的体验真的是非常糟糕。放弃了 emacs。还是 vim 香。所以我就在 vim 中实现]]></description>
 </item></channel>
 </rss>
