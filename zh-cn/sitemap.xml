@@ -2,7 +2,7 @@
     xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
     xmlns:xhtml="http://www.w3.org/1999/xhtml"
     ><url>
-            <loc>https://blog.gopherhub.org/categories/</loc><lastmod>2020-06-30T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>1</priority><xhtml:link
+            <loc>https://blog.gopherhub.org/categories/</loc><lastmod>2020-07-03T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>1</priority><xhtml:link
                         rel="alternate"
                         hreflang="en"
                         href="https://blog.gopherhub.org/en/categories/"
@@ -15,9 +15,9 @@
                     hreflang="zh-cn"
                     href="https://blog.gopherhub.org/categories/"
                     /></url><url>
-            <loc>https://blog.gopherhub.org/05-queues-go/</loc><lastmod>2020-06-30T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
-            <loc>https://blog.gopherhub.org/posts/</loc><lastmod>2020-06-30T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
-            <loc>https://blog.gopherhub.org/</loc><lastmod>2020-06-30T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>1</priority><xhtml:link
+            <loc>https://blog.gopherhub.org/06-synchronized-queue/</loc><lastmod>2020-07-03T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
+            <loc>https://blog.gopherhub.org/posts/</loc><lastmod>2020-07-03T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
+            <loc>https://blog.gopherhub.org/</loc><lastmod>2020-07-03T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>1</priority><xhtml:link
                         rel="alternate"
                         hreflang="en"
                         href="https://blog.gopherhub.org/en/"
@@ -30,7 +30,7 @@
                     hreflang="zh-cn"
                     href="https://blog.gopherhub.org/"
                     /></url><url>
-            <loc>https://blog.gopherhub.org/tags/</loc><lastmod>2020-06-30T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>1</priority><xhtml:link
+            <loc>https://blog.gopherhub.org/tags/</loc><lastmod>2020-07-03T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>1</priority><xhtml:link
                         rel="alternate"
                         hreflang="en"
                         href="https://blog.gopherhub.org/en/tags/"
@@ -43,11 +43,12 @@
                     hreflang="zh-cn"
                     href="https://blog.gopherhub.org/tags/"
                     /></url><url>
-            <loc>https://blog.gopherhub.org/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/</loc><lastmod>2020-06-30T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
-            <loc>https://blog.gopherhub.org/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/</loc><lastmod>2020-06-30T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
+            <loc>https://blog.gopherhub.org/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/</loc><lastmod>2020-07-03T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
+            <loc>https://blog.gopherhub.org/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/</loc><lastmod>2020-07-03T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
+            <loc>https://blog.gopherhub.org/05-queues-go/</loc><lastmod>2020-06-30T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
             <loc>https://blog.gopherhub.org/04-sets-go/</loc><lastmod>2020-06-29T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
             <loc>https://blog.gopherhub.org/03-circularlinkedlist-go/</loc><lastmod>2020-06-28T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
-            <loc>https://blog.gopherhub.org/02-doublylinkedlist-go/</loc><lastmod>2020-06-27T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
+            <loc>https://blog.gopherhub.org/02-doublylinkedlist-go/</loc><lastmod>2020-06-27T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url><url>
             <loc>https://blog.gopherhub.org/tags/go/</loc><lastmod>2020-06-23T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url><url>
             <loc>https://blog.gopherhub.org/categories/go/</loc><lastmod>2020-06-23T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url><url>
             <loc>https://blog.gopherhub.org/go-context/</loc><lastmod>2020-06-23T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url><url>
@@ -56,6 +57,6 @@
             <loc>https://blog.gopherhub.org/dashboard-nvim/</loc><lastmod>2020-06-10T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url><url>
             <loc>https://blog.gopherhub.org/tags/vim/</loc><lastmod>2020-06-10T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url><url>
             <loc>https://blog.gopherhub.org/categories/vim/</loc><lastmod>2020-06-10T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url><url>
-            <loc>https://blog.gopherhub.org/spaceline.vim/</loc><lastmod>2020-06-05T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url><url>
+            <loc>https://blog.gopherhub.org/spaceline.vim/</loc><lastmod>2020-06-05T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.6</priority></url><url>
             <loc>https://blog.gopherhub.org/about/</loc><lastmod>2019-02-28T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
             <loc>https://blog.gopherhub.org/contact/</loc><changefreq>weekly</changefreq><priority>0.5</priority></url></urlset>
