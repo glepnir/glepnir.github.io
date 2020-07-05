@@ -47,7 +47,7 @@
             <loc>https://blog.gopherhub.org/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/</loc><lastmod>2020-07-03T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
             <loc>https://blog.gopherhub.org/05-queues-go/</loc><lastmod>2020-06-30T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
             <loc>https://blog.gopherhub.org/04-sets-go/</loc><lastmod>2020-06-29T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
-            <loc>https://blog.gopherhub.org/03-circularlinkedlist-go/</loc><lastmod>2020-06-28T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
+            <loc>https://blog.gopherhub.org/03-circularlinkedlist-go/</loc><lastmod>2020-06-28T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url><url>
             <loc>https://blog.gopherhub.org/02-doublylinkedlist-go/</loc><lastmod>2020-06-27T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url><url>
             <loc>https://blog.gopherhub.org/tags/go/</loc><lastmod>2020-06-23T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url><url>
             <loc>https://blog.gopherhub.org/categories/go/</loc><lastmod>2020-06-23T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url><url>
