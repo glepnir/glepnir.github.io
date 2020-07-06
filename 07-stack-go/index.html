@@ -29,7 +29,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/blog.gopherhub.org\/07-stack-go\/"
-        },"image": ["https:\/\/blog.gopherhub.org\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "数据结构","wordcount":  478 ,
+        },"image": ["https:\/\/blog.gopherhub.org\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "数据结构","wordcount":  1367 ,
         "url": "https:\/\/blog.gopherhub.org\/07-stack-go\/","datePublished": "2020-07-06T23:39:59+08:00","dateModified": "2020-07-06T23:39:59+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
             "@type": "Organization",
             "name": "Raphael","logo": "https:\/\/blog.gopherhub.org\/img\/avatar.png"},"author": {
@@ -110,8 +110,8 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">Go 数据结构与算法-Stack(栈)</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="https://github.com/glepnir" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>raphael</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/"><i class="far fa-folder fa-fw"></i>数据结构</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-07-06">2020-07-06</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 478 字&nbsp;
-                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 1 分钟&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-07-06">2020-07-06</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1367 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 3 分钟&nbsp;
                 <i class="far fa-eye fa-fw"></i>
                   <span id="busuanzi_container_page_pv">
                     本文总阅读量<span id="busuanzi_value_page_pv"></span>次
@@ -126,9 +126,10 @@
   <ul>
     <li><a href="#stack-栈">Stack 栈</a>
       <ul>
-        <li><a href="#实现">实现</a></li>
-        <li><a href="#push-入栈方法">Push 入栈方法</a></li>
-        <li><a href="#pop-出栈方法">Pop 出栈方法</a></li>
+        <li><a href="#切片实现">切片实现</a></li>
+        <li><a href="#链表实现">链表实现</a></li>
+        <li><a href="#godoc-的实现参考自定义数据结构实现">godoc 的实现参考（自定义数据结构实现）</a></li>
+        <li><a href="#对比">对比</a></li>
       </ul>
     </li>
   </ul>
@@ -137,7 +138,8 @@
 <p>堆栈是后进先出(LIFO)的结构，其中项目是从顶部添加的。 在解析器中使用堆栈来求解迷宫算法。 PUSH、POP、TOP 和
 GET SIZE 是堆栈数据结构上允许的典型操作。 语法分析、回溯和编译时内存管理是可以使用堆栈的一些真实场景
 堆栈实现示例如下(stack.go)：</p>
-<h3 id="实现">实现</h3>
+<p>栈实现常用的三种经典方式使用切片 链表 自定义结构体。</p>
+<h3 id="切片实现">切片实现</h3>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code><span class="lnt"> 1
@@ -155,81 +157,82 @@ GET SIZE 是堆栈数据结构上允许的典型操作。 语法分析、回溯�
 </span><span class="lnt">13
 </span><span class="lnt">14
 </span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// 栈内元素结构体
-</span><span class="c1"></span><span class="kd">type</span> <span class="nx">Element</span> <span class="kd">struct</span> <span class="p">{</span>
-	<span class="nx">elementvalue</span> <span class="kt">int</span>
+<pre class="chroma"><code class="language-GO" data-lang="GO"><span class="c1">// Item the type of the stack
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">Item</span> <span class="kd">interface</span><span class="p">{}</span>
+
+<span class="c1">// ItemStack the stack of Items
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">ItemStack</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">items</span> <span class="p">[]</span><span class="nx">Item</span>
+	<span class="nx">lock</span>  <span class="nx">sync</span><span class="p">.</span><span class="nx">RWMutex</span>
 <span class="p">}</span>
 
-<span class="kd">func</span> <span class="p">(</span><span class="nx">element</span> <span class="o">*</span><span class="nx">Element</span><span class="p">)</span> <span class="nf">String</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
-	<span class="k">return</span> <span class="nx">strconv</span><span class="p">.</span><span class="nf">Itoa</span><span class="p">(</span><span class="nx">element</span><span class="p">.</span><span class="nx">elementvalue</span><span class="p">)</span>
+<span class="c1">// New creates a new ItemStack
+</span><span class="c1"></span><span class="kd">func</span> <span class="nf">NewStack</span><span class="p">()</span> <span class="o">*</span><span class="nx">ItemStack</span> <span class="p">{</span>
+	<span class="nx">s</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">ItemStack</span><span class="p">{}</span>
+	<span class="nx">s</span><span class="p">.</span><span class="nx">items</span> <span class="p">=</span> <span class="p">[]</span><span class="nx">Item</span><span class="p">{}</span>
+	<span class="k">return</span> <span class="nx">s</span>
 <span class="p">}</span>
 
-<span class="kd">type</span> <span class="nx">Stack</span> <span class="kd">struct</span> <span class="p">{</span>
-  <span class="c1">// 使用切片存储元素
-</span><span class="c1"></span>	<span class="nx">elements</span>     <span class="p">[]</span><span class="o">*</span><span class="nx">Element</span>
-  <span class="c1">// 栈元素计数
-</span><span class="c1"></span>	<span class="nx">elementCount</span> <span class="kt">int</span>
+<span class="c1">// Pirnt prints all the elements
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="o">*</span><span class="nx">ItemStack</span><span class="p">)</span> <span class="nf">Print</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nx">items</span><span class="p">)</span>
 <span class="p">}</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>使用一个简单工厂函数返回一个初始化的栈</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-GO" data-lang="GO"><span class="kd">func</span> <span class="nf">NewStack</span><span class="p">()</span> <span class="o">*</span><span class="nx">Stack</span> <span class="p">{</span>
-	<span class="k">return</span> <span class="o">&amp;</span><span class="nx">Stack</span><span class="p">{}</span>
+
+<span class="c1">// Push adds an Item to the top of the stack
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="o">*</span><span class="nx">ItemStack</span><span class="p">)</span> <span class="nf">Push</span><span class="p">(</span><span class="nx">t</span> <span class="nx">Item</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">s</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+	<span class="nx">s</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+	<span class="nx">s</span><span class="p">.</span><span class="nx">items</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nx">items</span><span class="p">,</span> <span class="nx">t</span><span class="p">)</span>
 <span class="p">}</span>
-</code></pre></td></tr></table>
-</div>
-</div><h3 id="push-入栈方法">Push 入栈方法</h3>
-<p>Push 方法将节点添加到 Stack 的顶部。 在下面的代码示例中，Stack 的 Push 方法将元素添加到 Elements 切片
-并增加 Count 元素，而 Append 方法将元素添加到 Stack：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-GO" data-lang="GO"><span class="kd">func</span> <span class="p">(</span><span class="nx">stack</span> <span class="o">*</span><span class="nx">Stack</span><span class="p">)</span> <span class="nf">Push</span><span class="p">(</span><span class="nx">element</span> <span class="o">*</span><span class="nx">Element</span><span class="p">)</span> <span class="p">{</span>
-	<span class="nx">stack</span><span class="p">.</span><span class="nx">elements</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">stack</span><span class="p">.</span><span class="nx">elements</span><span class="p">[:</span><span class="nx">stack</span><span class="p">.</span><span class="nx">elementCount</span><span class="p">],</span> <span class="nx">element</span><span class="p">)</span>
-	<span class="nx">stack</span><span class="p">.</span><span class="nx">elementCount</span><span class="o">++</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
-</div>
-</div><h3 id="pop-出栈方法">Pop 出栈方法</h3>
-<p>Stack 的 Pop 方法从 Element 切片中移除最后一个元素并返回该元素，如下面的代码所示。 len 方法返回元素
-切片的长度：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-GO" data-lang="GO"><span class="kd">func</span> <span class="p">(</span><span class="nx">stack</span> <span class="o">*</span><span class="nx">Stack</span><span class="p">)</span> <span class="nf">Pop</span><span class="p">()</span> <span class="o">*</span><span class="nx">Element</span> <span class="p">{</span>
-	<span class="k">if</span> <span class="nx">stack</span><span class="p">.</span><span class="nx">elementCount</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+
+<span class="c1">// Pop removes an Item from the top of the stack
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="o">*</span><span class="nx">ItemStack</span><span class="p">)</span> <span class="nf">Pop</span><span class="p">()</span> <span class="nx">Item</span> <span class="p">{</span>
+	<span class="nx">s</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+	<span class="k">defer</span> <span class="nx">s</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nx">items</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
 		<span class="k">return</span> <span class="kc">nil</span>
 	<span class="p">}</span>
-	<span class="nx">stack</span><span class="p">.</span><span class="nx">elementCount</span><span class="o">--</span>
-	<span class="k">return</span> <span class="nx">stack</span><span class="p">.</span><span class="nx">elements</span><span class="p">[</span><span class="nx">stack</span><span class="p">.</span><span class="nx">elementCount</span><span class="p">]</span>
+	<span class="nx">item</span> <span class="o">:=</span> <span class="nx">s</span><span class="p">.</span><span class="nx">items</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nx">items</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+	<span class="nx">s</span><span class="p">.</span><span class="nx">items</span> <span class="p">=</span> <span class="nx">s</span><span class="p">.</span><span class="nx">items</span><span class="p">[</span><span class="mi">0</span> <span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nx">items</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+	<span class="k">return</span> <span class="nx">item</span>
 <span class="p">}</span>
 </code></pre></td></tr></table>
 </div>
-</div><ul>
-<li>输出</li>
+</div><p>使用切片的特点:</p>
+<ul>
+<li>利用 Golang 的 Slice，足够简单</li>
+<li>允许添加任意类型的元素</li>
+<li>Push 和 Pop 有加锁处理，线程安全</li>
+<li>使用 slice 作为 Stack 的底层支持，速度更快。但是，slice 最大的问题其实是存在一个共用底层数组的的问题，哪
+怕你不断的 Pop，但可能对于 Golang 来说，其占用的内存，并不一定减少。</li>
 </ul>
+<p>性能测试如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code><span class="lnt"> 1
@@ -244,25 +247,378 @@ GET SIZE 是堆栈数据结构上允许的典型操作。 语法分析、回溯�
 </span><span class="lnt">10
 </span><span class="lnt">11
 </span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// main method
-</span><span class="c1"></span><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-	<span class="nx">stack</span> <span class="o">:=</span> <span class="nf">NewStack</span><span class="p">()</span>
-	<span class="nx">stack</span><span class="p">.</span><span class="nf">Push</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">Element</span><span class="p">{</span><span class="mi">3</span><span class="p">})</span>
-	<span class="nx">stack</span><span class="p">.</span><span class="nf">Push</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">Element</span><span class="p">{</span><span class="mi">5</span><span class="p">})</span>
-	<span class="nx">stack</span><span class="p">.</span><span class="nf">Push</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">Element</span><span class="p">{</span><span class="mi">7</span><span class="p">})</span>
-	<span class="nx">stack</span><span class="p">.</span><span class="nf">Push</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">Element</span><span class="p">{</span><span class="mi">9</span><span class="p">})</span>
-	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">stack</span><span class="p">.</span><span class="nf">Pop</span><span class="p">(),</span> <span class="nx">stack</span><span class="p">.</span><span class="nf">Pop</span><span class="p">(),</span> <span class="nx">stack</span><span class="p">.</span><span class="nf">Pop</span><span class="p">(),</span> <span class="nx">stack</span><span class="p">.</span><span class="nf">Pop</span><span class="p">())</span>
+<pre class="chroma"><code class="language-GO" data-lang="GO"><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&#34;testing&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">var</span> <span class="nx">stack</span> <span class="o">*</span><span class="nx">ItemStack</span>
+
+<span class="kd">func</span> <span class="nf">init</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">stack</span> <span class="p">=</span> <span class="nf">NewStack</span><span class="p">()</span>
 <span class="p">}</span>
 
-<span class="o">---</span> <span class="nx">output</span>
-<span class="mi">9</span> <span class="mi">7</span> <span class="mi">5</span> <span class="mi">3</span>
+<span class="kd">func</span> <span class="nf">Benchmark_Push</span><span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">B</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">b</span><span class="p">.</span><span class="nx">N</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span> <span class="c1">//use b.N for looping
+</span><span class="c1"></span>		<span class="nx">stack</span><span class="p">.</span><span class="nf">Push</span><span class="p">(</span><span class="s">&#34;test&#34;</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">Benchmark_Pop</span><span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">B</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">b</span><span class="p">.</span><span class="nf">StopTimer</span><span class="p">()</span>
+	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">b</span><span class="p">.</span><span class="nx">N</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span> <span class="c1">//use b.N for looping
+</span><span class="c1"></span>		<span class="nx">stack</span><span class="p">.</span><span class="nf">Push</span><span class="p">(</span><span class="s">&#34;test&#34;</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="nx">b</span><span class="p">.</span><span class="nf">StartTimer</span><span class="p">()</span>
+	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">b</span><span class="p">.</span><span class="nx">N</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span> <span class="c1">//use b.N for looping
+</span><span class="c1"></span>		<span class="nx">stack</span><span class="p">.</span><span class="nf">Pop</span><span class="p">()</span>
+	<span class="p">}</span>
+<span class="p">}</span>
 </code></pre></td></tr></table>
 </div>
-</div><p>项目地址:<a href="https://github.com/glepnir/DataStructuresAndAlgorithms-Go" target="_blank" rel="noopener noreffer">github:DataStructuresAndAlgorithms-Go</a>
-如果喜欢这个项目请 Star。</p>
-</div><div style="padding: 10px 0; margin: 20px auto; width: 100%; font-size:16px; text-align: center;">
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">$ go test -test.bench=&#34;.*&#34; -benchmem -v
+goos: darwin
+goarch: amd64
+pkg: test/test8
+Benchmark_Push-4   	10000000	         222 ns/op	      94 B/op	       0 allocs/op
+Benchmark_Pop-4    	20000000	        65.0 ns/op	       0 B/op	       0 allocs/op
+PASS
+ok  	test/test8	7.644s
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="链表实现">链表实现</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-GO" data-lang="GO"><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&#34;container/list&#34;</span>
+	<span class="s">&#34;sync&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">type</span> <span class="nx">Stack</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">list</span> <span class="o">*</span><span class="nx">list</span><span class="p">.</span><span class="nx">List</span>
+	<span class="nx">lock</span> <span class="o">*</span><span class="nx">sync</span><span class="p">.</span><span class="nx">RWMutex</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">NewStack</span><span class="p">()</span> <span class="o">*</span><span class="nx">Stack</span> <span class="p">{</span>
+	<span class="nx">list</span> <span class="o">:=</span> <span class="nx">list</span><span class="p">.</span><span class="nf">New</span><span class="p">()</span>
+	<span class="nx">l</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">sync</span><span class="p">.</span><span class="nx">RWMutex</span><span class="p">{}</span>
+	<span class="k">return</span> <span class="o">&amp;</span><span class="nx">Stack</span><span class="p">{</span><span class="nx">list</span><span class="p">,</span> <span class="nx">l</span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">stack</span> <span class="o">*</span><span class="nx">Stack</span><span class="p">)</span> <span class="nf">Push</span><span class="p">(</span><span class="nx">value</span> <span class="kd">interface</span><span class="p">{})</span> <span class="p">{</span>
+	<span class="nx">stack</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+	<span class="k">defer</span> <span class="nx">stack</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+	<span class="nx">stack</span><span class="p">.</span><span class="nx">list</span><span class="p">.</span><span class="nf">PushBack</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">stack</span> <span class="o">*</span><span class="nx">Stack</span><span class="p">)</span> <span class="nf">Pop</span><span class="p">()</span> <span class="kd">interface</span><span class="p">{}</span> <span class="p">{</span>
+	<span class="nx">stack</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+	<span class="k">defer</span> <span class="nx">stack</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+	<span class="nx">e</span> <span class="o">:=</span> <span class="nx">stack</span><span class="p">.</span><span class="nx">list</span><span class="p">.</span><span class="nf">Back</span><span class="p">()</span>
+	<span class="k">if</span> <span class="nx">e</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">stack</span><span class="p">.</span><span class="nx">list</span><span class="p">.</span><span class="nf">Remove</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span>
+		<span class="k">return</span> <span class="nx">e</span><span class="p">.</span><span class="nx">Value</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="kc">nil</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">stack</span> <span class="o">*</span><span class="nx">Stack</span><span class="p">)</span> <span class="nf">Peak</span><span class="p">()</span> <span class="kd">interface</span><span class="p">{}</span> <span class="p">{</span>
+	<span class="nx">e</span> <span class="o">:=</span> <span class="nx">stack</span><span class="p">.</span><span class="nx">list</span><span class="p">.</span><span class="nf">Back</span><span class="p">()</span>
+	<span class="k">if</span> <span class="nx">e</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">e</span><span class="p">.</span><span class="nx">Value</span>
+	<span class="p">}</span>
+
+	<span class="k">return</span> <span class="kc">nil</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">stack</span> <span class="o">*</span><span class="nx">Stack</span><span class="p">)</span> <span class="nf">Len</span><span class="p">()</span> <span class="kt">int</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="nx">stack</span><span class="p">.</span><span class="nx">list</span><span class="p">.</span><span class="nf">Len</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">stack</span> <span class="o">*</span><span class="nx">Stack</span><span class="p">)</span> <span class="nf">Empty</span><span class="p">()</span> <span class="kt">bool</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="nx">stack</span><span class="p">.</span><span class="nx">list</span><span class="p">.</span><span class="nf">Len</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>简单来说，container/list 是一个链表。用链表模拟栈，要么都向链表的最后做 push 和 pop，要么都向链表的起点
+做 push 和 pop，这种方法也非常简单。</p>
+<p>性能测试如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">$ go test -test.bench=&#34;.*&#34; -benchmem -v  -count=1
+goos: darwin
+goarch: amd64
+pkg: test/test10
+Benchmark_Push-4   	 5000000	       222 ns/op	      48 B/op	       1 allocs/op
+Benchmark_Pop-4    	20000000	        73.5 ns/op	       0 B/op	       0 allocs/op
+PASS
+ok  	test/test10	10.837s
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="godoc-的实现参考自定义数据结构实现">godoc 的实现参考（自定义数据结构实现）</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&#34;sync&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">type</span> <span class="p">(</span>
+	<span class="nx">Stack</span> <span class="kd">struct</span> <span class="p">{</span>
+		<span class="nx">top</span>    <span class="o">*</span><span class="nx">node</span>
+		<span class="nx">length</span> <span class="kt">int</span>
+		<span class="nx">lock</span>   <span class="o">*</span><span class="nx">sync</span><span class="p">.</span><span class="nx">RWMutex</span>
+	<span class="p">}</span>
+	<span class="nx">node</span> <span class="kd">struct</span> <span class="p">{</span>
+		<span class="nx">value</span> <span class="kd">interface</span><span class="p">{}</span>
+		<span class="nx">prev</span>  <span class="o">*</span><span class="nx">node</span>
+	<span class="p">}</span>
+<span class="p">)</span>
+
+<span class="c1">// Create a new stack
+</span><span class="c1"></span><span class="kd">func</span> <span class="nf">NewStack</span><span class="p">()</span> <span class="o">*</span><span class="nx">Stack</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="o">&amp;</span><span class="nx">Stack</span><span class="p">{</span><span class="kc">nil</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">sync</span><span class="p">.</span><span class="nx">RWMutex</span><span class="p">{}}</span>
+<span class="p">}</span>
+
+<span class="c1">// Return the number of items in the stack
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">this</span> <span class="o">*</span><span class="nx">Stack</span><span class="p">)</span> <span class="nf">Len</span><span class="p">()</span> <span class="kt">int</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="nx">this</span><span class="p">.</span><span class="nx">length</span>
+<span class="p">}</span>
+
+<span class="c1">// View the top item on the stack
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">this</span> <span class="o">*</span><span class="nx">Stack</span><span class="p">)</span> <span class="nf">Peek</span><span class="p">()</span> <span class="kd">interface</span><span class="p">{}</span> <span class="p">{</span>
+	<span class="k">if</span> <span class="nx">this</span><span class="p">.</span><span class="nx">length</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="kc">nil</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="nx">this</span><span class="p">.</span><span class="nx">top</span><span class="p">.</span><span class="nx">value</span>
+<span class="p">}</span>
+
+<span class="c1">// Pop the top item of the stack and return it
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">this</span> <span class="o">*</span><span class="nx">Stack</span><span class="p">)</span> <span class="nf">Pop</span><span class="p">()</span> <span class="kd">interface</span><span class="p">{}</span> <span class="p">{</span>
+	<span class="nx">this</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+	<span class="k">defer</span> <span class="nx">this</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+	<span class="k">if</span> <span class="nx">this</span><span class="p">.</span><span class="nx">length</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="kc">nil</span>
+	<span class="p">}</span>
+	<span class="nx">n</span> <span class="o">:=</span> <span class="nx">this</span><span class="p">.</span><span class="nx">top</span>
+	<span class="nx">this</span><span class="p">.</span><span class="nx">top</span> <span class="p">=</span> <span class="nx">n</span><span class="p">.</span><span class="nx">prev</span>
+	<span class="nx">this</span><span class="p">.</span><span class="nx">length</span><span class="o">--</span>
+	<span class="k">return</span> <span class="nx">n</span><span class="p">.</span><span class="nx">value</span>
+<span class="p">}</span>
+
+<span class="c1">// Push a value onto the top of the stack
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">this</span> <span class="o">*</span><span class="nx">Stack</span><span class="p">)</span> <span class="nf">Push</span><span class="p">(</span><span class="nx">value</span> <span class="kd">interface</span><span class="p">{})</span> <span class="p">{</span>
+	<span class="nx">this</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+	<span class="k">defer</span> <span class="nx">this</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+	<span class="nx">n</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">node</span><span class="p">{</span><span class="nx">value</span><span class="p">,</span> <span class="nx">this</span><span class="p">.</span><span class="nx">top</span><span class="p">}</span>
+	<span class="nx">this</span><span class="p">.</span><span class="nx">top</span> <span class="p">=</span> <span class="nx">n</span>
+	<span class="nx">this</span><span class="p">.</span><span class="nx">length</span><span class="o">++</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>此方式特点:</p>
+<ul>
+<li>实现比较精巧，唯一需要理解的地方就是 node 结构体中，prev 的部分，它指向的是前一个 node 成员。</li>
+<li>允许添加任意类型的元素。</li>
+<li>Push 和 Pop 是线程安全的。</li>
+</ul>
+<p>性能测试如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-GO" data-lang="GO"><span class="err">$</span> <span class="k">go</span> <span class="nx">test</span> <span class="o">-</span><span class="nx">test</span><span class="p">.</span><span class="nx">bench</span><span class="p">=</span><span class="s">&#34;.*&#34;</span> <span class="o">-</span><span class="nx">benchmem</span> <span class="o">-</span><span class="nx">v</span>
+<span class="nx">goos</span><span class="p">:</span> <span class="nx">darwin</span>
+<span class="nx">goarch</span><span class="p">:</span> <span class="nx">amd64</span>
+<span class="nx">pkg</span><span class="p">:</span> <span class="nx">test</span><span class="o">/</span><span class="nx">test9</span>
+<span class="nx">Benchmark_Push</span><span class="o">-</span><span class="mi">4</span>   	<span class="mi">10000000</span>	         <span class="mi">178</span> <span class="nx">ns</span><span class="o">/</span><span class="nx">op</span>	      <span class="mi">32</span> <span class="nx">B</span><span class="o">/</span><span class="nx">op</span>	       <span class="mi">1</span> <span class="nx">allocs</span><span class="o">/</span><span class="nx">op</span>
+<span class="nx">Benchmark_Pop</span><span class="o">-</span><span class="mi">4</span>    	<span class="mi">20000000</span>	        <span class="mf">75.5</span> <span class="nx">ns</span><span class="o">/</span><span class="nx">op</span>	       <span class="mi">0</span> <span class="nx">B</span><span class="o">/</span><span class="nx">op</span>	       <span class="mi">0</span> <span class="nx">allocs</span><span class="o">/</span><span class="nx">op</span>
+<span class="nx">PASS</span>
+<span class="nx">ok</span>  	<span class="nx">test</span><span class="o">/</span><span class="nx">test9</span>	<span class="mf">9.776</span><span class="nx">s</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="对比">对比</h3>
+<p>三种方式，总的来看，第三种基于自定义数据结构的实现方式，在 push 上效率最高，而且实现也比较精巧。个人其
+实是推荐使用这种方式的。其次，是基于 container/list 实现的方式。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">特性对比	push速度	pop速度	push内存分配	pop内存分配
+基于slice	222ns/op	65ns/op	94B/op	0B/op
+container/list链表	222ns/op	73.5ns/op	48B/op	0B/op
+自定义数据结构	178ns/op	75ns/op	32B/op	0B/op
+</code></pre></td></tr></table>
+</div>
+</div></div><div style="padding: 10px 0; margin: 20px auto; width: 100%; font-size:16px; text-align: center;">
     <span>如果您喜欢这篇文章或者对您有帮助欢迎打赏😘</span>
     <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
         <span>打赏</span></button>
