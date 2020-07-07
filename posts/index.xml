@@ -4,7 +4,14 @@
         <link>https://blog.gopherhub.org/posts/</link>
         <description>所有文章 | Raphael Blog</description>
         <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>sawakitaeiji233@gmail.com (Raphael)</managingEditor>
-            <webMaster>sawakitaeiji233@gmail.com (Raphael)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Mon, 06 Jul 2020 23:39:59 &#43;0800</lastBuildDate><atom:link href="https://blog.gopherhub.org/posts/" rel="self" type="application/rss+xml" /><item>
+            <webMaster>sawakitaeiji233@gmail.com (Raphael)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Tue, 07 Jul 2020 23:38:02 &#43;0800</lastBuildDate><atom:link href="https://blog.gopherhub.org/posts/" rel="self" type="application/rss+xml" /><item>
+    <title>Go 数据结构与算法-二叉搜索树(Binarysearchtree)</title>
+    <link>https://blog.gopherhub.org/08-binarysearchtree/</link>
+    <pubDate>Tue, 07 Jul 2020 23:38:02 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>https://blog.gopherhub.org/08-binarysearchtree/</guid>
+    <description><![CDATA[Tree 树 树是一种非线性数据结构。 树用于搜索和其他用例。 二叉树的节点最多有两个子节点。 二叉搜索树由左侧节点的 属性值小于右侧节点的属性值的节点组成。]]></description>
+</item><item>
     <title>Go 数据结构与算法-Stack(栈)</title>
     <link>https://blog.gopherhub.org/07-stack-go/</link>
     <pubDate>Mon, 06 Jul 2020 23:39:59 &#43;0800</pubDate>
@@ -69,14 +76,5 @@
     <author>作者</author>
     <guid>https://blog.gopherhub.org/go-graceful-shutdown/</guid>
     <description><![CDATA[一个简单的 Http 服务 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 package main import ( &#34;log&#34; &#34;net/http&#34; &#34;time&#34; &#34;github.com/gin-gonic/gin&#34; ) func main() { router := gin.Default() router.GET(&#34;/&#34;, func(c *gin.Context) { time.Sleep(5 * time.Second) c.String(http.StatusOK, &#34;Welcome Gin Server&#34;) }) srv := &amp;http.Server{ Addr: &#34;:8080&#34;, Handler:]]></description>
-</item><item>
-    <title>Dashboard vim plugin</title>
-    <link>https://blog.gopherhub.org/dashboard-nvim/</link>
-    <pubDate>Wed, 10 Jun 2020 00:00:00 &#43;0000</pubDate>
-    <author>作者</author>
-    <guid>https://blog.gopherhub.org/dashboard-nvim/</guid>
-    <description><![CDATA[<h2 id="dashboard">Dashboard</h2>
-<p>Dashboard-nvim 是一个 vim/neovim 的首屏启动插件。灵感来源于 doom emacs。
-功能也很丰富。</p>]]></description>
 </item></channel>
 </rss>
