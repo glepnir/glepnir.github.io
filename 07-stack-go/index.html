@@ -29,7 +29,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/blog.gopherhub.org\/07-stack-go\/"
-        },"image": ["https:\/\/blog.gopherhub.org\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "数据结构","wordcount":  1336 ,
+        },"image": ["https:\/\/blog.gopherhub.org\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "数据结构","wordcount":  1300 ,
         "url": "https:\/\/blog.gopherhub.org\/07-stack-go\/","datePublished": "2020-07-06T23:39:59+08:00","dateModified": "2020-07-06T23:39:59+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
             "@type": "Organization",
             "name": "Raphael","logo": "https:\/\/blog.gopherhub.org\/img\/avatar.png"},"author": {
@@ -110,7 +110,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">Go 数据结构与算法-Stack(栈)</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="https://github.com/glepnir" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>raphael</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/"><i class="far fa-folder fa-fw"></i>数据结构</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-07-06">2020-07-06</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1336 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-07-06">2020-07-06</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1300 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 3 分钟&nbsp;
                 <i class="far fa-eye fa-fw"></i>
                   <span id="busuanzi_container_page_pv">
@@ -295,7 +295,10 @@ GET SIZE 是堆栈数据结构上允许的典型操作。 语法分析、回溯�
 <span class="p">}</span>
 </code></pre></td></tr></table>
 </div>
-</div><div class="highlight"><div class="chroma">
+</div><blockquote>
+<p>以下所有测试基于 go 1.14.4 darwin/amd64</p>
+</blockquote>
+<div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
@@ -305,16 +308,18 @@ GET SIZE 是堆栈数据结构上允许的典型操作。 语法分析、回溯�
 </span><span class="lnt">6
 </span><span class="lnt">7
 </span><span class="lnt">8
+</span><span class="lnt">9
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-fallback" data-lang="fallback">$ go test -test.bench=&#34;.*&#34; -benchmem -v
 goos: darwin
 goarch: amd64
-pkg: test/test8
-Benchmark_Push-4   	10000000	         222 ns/op	      94 B/op	       0 allocs/op
-Benchmark_Pop-4    	20000000	        65.0 ns/op	       0 B/op	       0 allocs/op
+pkg: github.com/glepnir/DataStructuresAndAlgorithms-Go/DataStructures/Chapter1-Linear/04-Stack/stack
+Benchmark_Push
+Benchmark_Push-8   	12399790	        89.7 ns/op	      97 B/op	       0 allocs/op
+Benchmark_Pop
+Benchmark_Pop-8    	39666664	        29.4 ns/op	       0 B/op	       0 allocs/op
 PASS
-ok  	test/test8	7.644s
 </code></pre></td></tr></table>
 </div>
 </div><h3 id="链表实现">链表实现</h3>
@@ -439,16 +444,18 @@ ok  	test/test8	7.644s
 </span><span class="lnt">6
 </span><span class="lnt">7
 </span><span class="lnt">8
+</span><span class="lnt">9
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-fallback" data-lang="fallback">$ go test -test.bench=&#34;.*&#34; -benchmem -v  -count=1
 goos: darwin
 goarch: amd64
-pkg: test/test10
-Benchmark_Push-4   	 5000000	       222 ns/op	      48 B/op	       1 allocs/op
-Benchmark_Pop-4    	20000000	        73.5 ns/op	       0 B/op	       0 allocs/op
+pkg: github.com/glepnir/DataStructuresAndAlgorithms-Go/DataStructures/Chapter1-Linear/04-Stack/stack2
+Benchmark_Push
+Benchmark_Push-8   	 8214225	       158 ns/op	      48 B/op	       1 allocs/op
+Benchmark_Pop
+Benchmark_Pop-8    	32743381	        43.3 ns/op	       0 B/op	       0 allocs/op
 PASS
-ok  	test/test10	10.837s
 </code></pre></td></tr></table>
 </div>
 </div><h3 id="godoc-的实现参考自定义数据结构实现">godoc 的实现参考（自定义数据结构实现）</h3>
@@ -537,38 +544,38 @@ ok  	test/test10	10.837s
 <span class="p">}</span>
 
 <span class="c1">// Return the number of items in the stack
-</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">this</span> <span class="o">*</span><span class="nx">Stack</span><span class="p">)</span> <span class="nf">Len</span><span class="p">()</span> <span class="kt">int</span> <span class="p">{</span>
-	<span class="k">return</span> <span class="nx">this</span><span class="p">.</span><span class="nx">length</span>
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">stack</span> <span class="o">*</span><span class="nx">Stack</span><span class="p">)</span> <span class="nf">Len</span><span class="p">()</span> <span class="kt">int</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="nx">stack</span><span class="p">.</span><span class="nx">length</span>
 <span class="p">}</span>
 
 <span class="c1">// View the top item on the stack
-</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">this</span> <span class="o">*</span><span class="nx">Stack</span><span class="p">)</span> <span class="nf">Peek</span><span class="p">()</span> <span class="kd">interface</span><span class="p">{}</span> <span class="p">{</span>
-	<span class="k">if</span> <span class="nx">this</span><span class="p">.</span><span class="nx">length</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">stack</span> <span class="o">*</span><span class="nx">Stack</span><span class="p">)</span> <span class="nf">Peek</span><span class="p">()</span> <span class="kd">interface</span><span class="p">{}</span> <span class="p">{</span>
+	<span class="k">if</span> <span class="nx">stack</span><span class="p">.</span><span class="nx">length</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
 		<span class="k">return</span> <span class="kc">nil</span>
 	<span class="p">}</span>
-	<span class="k">return</span> <span class="nx">this</span><span class="p">.</span><span class="nx">top</span><span class="p">.</span><span class="nx">value</span>
+	<span class="k">return</span> <span class="nx">stack</span><span class="p">.</span><span class="nx">top</span><span class="p">.</span><span class="nx">value</span>
 <span class="p">}</span>
 
 <span class="c1">// Pop the top item of the stack and return it
-</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">this</span> <span class="o">*</span><span class="nx">Stack</span><span class="p">)</span> <span class="nf">Pop</span><span class="p">()</span> <span class="kd">interface</span><span class="p">{}</span> <span class="p">{</span>
-	<span class="nx">this</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
-	<span class="k">defer</span> <span class="nx">this</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
-	<span class="k">if</span> <span class="nx">this</span><span class="p">.</span><span class="nx">length</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">stack</span> <span class="o">*</span><span class="nx">Stack</span><span class="p">)</span> <span class="nf">Pop</span><span class="p">()</span> <span class="kd">interface</span><span class="p">{}</span> <span class="p">{</span>
+	<span class="nx">stack</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+	<span class="k">defer</span> <span class="nx">stack</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+	<span class="k">if</span> <span class="nx">stack</span><span class="p">.</span><span class="nx">length</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
 		<span class="k">return</span> <span class="kc">nil</span>
 	<span class="p">}</span>
-	<span class="nx">n</span> <span class="o">:=</span> <span class="nx">this</span><span class="p">.</span><span class="nx">top</span>
-	<span class="nx">this</span><span class="p">.</span><span class="nx">top</span> <span class="p">=</span> <span class="nx">n</span><span class="p">.</span><span class="nx">prev</span>
-	<span class="nx">this</span><span class="p">.</span><span class="nx">length</span><span class="o">--</span>
+	<span class="nx">n</span> <span class="o">:=</span> <span class="nx">stack</span><span class="p">.</span><span class="nx">top</span>
+	<span class="nx">stack</span><span class="p">.</span><span class="nx">top</span> <span class="p">=</span> <span class="nx">n</span><span class="p">.</span><span class="nx">prev</span>
+	<span class="nx">stack</span><span class="p">.</span><span class="nx">length</span><span class="o">--</span>
 	<span class="k">return</span> <span class="nx">n</span><span class="p">.</span><span class="nx">value</span>
 <span class="p">}</span>
 
 <span class="c1">// Push a value onto the top of the stack
-</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">this</span> <span class="o">*</span><span class="nx">Stack</span><span class="p">)</span> <span class="nf">Push</span><span class="p">(</span><span class="nx">value</span> <span class="kd">interface</span><span class="p">{})</span> <span class="p">{</span>
-	<span class="nx">this</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
-	<span class="k">defer</span> <span class="nx">this</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
-	<span class="nx">n</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">node</span><span class="p">{</span><span class="nx">value</span><span class="p">,</span> <span class="nx">this</span><span class="p">.</span><span class="nx">top</span><span class="p">}</span>
-	<span class="nx">this</span><span class="p">.</span><span class="nx">top</span> <span class="p">=</span> <span class="nx">n</span>
-	<span class="nx">this</span><span class="p">.</span><span class="nx">length</span><span class="o">++</span>
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">stack</span> <span class="o">*</span><span class="nx">Stack</span><span class="p">)</span> <span class="nf">Push</span><span class="p">(</span><span class="nx">value</span> <span class="kd">interface</span><span class="p">{})</span> <span class="p">{</span>
+	<span class="nx">stack</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+	<span class="k">defer</span> <span class="nx">stack</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+	<span class="nx">n</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">node</span><span class="p">{</span><span class="nx">value</span><span class="p">,</span> <span class="nx">stack</span><span class="p">.</span><span class="nx">top</span><span class="p">}</span>
+	<span class="nx">stack</span><span class="p">.</span><span class="nx">top</span> <span class="p">=</span> <span class="nx">n</span>
+	<span class="nx">stack</span><span class="p">.</span><span class="nx">length</span><span class="o">++</span>
 <span class="p">}</span>
 </code></pre></td></tr></table>
 </div>
@@ -589,21 +596,21 @@ ok  	test/test10	10.837s
 </span><span class="lnt">6
 </span><span class="lnt">7
 </span><span class="lnt">8
+</span><span class="lnt">9
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-GO" data-lang="GO"><span class="err">$</span> <span class="k">go</span> <span class="nx">test</span> <span class="o">-</span><span class="nx">test</span><span class="p">.</span><span class="nx">bench</span><span class="p">=</span><span class="s">&#34;.*&#34;</span> <span class="o">-</span><span class="nx">benchmem</span> <span class="o">-</span><span class="nx">v</span>
 <span class="nx">goos</span><span class="p">:</span> <span class="nx">darwin</span>
 <span class="nx">goarch</span><span class="p">:</span> <span class="nx">amd64</span>
-<span class="nx">pkg</span><span class="p">:</span> <span class="nx">test</span><span class="o">/</span><span class="nx">test9</span>
-<span class="nx">Benchmark_Push</span><span class="o">-</span><span class="mi">4</span>   	<span class="mi">10000000</span>	         <span class="mi">178</span> <span class="nx">ns</span><span class="o">/</span><span class="nx">op</span>	      <span class="mi">32</span> <span class="nx">B</span><span class="o">/</span><span class="nx">op</span>	       <span class="mi">1</span> <span class="nx">allocs</span><span class="o">/</span><span class="nx">op</span>
-<span class="nx">Benchmark_Pop</span><span class="o">-</span><span class="mi">4</span>    	<span class="mi">20000000</span>	        <span class="mf">75.5</span> <span class="nx">ns</span><span class="o">/</span><span class="nx">op</span>	       <span class="mi">0</span> <span class="nx">B</span><span class="o">/</span><span class="nx">op</span>	       <span class="mi">0</span> <span class="nx">allocs</span><span class="o">/</span><span class="nx">op</span>
+<span class="nx">pkg</span><span class="p">:</span> <span class="nx">github</span><span class="p">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">glepnir</span><span class="o">/</span><span class="nx">DataStructuresAndAlgorithms</span><span class="o">-</span><span class="nx">Go</span><span class="o">/</span><span class="nx">DataStructures</span><span class="o">/</span><span class="nx">Chapter1</span><span class="o">-</span><span class="nx">Linear</span><span class="o">/</span><span class="mo">04</span><span class="o">-</span><span class="nx">Stack</span><span class="o">/</span><span class="nx">stack3</span>
+<span class="nx">Benchmark_Push</span>
+<span class="nx">Benchmark_Push</span><span class="o">-</span><span class="mi">8</span>   	<span class="mi">10694956</span>	        <span class="mf">99.9</span> <span class="nx">ns</span><span class="o">/</span><span class="nx">op</span>	      <span class="mi">32</span> <span class="nx">B</span><span class="o">/</span><span class="nx">op</span>	       <span class="mi">1</span> <span class="nx">allocs</span><span class="o">/</span><span class="nx">op</span>
+<span class="nx">Benchmark_Pop</span>
+<span class="nx">Benchmark_Pop</span><span class="o">-</span><span class="mi">8</span>    	<span class="mi">38457697</span>	        <span class="mf">30.2</span> <span class="nx">ns</span><span class="o">/</span><span class="nx">op</span>	       <span class="mi">0</span> <span class="nx">B</span><span class="o">/</span><span class="nx">op</span>	       <span class="mi">0</span> <span class="nx">allocs</span><span class="o">/</span><span class="nx">op</span>
 <span class="nx">PASS</span>
-<span class="nx">ok</span>  	<span class="nx">test</span><span class="o">/</span><span class="nx">test9</span>	<span class="mf">9.776</span><span class="nx">s</span>
 </code></pre></td></tr></table>
 </div>
 </div><h3 id="对比">对比</h3>
-<p>三种方式，总的来看，第三种基于自定义数据结构的实现方式，在 push 上效率最高，而且实现也比较精巧。个人其
-实是推荐使用这种方式的。其次，是基于 container/list 实现的方式。</p>
 <table>
 <thead>
 <tr>
@@ -612,32 +619,37 @@ ok  	test/test10	10.837s
 <th>pop 速度</th>
 <th>push 内存分配</th>
 <th>pop 内存分配</th>
+<th>allocs(不同的内存分配)</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>基于 slice</td>
-<td>222ns/op</td>
-<td>65ns/op</td>
-<td>94B/op</td>
+<td>89.7ns/op</td>
+<td>29.4ns/op</td>
+<td>97B/op</td>
 <td>0B/op</td>
+<td>0 allocs/op</td>
 </tr>
 <tr>
 <td>container/list 链表</td>
-<td>222ns/op</td>
-<td>73.5ns/op</td>
+<td>158ns/op</td>
+<td>43.3ns/op</td>
 <td>48B/op</td>
 <td>0B/op</td>
+<td>1 allocs/op</td>
 </tr>
 <tr>
 <td>自定义数据结构</td>
-<td>178ns/op</td>
-<td>75ns/op</td>
+<td>99.9ns/op</td>
+<td>30.2ns/op</td>
 <td>32B/op</td>
 <td>0B/op</td>
+<td>1 allocs/op</td>
 </tr>
 </tbody>
 </table>
+<p><a href="http://github.com/glepnir/DataStructuresAndAlgorithms-Go" target="_blank" rel="noopener noreffer">项目地址: DataStructuresAndAlgorithms-Go</a></p>
 </div><div style="padding: 10px 0; margin: 20px auto; width: 100%; font-size:16px; text-align: center;">
     <span>如果您喜欢这篇文章或者对您有帮助欢迎打赏😘</span>
     <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
