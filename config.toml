@@ -421,7 +421,7 @@ enableEmoji = true
         XMPP = ""
         Matrix = ""
         Bilibili = "321783076"
-        Email = "sawakitaeiji233@gmail.com"
+        Email = "glepnir@gopherhub.org"
         RSS = true
 
   [languages.fr]
