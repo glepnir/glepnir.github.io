@@ -56,9 +56,9 @@
             <loc>https://blog.gopherhub.org/go-context/</loc><lastmod>2020-06-23T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url><url>
             <loc>https://blog.gopherhub.org/01-singlylinkedlist-go/</loc><lastmod>2020-06-23T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url><url>
             <loc>https://blog.gopherhub.org/go-graceful-shutdown/</loc><lastmod>2020-06-15T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url><url>
-            <loc>https://blog.gopherhub.org/dashboard-nvim/</loc><lastmod>2020-06-10T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url><url>
-            <loc>https://blog.gopherhub.org/tags/vim/</loc><lastmod>2020-06-10T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url><url>
-            <loc>https://blog.gopherhub.org/categories/vim/</loc><lastmod>2020-06-10T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url><url>
+            <loc>https://blog.gopherhub.org/dashboard-nvim/</loc><lastmod>2020-06-10T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.6</priority></url><url>
+            <loc>https://blog.gopherhub.org/tags/vim/</loc><lastmod>2020-06-10T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.6</priority></url><url>
+            <loc>https://blog.gopherhub.org/categories/vim/</loc><lastmod>2020-06-10T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.6</priority></url><url>
             <loc>https://blog.gopherhub.org/spaceline.vim/</loc><lastmod>2020-06-05T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.6</priority></url><url>
             <loc>https://blog.gopherhub.org/about/</loc><lastmod>2019-02-28T00:00:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
             <loc>https://blog.gopherhub.org/contact/</loc><changefreq>weekly</changefreq><priority>0.5</priority></url></urlset>

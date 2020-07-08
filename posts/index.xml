@@ -10,7 +10,7 @@
     <pubDate>Tue, 07 Jul 2020 23:38:02 &#43;0800</pubDate>
     <author>作者</author>
     <guid>https://blog.gopherhub.org/08-binarysearchtree/</guid>
-    <description><![CDATA[Tree 树 树是一种非线性数据结构。 树用于搜索和其他用例。 二叉树的节点最多有两个子节点。 二叉搜索树由左侧节点的 属性值小于右侧节点的属性值的节点组成。]]></description>
+    <description><![CDATA[Binary search tree 二叉搜索树 二叉搜索树，也称为二叉查找树、有序二叉树（ordered binary tree）或排序二叉树（sorted binary tree）， 是指一棵空树或者]]></description>
 </item><item>
     <title>Go 数据结构与算法-Stack(栈)</title>
     <link>https://blog.gopherhub.org/07-stack-go/</link>

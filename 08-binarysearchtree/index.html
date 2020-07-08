@@ -29,7 +29,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/blog.gopherhub.org\/08-binarysearchtree\/"
-        },"image": ["https:\/\/blog.gopherhub.org\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "数据结构","wordcount":  374 ,
+        },"image": ["https:\/\/blog.gopherhub.org\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "数据结构","wordcount":  568 ,
         "url": "https:\/\/blog.gopherhub.org\/08-binarysearchtree\/","datePublished": "2020-07-07T23:38:02+08:00","dateModified": "2020-07-07T23:38:02+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
             "@type": "Organization",
             "name": "Raphael","logo": "https:\/\/blog.gopherhub.org\/img\/avatar.png"},"author": {
@@ -110,8 +110,8 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">Go 数据结构与算法-二叉搜索树(Binarysearchtree)</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="https://github.com/glepnir" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Raphael Huan</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/"><i class="far fa-folder fa-fw"></i>数据结构</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-07-07">2020-07-07</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 374 字&nbsp;
-                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 1 分钟&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-07-07">2020-07-07</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 568 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 2 分钟&nbsp;
                 <i class="far fa-eye fa-fw"></i>
                   <span id="busuanzi_container_page_pv">
                     本文总阅读量<span id="busuanzi_value_page_pv"></span>次
@@ -124,17 +124,20 @@
                 </div>
                 <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
   <ul>
-    <li><a href="#tree-树">Tree 树</a></li>
     <li><a href="#binary-search-tree-二叉搜索树">Binary search tree 二叉搜索树</a></li>
+    <li><a href="#insertelement-插入元素方法">InsertElement 插入元素方法</a></li>
   </ul>
 </nav></div>
-            </div><div class="content" id="content"><h2 id="tree-树">Tree 树</h2>
-<p>树是一种非线性数据结构。 树用于搜索和其他用例。 二叉树的节点最多有两个子节点。 二叉搜索树由左侧节点的
-属性值小于右侧节点的属性值的节点组成。 根节点位于树的零级。 每个子节点可以是叶。没有节点的树被称为空树</p>
-<h2 id="binary-search-tree-二叉搜索树">Binary search tree 二叉搜索树</h2>
-<p>二叉搜索树是一种允许快速查找、添加和删除元素的数据结构。 它按排序顺序存储密钥，以实现更快的查找。 这
-种数据结构是由 P.F.Windley、A.D.Booth、A.J.T.Colin 和 T.N.Hibbard 发明的。平均而言，二叉树的空间复杂
-度为 O(N)，而插入、搜索和删除操作为 O(Logn)。</p>
+            </div><div class="content" id="content"><h2 id="binary-search-tree-二叉搜索树">Binary search tree 二叉搜索树</h2>
+<p>二叉搜索树，也称为二叉查找树、有序二叉树（ordered binary tree）或排序二叉树（sorted binary tree），
+是指一棵空树或者具有下列性质的二叉树：</p>
+<ul>
+<li>若任意节点的左子树不空，则左子树上所有节点的值均小于它的根节点的值；</li>
+<li>若任意节点的右子树不空，则右子树上所有节点的值均大于或等于它的根节点的值；</li>
+<li>任意节点的左、右子树也分别为二叉搜索树；</li>
+</ul>
+<p>如下图，左侧的就是一棵二叉搜索树;而右侧的则不是，因为节点 9 在根节点 10 的右子树上，但
+是其值却比 10 小.</p>
 <center>
 <img src="/img/datastructures/binarysearchtree.png" />
 </center>
@@ -182,6 +185,79 @@ rootNode 左侧和右侧的节点，可以从 rootNode 遍历二叉搜索树：<
   <span class="c1">// 根节点
 </span><span class="c1"></span>  <span class="nx">rootNode</span> <span class="o">*</span><span class="nx">TreeNode</span>
   <span class="nx">lock</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">RWMutex</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="insertelement-插入元素方法">InsertElement 插入元素方法</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-GO" data-lang="GO"><span class="c1">// 插入树节点
+</span><span class="c1"></span><span class="kd">func</span> <span class="nf">InsertTreeNode</span><span class="p">(</span><span class="nx">rootNode</span><span class="p">,</span> <span class="nx">newTreeNode</span> <span class="o">*</span><span class="nx">TreeNode</span><span class="p">)</span> <span class="p">{</span>
+	<span class="c1">// 如果新节点小于根节点放到左边否则放到右边
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">newTreeNode</span><span class="p">.</span><span class="nx">key</span> <span class="p">&lt;</span> <span class="nx">rootNode</span><span class="p">.</span><span class="nx">key</span> <span class="p">{</span>
+		<span class="c1">// 如果根节点的左子节点是空
+</span><span class="c1"></span>		<span class="k">if</span> <span class="nx">rootNode</span><span class="p">.</span><span class="nx">leftNode</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="nx">rootNode</span><span class="p">.</span><span class="nx">leftNode</span> <span class="p">=</span> <span class="nx">newTreeNode</span>
+		<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+			<span class="c1">// 否则递归调用参数的根节点则换成根节点的左子节点
+</span><span class="c1"></span>			<span class="nf">InsertTreeNode</span><span class="p">(</span><span class="nx">rootNode</span><span class="p">.</span><span class="nx">leftNode</span><span class="p">,</span> <span class="nx">newTreeNode</span><span class="p">)</span>
+		<span class="p">}</span>
+	<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+		<span class="c1">// 同上
+</span><span class="c1"></span>		<span class="k">if</span> <span class="nx">rootNode</span><span class="p">.</span><span class="nx">rightNode</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="nx">rootNode</span><span class="p">.</span><span class="nx">rightNode</span> <span class="p">=</span> <span class="nx">newTreeNode</span>
+		<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+			<span class="c1">// 一样的递归调用将根节点换成根节点的右子节点
+</span><span class="c1"></span>			<span class="nf">InsertTreeNode</span><span class="p">(</span><span class="nx">rootNode</span><span class="p">.</span><span class="nx">rightNode</span><span class="p">,</span> <span class="nx">newTreeNode</span><span class="p">)</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 二叉搜索树的插入元素方法
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">bst</span> <span class="o">*</span><span class="nx">BinarySearchTree</span><span class="p">)</span> <span class="nf">InsertElement</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">bst</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+	<span class="k">defer</span> <span class="nx">bst</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+	<span class="nx">treeNode</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">TreeNode</span><span class="p">{</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="kc">nil</span><span class="p">,</span> <span class="kc">nil</span><span class="p">}</span>
+	<span class="k">if</span> <span class="nx">bst</span><span class="p">.</span><span class="nx">rootNode</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">bst</span><span class="p">.</span><span class="nx">rootNode</span> <span class="p">=</span> <span class="nx">treeNode</span>
+	<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+		<span class="nf">InsertTreeNode</span><span class="p">(</span><span class="nx">bst</span><span class="p">.</span><span class="nx">rootNode</span><span class="p">,</span> <span class="nx">treeNode</span><span class="p">)</span>
+	<span class="p">}</span>
 <span class="p">}</span>
 </code></pre></td></tr></table>
 </div>
