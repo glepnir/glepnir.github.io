@@ -32,6 +32,6 @@ sed -i "" "s/^description =.*/description = \"$post_description\"/g" "$file"
 sed -i "" "s/^tags =.*/categories = [\"$post_tags\"]/g" "$file"
 sed -i "" "s/^categories =.*/categories = [\"$post_categories\"]/g" "$file"
 
-echo  "Generate new posts"
+echo -e "\033[0;32mCreate Post Success...\033[0m"
 
 nvim content/posts/$post_diretory/$post_name.md
