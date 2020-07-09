@@ -268,13 +268,13 @@ enableEmoji = true
         url = "/categories/"
         title = ""
         weight = 3
-      # [[languages.zh-cn.menu.main]]
-      #   identifier = "documentation"
-      #   pre = ""
-      #   name = "文档"
-      #   url = "/categories/documentation/"
-      #   title = ""
-      #   weight = 4
+      [[languages.zh-cn.menu.main]]
+        identifier = "Sponsors"
+        pre = ""
+        name = "赞赏"
+        url = "/sponsors/"
+        title = ""
+        weight = 4
       [[languages.zh-cn.menu.main]]
         identifier = "about"
         pre = ""
