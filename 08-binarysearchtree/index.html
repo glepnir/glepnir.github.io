@@ -29,7 +29,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/blog.gopherhub.org\/08-binarysearchtree\/"
-        },"image": ["https:\/\/blog.gopherhub.org\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "数据结构","wordcount":  568 ,
+        },"image": ["https:\/\/blog.gopherhub.org\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "数据结构","wordcount":  957 ,
         "url": "https:\/\/blog.gopherhub.org\/08-binarysearchtree\/","datePublished": "2020-07-07T23:38:02+08:00","dateModified": "2020-07-07T23:38:02+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
             "@type": "Organization",
             "name": "Raphael","logo": "https:\/\/blog.gopherhub.org\/img\/avatar.png"},"author": {
@@ -110,7 +110,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">Go 数据结构与算法-二叉搜索树(Binarysearchtree)</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="https://github.com/glepnir" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Raphael Huan</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/"><i class="far fa-folder fa-fw"></i>数据结构</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-07-07">2020-07-07</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 568 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-07-07">2020-07-07</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 957 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 2 分钟&nbsp;
                 <i class="far fa-eye fa-fw"></i>
                   <span id="busuanzi_container_page_pv">
@@ -125,7 +125,8 @@
                 <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
   <ul>
     <li><a href="#binary-search-tree-二叉搜索树">Binary search tree 二叉搜索树</a></li>
-    <li><a href="#insertelement-插入元素方法">InsertElement 插入元素方法</a></li>
+    <li><a href="#实现">实现</a></li>
+    <li><a href="#insert-方法">Insert 方法</a></li>
   </ul>
 </nav></div>
             </div><div class="content" id="content"><h2 id="binary-search-tree-二叉搜索树">Binary search tree 二叉搜索树</h2>
@@ -141,6 +142,44 @@
 <center>
 <img src="/img/datastructures/binarysearchtree.png" />
 </center>
+<h2 id="实现">实现</h2>
+<p>接下来实现一个如下图的二叉搜索树并实现一些关于操作二叉搜索树的方法</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/image/binarysearchtree-1.png"
+        data-srcset="/image/binarysearchtree-1.png, /image/binarysearchtree-1.png 1.5x, /image/binarysearchtree-1.png 2x"
+        data-sizes="auto"
+        alt="/image/binarysearchtree-1.png"
+        title="Binarysearchtree-1" /></p>
+<p>操作二叉树的一些常用方法:</p>
+<ul>
+<li>Insert(t) 将 Item t 插入树中</li>
+<li>Search(t) 如果树中存在 Item t，则返回 true</li>
+<li>InOrderTraverse() 使用顺序遍历访问所有节点</li>
+<li>PreOrderTraverse() 通过前序遍历访问所有节点</li>
+<li>PostOrderTraverse() 使用后序遍历访问所有节点</li>
+<li>Min() 返回具有存储在树中的最小值的 Item</li>
+<li>Max() 返回具有最大值的 Item 存储在树中</li>
+<li>Remove(t) 从树上删除项目 t</li>
+<li>String() 打印树的 CLI 可读渲染</li>
+</ul>
+<p>三种遍历方式：</p>
+<ul>
+<li>
+<p><strong>中序遍历</strong> 我们通过跟随最小的链接来访问所有节点，直到找到最左边的叶子，然后处理该叶子并通过进入
+链接到当前节点的下一个最小键值移动到其他节点。在上图中:
+<code>1 -&gt; 2 -&gt; 3 -&gt; 4 -&gt; 5 -&gt; 6 -&gt; 7 -&gt; 8 -&gt; 9 -&gt; 10 -&gt; 11</code></p>
+</li>
+<li>
+<p><strong>前序遍历</strong> 在拜访孩子之前，此方法首先拜访节点。在上图中：
+<code>8 -&gt; 4 -&gt; 2 -&gt; 1 -&gt; 3 -&gt; 6 -&gt; 5 -&gt; 7 -&gt;10 -&gt; 9 -&gt; 11</code></p>
+</li>
+<li>
+<p><strong>后序遍历</strong> 我们找到最小的叶子（最左边的叶子），然后处理同级节点，然后处理父节点，然后转到下一个
+子树，然后向上导航父节点。在上图中:<code>1 -&gt; 3 -&gt; 2 -&gt; 5 -&gt; 7 -&gt; 6 -&gt; 4 -&gt; 9 -&gt; 11 -&gt; 10 -&gt; 8</code></p>
+</li>
+</ul>
 <p>二叉搜索树由具有属性或属性的节点组成：</p>
 <ul>
 <li>key 整形</li>
@@ -188,7 +227,7 @@ rootNode 左侧和右侧的节点，可以从 rootNode 遍历二叉搜索树：<
 <span class="p">}</span>
 </code></pre></td></tr></table>
 </div>
-</div><h2 id="insertelement-插入元素方法">InsertElement 插入元素方法</h2>
+</div><h2 id="insert-方法">Insert 方法</h2>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code><span class="lnt"> 1
@@ -249,7 +288,7 @@ rootNode 左侧和右侧的节点，可以从 rootNode 遍历二叉搜索树：<
 <span class="p">}</span>
 
 <span class="c1">// 二叉搜索树的插入元素方法
-</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">bst</span> <span class="o">*</span><span class="nx">BinarySearchTree</span><span class="p">)</span> <span class="nf">InsertElement</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">bst</span> <span class="o">*</span><span class="nx">BinarySearchTree</span><span class="p">)</span> <span class="nf">Insert</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
 	<span class="nx">bst</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
 	<span class="k">defer</span> <span class="nx">bst</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
 	<span class="nx">treeNode</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">TreeNode</span><span class="p">{</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="kc">nil</span><span class="p">,</span> <span class="kc">nil</span><span class="p">}</span>
