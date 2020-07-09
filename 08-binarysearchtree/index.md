@@ -21,7 +21,9 @@
 
 接下来实现一个如下图的二叉搜索树并实现一些关于操作二叉搜索树的方法
 
-![Binarysearchtree-1](/img/datastructures/binarysearchtree-1.png)
+<center>
+<img src="/img/datastructures/binarysearchtree-1.png" width="70%" height="70%"/>
+</center>
 
 操作二叉树的一些常用方法:
 
