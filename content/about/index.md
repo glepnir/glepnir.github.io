@@ -17,7 +17,7 @@ author = "huan"
          ·
          <span>
              <img src="/assets/envelope-solid.svg" width="18px">
-             sawakitaeiji233@gmail.com
+             glepnir@gopherhub.org
          </span>
          ·
          <span>
