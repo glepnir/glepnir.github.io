@@ -52,7 +52,7 @@ type Node struct{
 
 ```GO
 type LinkedList struct{
-  // 链表的changdu
+  // 链表的长度
   len int
   // 单链表的首节点
   headNode *Node
