@@ -29,7 +29,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/blog.gopherhub.org\/08-binarysearchtree\/"
-        },"image": ["https:\/\/blog.gopherhub.org\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "数据结构","wordcount":  957 ,
+        },"image": ["https:\/\/blog.gopherhub.org\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "数据结构","wordcount":  2163 ,
         "url": "https:\/\/blog.gopherhub.org\/08-binarysearchtree\/","datePublished": "2020-07-07T23:38:02+08:00","dateModified": "2020-07-07T23:38:02+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
             "@type": "Organization",
             "name": "Raphael","logo": "https:\/\/blog.gopherhub.org\/img\/avatar.png"},"author": {
@@ -110,8 +110,8 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">Go 数据结构与算法-二叉搜索树(Binarysearchtree)</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="https://github.com/glepnir" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Raphael Huan</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/"><i class="far fa-folder fa-fw"></i>数据结构</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-07-07">2020-07-07</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 957 字&nbsp;
-                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 2 分钟&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-07-07">2020-07-07</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 2163 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 5 分钟&nbsp;
                 <i class="far fa-eye fa-fw"></i>
                   <span id="busuanzi_container_page_pv">
                     本文总阅读量<span id="busuanzi_value_page_pv"></span>次
@@ -127,6 +127,14 @@
     <li><a href="#binary-search-tree-二叉搜索树">Binary search tree 二叉搜索树</a></li>
     <li><a href="#实现">实现</a></li>
     <li><a href="#insert-方法">Insert 方法</a></li>
+    <li><a href="#inordertraversetree-中序遍历">InOrderTraverseTree 中序遍历</a></li>
+    <li><a href="#preordertraversetree-先序遍历">PreOrderTraverseTree 先序遍历</a></li>
+    <li><a href="#postordertraversetree-后序遍历">PostOrderTraverseTree 后序遍历</a></li>
+    <li><a href="#minnode-最小节点">MinNode 最小节点</a></li>
+    <li><a href="#maxnode-最大节点">MaxNode 最大节点</a></li>
+    <li><a href="#searchnode-搜索节点">SearchNode 搜索节点</a></li>
+    <li><a href="#removenode-删除节点">RemoveNode 删除节点</a></li>
+    <li><a href="#辅助方法">辅助方法</a></li>
   </ul>
 </nav></div>
             </div><div class="content" id="content"><h2 id="binary-search-tree-二叉搜索树">Binary search tree 二叉搜索树</h2>
@@ -142,6 +150,21 @@
 <center>
 <img src="/img/datastructures/binarysearchtree.png" />
 </center>
+<ul>
+<li>节点的度： 一个节点含有的子树的个数称为节点的度</li>
+<li>树的度 ： 一棵树中，最大的节点的度称为树的度</li>
+<li>叶节点或终端节点：度为零的节点</li>
+<li>非终端节点或分支节点： 度不为零的节点</li>
+<li>父亲节点或父节点： 若一个节点含有子节点，则这个节点称为其子节点的父节点</li>
+<li>孩子节点或子节点：一个节点含有的子树的根节点称为该节点的子节点</li>
+<li>兄弟节点： 具有相同父节点的节点互称为兄弟节点</li>
+<li>节点的层次： 从根节点开始，根为第一层，根的子节点为第二层，以此类推</li>
+<li>深度：对于任意节点 n， n 的深度为从根到 n 的唯一路径长，根的深度为 0</li>
+<li>高度： 对于任意节点 n，n 的高度为从 n 到一片树叶的最长路径厂，所有树叶的高度为 0</li>
+<li>堂兄弟节点：父节点在同一层的节点互称堂兄节点</li>
+<li>子孙： 以某节点为根的子树中任一节点都称为该节点的子孙</li>
+<li>森林：由 m（m&gt;0）颗互不相交的树的集合称为森林</li>
+</ul>
 <h2 id="实现">实现</h2>
 <p>接下来实现一个如下图的二叉搜索树并实现一些关于操作二叉搜索树的方法</p>
 <center>
@@ -291,6 +314,388 @@ rootNode 左侧和右侧的节点，可以从 rootNode 遍历二叉搜索树：<
 		<span class="nx">bst</span><span class="p">.</span><span class="nx">rootNode</span> <span class="p">=</span> <span class="nx">treeNode</span>
 	<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
 		<span class="nf">InsertTreeNode</span><span class="p">(</span><span class="nx">bst</span><span class="p">.</span><span class="nx">rootNode</span><span class="p">,</span> <span class="nx">treeNode</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="inordertraversetree-中序遍历">InOrderTraverseTree 中序遍历</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-GO" data-lang="GO"><span class="kd">func</span> <span class="nf">inOrderTraverseTree</span><span class="p">(</span><span class="nx">treeNode</span> <span class="o">*</span><span class="nx">TreeNode</span><span class="p">,</span> <span class="nx">f</span> <span class="kd">func</span><span class="p">(</span><span class="kt">int</span><span class="p">))</span> <span class="p">{</span>
+	<span class="k">if</span> <span class="nx">treeNode</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nf">inOrderTraverseTree</span><span class="p">(</span><span class="nx">treeNode</span><span class="p">.</span><span class="nx">leftNode</span><span class="p">,</span> <span class="nx">f</span><span class="p">)</span>
+		<span class="nf">f</span><span class="p">(</span><span class="nx">treeNode</span><span class="p">.</span><span class="nx">value</span><span class="p">)</span>
+		<span class="nf">inOrderTraverseTree</span><span class="p">(</span><span class="nx">treeNode</span><span class="p">.</span><span class="nx">rightNode</span><span class="p">,</span> <span class="nx">f</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 中序遍历 左子树-根节点-右子树
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">bst</span> <span class="o">*</span><span class="nx">BinarySearchTree</span><span class="p">)</span> <span class="nf">InOrderTraverseTree</span><span class="p">(</span><span class="nx">f</span> <span class="kd">func</span><span class="p">(</span><span class="kt">int</span><span class="p">))</span> <span class="p">{</span>
+	<span class="nx">bst</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+	<span class="k">defer</span> <span class="nx">bst</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+	<span class="nf">inOrderTraverseTree</span><span class="p">(</span><span class="nx">bst</span><span class="p">.</span><span class="nx">rootNode</span><span class="p">,</span> <span class="nx">f</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="preordertraversetree-先序遍历">PreOrderTraverseTree 先序遍历</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-GO" data-lang="GO"><span class="kd">func</span> <span class="nf">preOrderTraverseTree</span><span class="p">(</span><span class="nx">treeNode</span> <span class="o">*</span><span class="nx">TreeNode</span><span class="p">,</span> <span class="nx">f</span> <span class="kd">func</span><span class="p">(</span><span class="kt">int</span><span class="p">))</span> <span class="p">{</span>
+	<span class="k">if</span> <span class="nx">treeNode</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nf">f</span><span class="p">(</span><span class="nx">treeNode</span><span class="p">.</span><span class="nx">value</span><span class="p">)</span>
+		<span class="nf">preOrderTraverseTree</span><span class="p">(</span><span class="nx">treeNode</span><span class="p">.</span><span class="nx">leftNode</span><span class="p">,</span> <span class="nx">f</span><span class="p">)</span>
+		<span class="nf">preOrderTraverseTree</span><span class="p">(</span><span class="nx">treeNode</span><span class="p">.</span><span class="nx">rightNode</span><span class="p">,</span> <span class="nx">f</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 先序遍历：根节点 -&gt; 左子树 -&gt; 右子树
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">bst</span> <span class="o">*</span><span class="nx">BinarySearchTree</span><span class="p">)</span> <span class="nf">PreOrderTraverseTree</span><span class="p">(</span><span class="nx">f</span> <span class="kd">func</span><span class="p">(</span><span class="kt">int</span><span class="p">))</span> <span class="p">{</span>
+	<span class="nx">bst</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+	<span class="k">defer</span> <span class="nx">bst</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+	<span class="nf">preOrderTraverseTree</span><span class="p">(</span><span class="nx">bst</span><span class="p">.</span><span class="nx">rootNode</span><span class="p">,</span> <span class="nx">f</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="postordertraversetree-后序遍历">PostOrderTraverseTree 后序遍历</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-GO" data-lang="GO"><span class="kd">func</span> <span class="nf">postOrderTraverseTree</span><span class="p">(</span><span class="nx">treeNode</span> <span class="o">*</span><span class="nx">TreeNode</span><span class="p">,</span> <span class="nx">f</span> <span class="kd">func</span><span class="p">(</span><span class="kt">int</span><span class="p">))</span> <span class="p">{</span>
+	<span class="k">if</span> <span class="nx">treeNode</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nf">postOrderTraverseTree</span><span class="p">(</span><span class="nx">treeNode</span><span class="p">.</span><span class="nx">leftNode</span><span class="p">,</span> <span class="nx">f</span><span class="p">)</span>
+		<span class="nf">postOrderTraverseTree</span><span class="p">(</span><span class="nx">treeNode</span><span class="p">.</span><span class="nx">rightNode</span><span class="p">,</span> <span class="nx">f</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 后序遍历: 左子树-右子树-根节点
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">bst</span> <span class="o">*</span><span class="nx">BinarySearchTree</span><span class="p">)</span> <span class="nf">PostOrderTraverseTree</span><span class="p">(</span><span class="nx">treeNode</span> <span class="o">*</span><span class="nx">TreeNode</span><span class="p">,</span> <span class="nx">f</span> <span class="kd">func</span><span class="p">(</span><span class="kt">int</span><span class="p">))</span> <span class="p">{</span>
+	<span class="nx">bst</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+	<span class="k">defer</span> <span class="nx">bst</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+	<span class="nf">postOrderTraverseTree</span><span class="p">(</span><span class="nx">bst</span><span class="p">.</span><span class="nx">rootNode</span><span class="p">,</span> <span class="nx">f</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="minnode-最小节点">MinNode 最小节点</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-GO" data-lang="GO"><span class="c1">// 找到最小的节点
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">bst</span> <span class="o">*</span><span class="nx">BinarySearchTree</span><span class="p">)</span> <span class="nf">MinNode</span><span class="p">()</span> <span class="o">*</span><span class="kt">int</span> <span class="p">{</span>
+	<span class="nx">bst</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+	<span class="k">defer</span> <span class="nx">bst</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+	<span class="nx">treeNode</span> <span class="o">:=</span> <span class="nb">new</span><span class="p">(</span><span class="nx">TreeNode</span><span class="p">)</span>
+	<span class="nx">treeNode</span> <span class="p">=</span> <span class="nx">bst</span><span class="p">.</span><span class="nx">rootNode</span>
+	<span class="k">if</span> <span class="nx">treeNode</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="p">(</span><span class="o">*</span><span class="kt">int</span><span class="p">)(</span><span class="kc">nil</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="k">for</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="nx">treeNode</span><span class="p">.</span><span class="nx">leftNode</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="k">return</span> <span class="o">&amp;</span><span class="nx">treeNode</span><span class="p">.</span><span class="nx">value</span>
+		<span class="p">}</span>
+		<span class="nx">treeNode</span> <span class="p">=</span> <span class="nx">treeNode</span><span class="p">.</span><span class="nx">leftNode</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="maxnode-最大节点">MaxNode 最大节点</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-GO" data-lang="GO"><span class="c1">// 找到最大的节点
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">bst</span> <span class="o">*</span><span class="nx">BinarySearchTree</span><span class="p">)</span> <span class="nf">MaxNode</span><span class="p">()</span> <span class="o">*</span><span class="kt">int</span> <span class="p">{</span>
+	<span class="nx">bst</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+	<span class="k">defer</span> <span class="nx">bst</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+	<span class="nx">treeNode</span> <span class="o">:=</span> <span class="nb">new</span><span class="p">(</span><span class="nx">TreeNode</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">treeNode</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="p">(</span><span class="o">*</span><span class="kt">int</span><span class="p">)(</span><span class="kc">nil</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="k">for</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="nx">treeNode</span><span class="p">.</span><span class="nx">rightNode</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="k">return</span> <span class="o">&amp;</span><span class="nx">treeNode</span><span class="p">.</span><span class="nx">value</span>
+		<span class="p">}</span>
+		<span class="nx">treeNode</span> <span class="p">=</span> <span class="nx">treeNode</span><span class="p">.</span><span class="nx">rightNode</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="searchnode-搜索节点">SearchNode 搜索节点</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-GO" data-lang="GO"><span class="kd">func</span> <span class="nf">searchNode</span><span class="p">(</span><span class="nx">treeNode</span> <span class="o">*</span><span class="nx">TreeNode</span><span class="p">,</span> <span class="nx">key</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+	<span class="k">if</span> <span class="nx">treeNode</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="kc">false</span>
+	<span class="p">}</span>
+	<span class="k">if</span> <span class="nx">key</span> <span class="p">&lt;</span> <span class="nx">treeNode</span><span class="p">.</span><span class="nx">key</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nf">searchNode</span><span class="p">(</span><span class="nx">treeNode</span><span class="p">.</span><span class="nx">leftNode</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="k">if</span> <span class="nx">key</span> <span class="p">&gt;</span> <span class="nx">treeNode</span><span class="p">.</span><span class="nx">key</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nf">searchNode</span><span class="p">(</span><span class="nx">treeNode</span><span class="p">.</span><span class="nx">rightNode</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="kc">true</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">bst</span> <span class="o">*</span><span class="nx">BinarySearchTree</span><span class="p">)</span> <span class="nf">SearchNode</span><span class="p">(</span><span class="nx">key</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+	<span class="nx">bst</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+	<span class="k">defer</span> <span class="nx">bst</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+	<span class="k">return</span> <span class="nf">searchNode</span><span class="p">(</span><span class="nx">bst</span><span class="p">.</span><span class="nx">rootNode</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="removenode-删除节点">RemoveNode 删除节点</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-GO" data-lang="GO"><span class="kd">func</span> <span class="nf">removeNode</span><span class="p">(</span><span class="nx">treeNode</span> <span class="o">*</span><span class="nx">TreeNode</span><span class="p">,</span> <span class="nx">key</span> <span class="kt">int</span><span class="p">)</span> <span class="o">*</span><span class="nx">TreeNode</span> <span class="p">{</span>
+	<span class="c1">// 当要删除的节点不存在时
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">treeNode</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="kc">nil</span>
+	<span class="p">}</span>
+	<span class="c1">// 要删除的节点在左侧时
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">key</span> <span class="p">&lt;</span> <span class="nx">treeNode</span><span class="p">.</span><span class="nx">key</span> <span class="p">{</span>
+		<span class="nx">treeNode</span><span class="p">.</span><span class="nx">leftNode</span> <span class="p">=</span> <span class="nf">removeNode</span><span class="p">(</span><span class="nx">treeNode</span><span class="p">.</span><span class="nx">leftNode</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span>
+		<span class="k">return</span> <span class="nx">treeNode</span>
+	<span class="p">}</span>
+	<span class="c1">// 要删除的节点在右侧的时候
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">key</span> <span class="p">&gt;</span> <span class="nx">treeNode</span><span class="p">.</span><span class="nx">key</span> <span class="p">{</span>
+		<span class="nx">treeNode</span><span class="p">.</span><span class="nx">rightNode</span> <span class="p">=</span> <span class="nf">removeNode</span><span class="p">(</span><span class="nx">treeNode</span><span class="p">.</span><span class="nx">rightNode</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span>
+		<span class="k">return</span> <span class="nx">treeNode</span>
+	<span class="p">}</span>
+	<span class="c1">// 判断节点类型 如果是叶子节点直接删除
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">treeNode</span><span class="p">.</span><span class="nx">leftNode</span> <span class="o">==</span> <span class="kc">nil</span> <span class="o">&amp;&amp;</span> <span class="nx">treeNode</span><span class="p">.</span><span class="nx">rightNode</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">treeNode</span> <span class="p">=</span> <span class="kc">nil</span>
+		<span class="k">return</span> <span class="kc">nil</span>
+	<span class="p">}</span>
+	<span class="c1">// 当要删除的节点只有右侧节点
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">treeNode</span><span class="p">.</span><span class="nx">leftNode</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">treeNode</span> <span class="p">=</span> <span class="nx">treeNode</span><span class="p">.</span><span class="nx">rightNode</span>
+		<span class="k">return</span> <span class="nx">treeNode</span>
+	<span class="p">}</span>
+	<span class="c1">// 当要删除的节点只有左侧节点
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">treeNode</span><span class="p">.</span><span class="nx">rightNode</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">treeNode</span> <span class="p">=</span> <span class="nx">treeNode</span><span class="p">.</span><span class="nx">leftNode</span>
+		<span class="k">return</span> <span class="nx">treeNode</span>
+	<span class="p">}</span>
+	<span class="c1">// 要删除的节点有 2 个子节点，找到右子树的最左节点，替换当前节点
+</span><span class="c1"></span>	<span class="nx">leftmostrightNode</span> <span class="o">:=</span> <span class="nb">new</span><span class="p">(</span><span class="nx">TreeNode</span><span class="p">)</span>
+	<span class="k">for</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="nx">leftmostrightNode</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="o">&amp;&amp;</span> <span class="nx">leftmostrightNode</span><span class="p">.</span><span class="nx">leftNode</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="nx">leftmostrightNode</span> <span class="p">=</span> <span class="nx">leftmostrightNode</span><span class="p">.</span><span class="nx">leftNode</span>
+		<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+			<span class="k">break</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+	<span class="c1">// 使用右子树的最左节点替换当前节点，即删除当前节点
+</span><span class="c1"></span>	<span class="nx">treeNode</span><span class="p">.</span><span class="nx">key</span><span class="p">,</span> <span class="nx">treeNode</span><span class="p">.</span><span class="nx">value</span> <span class="p">=</span> <span class="nx">leftmostrightNode</span><span class="p">.</span><span class="nx">key</span><span class="p">,</span> <span class="nx">leftmostrightNode</span><span class="p">.</span><span class="nx">value</span>
+	<span class="nx">treeNode</span><span class="p">.</span><span class="nx">rightNode</span> <span class="p">=</span> <span class="nf">removeNode</span><span class="p">(</span><span class="nx">treeNode</span><span class="p">.</span><span class="nx">rightNode</span><span class="p">,</span> <span class="nx">treeNode</span><span class="p">.</span><span class="nx">key</span><span class="p">)</span>
+	<span class="k">return</span> <span class="nx">treeNode</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">bst</span> <span class="o">*</span><span class="nx">BinarySearchTree</span><span class="p">)</span> <span class="nf">RemoveNode</span><span class="p">(</span><span class="nx">key</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">bst</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+	<span class="k">defer</span> <span class="nx">bst</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+	<span class="nf">removeNode</span><span class="p">(</span><span class="nx">bst</span><span class="p">.</span><span class="nx">rootNode</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="辅助方法">辅助方法</h2>
+<ul>
+<li>为了能在终端上更直观的打印整个二叉树定义 2 个方法，这里的 String 方法并不需要要显示的调用。当我们</li>
+<li>使用 fmt.Println 之类的方法的时候会自动调用这个 String 方法</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-GO" data-lang="GO"><span class="kd">func</span> <span class="p">(</span><span class="nx">bst</span> <span class="o">*</span><span class="nx">BinarySearchTree</span><span class="p">)</span> <span class="nf">String</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">bst</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+	<span class="k">defer</span> <span class="nx">bst</span><span class="p">.</span><span class="nx">lock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;------------------------------------------------&#34;</span><span class="p">)</span>
+	<span class="nf">stringify</span><span class="p">(</span><span class="nx">bst</span><span class="p">.</span><span class="nx">rootNode</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;------------------------------------------------&#34;</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">stringify</span><span class="p">(</span><span class="nx">treeNode</span> <span class="o">*</span><span class="nx">TreeNode</span><span class="p">,</span> <span class="nx">level</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">if</span> <span class="nx">treeNode</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">format</span> <span class="o">:=</span> <span class="s">&#34;&#34;</span>
+		<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">level</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+			<span class="nx">format</span> <span class="o">+=</span> <span class="s">&#34; &#34;</span>
+		<span class="p">}</span>
+		<span class="nx">format</span> <span class="o">+=</span> <span class="s">&#34;---[ &#34;</span>
+		<span class="nx">level</span><span class="o">++</span>
+		<span class="nf">stringify</span><span class="p">(</span><span class="nx">treeNode</span><span class="p">.</span><span class="nx">leftNode</span><span class="p">,</span> <span class="nx">level</span><span class="p">)</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="nx">format</span><span class="o">+</span><span class="s">&#34;%d\n&#34;</span><span class="p">,</span> <span class="nx">treeNode</span><span class="p">.</span><span class="nx">key</span><span class="p">)</span>
+		<span class="nf">stringify</span><span class="p">(</span><span class="nx">treeNode</span><span class="p">.</span><span class="nx">rightNode</span><span class="p">,</span> <span class="nx">level</span><span class="p">)</span>
 	<span class="p">}</span>
 <span class="p">}</span>
 </code></pre></td></tr></table>
