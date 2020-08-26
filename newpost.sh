@@ -1,7 +1,7 @@
 #!usr/bin/env bash
 
 PS1='Choose directory: '
-options=("datastructs" "go" "vim")
+options=("datastructs" "go" "vim" "docker")
 select opt in "${options[@]}"
 do
     case $opt in
@@ -17,12 +17,16 @@ do
             post_diretory=$opt
             break
             ;;
+        "docker")
+            post_diretory=$opt
+            break
+            ;;
     esac
 done
 
 read -p "POST NAME: " post_name
 read -p "POST Description: " post_description
-read -p "POST categories: " post_categories
+read -p "POST Categories: " post_categories
 read -p "POST Tags: " post_tags
 file=$HOME/blog/content/posts/$post_diretory/$post_name.md
 
