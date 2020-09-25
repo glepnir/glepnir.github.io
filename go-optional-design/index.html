@@ -5,36 +5,37 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="robots" content="noodp" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
-        <title>Contact - Raphael Blog</title><meta name="Description" content="Raphael的个人blog,专注Golang Vim Rust Typescript React Dart Flutter Mysql Redis Nosql"><meta property="og:title" content="Contact" />
-<meta property="og:description" content="" />
+        <title>选项模式 - Raphael Blog</title><meta name="Description" content="选项模式"><meta property="og:title" content="选项模式" />
+<meta property="og:description" content="选项模式" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://blog.gopherhub.org/contact/" />
-<meta property="og:image" content="https://blog.gopherhub.org/logo.png"/>
-
+<meta property="og:url" content="https://blog.gopherhub.org/go-optional-design/" />
+<meta property="og:image" content="https://blog.gopherhub.org" />
+<meta property="article:published_time" content="2020-09-25T20:08:08+08:00" />
+<meta property="article:modified_time" content="2020-09-25T20:08:08+08:00" />
 <meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:image" content="https://blog.gopherhub.org/logo.png"/>
+<meta name="twitter:image" content="https://blog.gopherhub.org"/>
 
-<meta name="twitter:title" content="Contact"/>
-<meta name="twitter:description" content=""/>
+<meta name="twitter:title" content="选项模式"/>
+<meta name="twitter:description" content="选项模式"/>
 <meta name="application-name" content="Raphael的次元壁">
 <meta name="apple-mobile-web-app-title" content="Raphael的次元壁"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://blog.gopherhub.org/contact/" /><link rel="next" href="https://blog.gopherhub.org/about/" /><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css"><script type="application/ld+json">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://blog.gopherhub.org/go-optional-design/" /><link rel="prev" href="https://blog.gopherhub.org/docker/" /><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css"><script type="application/ld+json">
     {
         "@context": "http://schema.org",
         "@type": "BlogPosting",
-        "headline": "Contact",
+        "headline": "选项模式",
         "inLanguage": "zh-CN",
         "mainEntityOfPage": {
             "@type": "WebPage",
-            "@id": "https:\/\/blog.gopherhub.org\/contact\/"
-        },"image": ["https:\/\/blog.gopherhub.org\/images\/Apple-Devices-Preview.png"],"genre": "page","wordcount":  0 ,
-        "url": "https:\/\/blog.gopherhub.org\/contact\/","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+            "@id": "https:\/\/blog.gopherhub.org\/go-optional-design\/"
+        },"image": ["https:\/\/blog.gopherhub.org\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "Go","wordcount":  4 ,
+        "url": "https:\/\/blog.gopherhub.org\/go-optional-design\/","datePublished": "2020-09-25T20:08:08+08:00","dateModified": "2020-09-25T20:08:08+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
             "@type": "Organization",
             "name": "Raphael","logo": "https:\/\/blog.gopherhub.org\/img\/avatar.png"},"author": {
                 "@type": "Person",
-                "name": "Raphael"
-            },"description": ""
+                "name": "Raphael Huan"
+            },"description": "选项模式"
     }
     </script></head>
     <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('dark' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'dark' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
@@ -46,7 +47,7 @@
         </div>
         <div class="menu">
             <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/sponsors/"> 赞赏 </a><a class="menu-item" href="/about/"> 关于 </a><a class="menu-item" href="https://github.com/glepnir" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item language" title="选择语言">简体中文<i class="fas fa-chevron-right fa-fw"></i>
-                        <select class="language-select" id="language-select-desktop" onchange="location = this.value;"><option value="/contact/" selected>简体中文</option></select>
+                        <select class="language-select" id="language-select-desktop" onchange="location = this.value;"><option value="/go-optional-design/" selected>简体中文</option></select>
                     </a><span class="menu-item search" id="search-desktop">
                         <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
                         <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
@@ -93,7 +94,7 @@
                 </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/sponsors/" title="">赞赏</a><a class="menu-item" href="/about/" title="">关于</a><a class="menu-item" href="https://github.com/glepnir" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
                 <i class="fas fa-adjust fa-fw"></i>
             </a><a href="javascript:void(0);" class="menu-item" title="选择语言">简体中文<i class="fas fa-chevron-right fa-fw"></i>
-                    <select class="language-select" onchange="location = this.value;"><option value="/contact/" selected>简体中文</option></select>
+                    <select class="language-select" onchange="location = this.value;"><option value="/go-optional-design/" selected>简体中文</option></select>
                 </a></div>
     </div>
 </header>
@@ -104,9 +105,115 @@
     <div id="search-dropdown-mobile"></div>
 </div>
 <main class="main">
-                <div class="container"><div class="page single special"><h1 class="single-title animated pulse faster">Contact</h1><div class="content" id="content"></div><div id="comments"><div id="utterances"></div><noscript>
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">目录</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">选项模式</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="https://github.com/glepnir" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Raphael Huan</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/go/"><i class="far fa-folder fa-fw"></i>Go</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-09-25">2020-09-25</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 4 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 1 分钟&nbsp;
+                <i class="far fa-eye fa-fw"></i>
+                  <span id="busuanzi_container_page_pv">
+                    本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+                  </span>
+                </i></div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>目录</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#选项模式">选项模式</a></li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h2 id="选项模式">选项模式</h2>
+</div><div style="padding: 10px 0; margin: 20px auto; width: 100%; font-size:16px; text-align: center;">
+  <span>如果您喜欢这篇文章或者对您有帮助欢迎打赏😘</span></br>
+    <span>需要gopherhub.org域名邮箱请留言联系我😼</span>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+        <span>打赏</span></button>
+    <div id="QR" style="display: none;">
+        <div id="wechat" style="display: inline-block">
+            <a class="fancybox" rel="group">
+                <img id="wechat_qr" src="/img/donate/wechat.png" alt="WeChat Pay"></a>
+            <p>微信打赏</p>
+        </div>
+        <div id="alipay" style="display: inline-block">
+            <a class="fancybox" rel="group">
+                <img id="alipay_qr" src="/img/donate/alipay.png" alt="Alipay"></a>
+            <p>支付宝打赏</p>
+        </div>
+    </div>
+</div>
+<style type="text/css">
+.post-copyright {
+    border-top: 1px solid #e8e8e8;
+    border-bottom: 1px solid #e8e8e8;
+    padding: 0.5em 1em;
+    border-left: 2px solid #ff1700;
+    background-color: #f9f9f9;
+	line-height:1.6;
+}
+.post-copyright strong {
+	font-weight: 600;
+}
+.post-copyright li {
+	list-style: none;
+}
+.post-copyright a {
+	color: #2d96bd;
+}
+</style>
+<ul class="post-copyright">
+	<li class="post-copyright-author">
+		<strong>文章作者：</strong>Raphael Huan
+	</li>
+	<li class="post-copyright-link">
+    <strong>文章链接：</strong><a href="https://blog.gopherhub.org/go-optional-design/">https://blog.gopherhub.org/go-optional-design/</a>
+	</li>
+	<li class="post-copyright-license">
+		<strong>版权声明：</strong>本站所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="CC BY-NC-ND 4.0">CC BY-NC-ND 4.0</a> 转载请注明来自 <a href="https://blog.gopherhub.org/" target="_blank">Raphael Huan</a>
+	</li>
+</ul>
+<div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>更新于 2020-09-25</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/go-optional-design/index.md" target="_blank">阅读原始文档</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span>
+                    
+                     
+                    <link rel="stylesheet" href="/css/share.min.css" />
+<script src="/js/social-share.min.js"></script>
+
+<div class="social-share" data-sites="wechat,qq,weibo,twitter,facebook,douban" >分享到:</div>
+
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/go/">Go</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/docker/" class="prev" rel="prev" title="Docker入门"><i class="fas fa-angle-left fa-fw"></i>Docker入门</a></div>
+</div>
+<div id="comments"><div id="utterances"></div><noscript>
                 Please enable JavaScript to view the comments powered by <a href="https://utteranc.es/">Utterances</a>.
-            </noscript></div></div></div>
+            </noscript></div></article></div>
             </main><footer class="footer">
         <div class="footer-container"><i class="fas fa-eye fa-fw"></i>
             <span id="busuanzi_container_site_pv">
