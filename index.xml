@@ -4,9 +4,16 @@
         <link>https://blog.gopherhub.org/</link>
         <description>Raphael的个人blog,专注Golang Vim Rust Typescript React Dart Flutter Mysql Redis Nosql</description>
         <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>sawakitaeiji233@gmail.com (Raphael)</managingEditor>
-            <webMaster>sawakitaeiji233@gmail.com (Raphael)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Tue, 25 Aug 2020 22:06:20 &#43;0800</lastBuildDate>
+            <webMaster>sawakitaeiji233@gmail.com (Raphael)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Tue, 27 Oct 2020 19:37:04 &#43;0800</lastBuildDate>
             <atom:link href="https://blog.gopherhub.org/index.xml" rel="self" type="application/rss+xml" />
         <item>
+    <title>使用装饰器模式封装Json的响应</title>
+    <link>https://blog.gopherhub.org/go-decorator-json/</link>
+    <pubDate>Tue, 27 Oct 2020 19:37:04 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>https://blog.gopherhub.org/go-decorator-json/</guid>
+    <description><![CDATA[常见的处理Http Json的响应输出 日常开发处理业务的时候这一步是必不可少的,判断处理各种情况然后返回给前端，有时候需要写不少重复的代码 例如]]></description>
+</item><item>
     <title>Docker入门</title>
     <link>https://blog.gopherhub.org/docker/</link>
     <pubDate>Tue, 25 Aug 2020 22:06:20 &#43;0800</pubDate>
@@ -71,12 +78,5 @@
     <description><![CDATA[<h2 id="intro">Intro</h2>
 <p>For the longest time I have wanted to see an easy to understand example (read newbie) of how to add data to the “new” golang 1.7 request context object. Since I wasted more than 2 days looking for something like that and never really found anything I decided to figure it out from the docs and write something up for others like me that wanted something simple. The example below is trivial and does not put anything useful in the context it’s just there to get your own juices flowing.</p>
 <p>Let’s start with the main function that will really only create the router and the routes.</p>]]></description>
-</item><item>
-    <title>Go 数据结构与算法-单链表</title>
-    <link>https://blog.gopherhub.org/01-singlylinkedlist-go/</link>
-    <pubDate>Tue, 23 Jun 2020 00:00:00 &#43;0000</pubDate>
-    <author>作者</author>
-    <guid>https://blog.gopherhub.org/01-singlylinkedlist-go/</guid>
-    <description><![CDATA[链表 链表是用于存储项目列表的有序元素的集合，链式存储的线性表。 与数组不同，链表可以动态扩展和收缩。链表 还可以用作其他数据结构（例如堆栈和队列]]></description>
 </item></channel>
 </rss>

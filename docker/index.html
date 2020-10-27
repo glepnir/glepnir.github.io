@@ -20,7 +20,7 @@
 <meta name="application-name" content="Raphael的次元壁">
 <meta name="apple-mobile-web-app-title" content="Raphael的次元壁"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://blog.gopherhub.org/docker/" /><link rel="prev" href="https://blog.gopherhub.org/08-binarysearchtree/" /><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css"><script type="application/ld+json">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://blog.gopherhub.org/docker/" /><link rel="prev" href="https://blog.gopherhub.org/08-binarysearchtree/" /><link rel="next" href="https://blog.gopherhub.org/go-decorator-json/" /><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css"><script type="application/ld+json">
     {
         "@context": "http://schema.org",
         "@type": "BlogPosting",
@@ -908,16 +908,16 @@ docker-compose -v
 <pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;3.1&#39;</span><span class="w">
 </span><span class="w"></span><span class="nt">services</span><span class="p">:</span><span class="w">
 </span><span class="w">  </span><span class="nt">mysql</span><span class="p">:</span><span class="w">           </span><span class="c"># 服务的名称</span><span class="w">
-</span><span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l">always   # 代表只要docker启动，那么这个容器就跟着一起启动</span><span class="w">
-</span><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">daocloud.io/library/mysql:5.7.4  # 指定镜像路径</span><span class="w">
-</span><span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l">mysql  # 指定容器名称 docker ps 看到的名称</span><span class="w">
+</span><span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l">always  </span><span class="w"> </span><span class="c"># 代表只要docker启动，那么这个容器就跟着一起启动</span><span class="w">
+</span><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">daocloud.io/library/mysql:5.7.4 </span><span class="w"> </span><span class="c"># 指定镜像路径</span><span class="w">
+</span><span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l">mysql </span><span class="w"> </span><span class="c"># 指定容器名称 docker ps 看到的名称</span><span class="w">
 </span><span class="w">    </span><span class="nt">ports</span><span class="p">:</span><span class="w">
 </span><span class="w">      </span>- <span class="m">3309</span><span class="p">:</span><span class="m">3306</span><span class="w">   </span><span class="c">#  指定端口号的映射</span><span class="w">
 </span><span class="w">    </span><span class="nt">environment</span><span class="p">:</span><span class="w">
-</span><span class="w">      </span><span class="nt">MYSQL_ROOT_PASSWORD</span><span class="p">:</span><span class="w"> </span><span class="l">root   # 指定MySQL的ROOT用户登录密码</span><span class="w">
-</span><span class="w">      </span><span class="nt">TZ</span><span class="p">:</span><span class="w"> </span><span class="l">Asia/Shanghai        # 指定时区</span><span class="w">
+</span><span class="w">      </span><span class="nt">MYSQL_ROOT_PASSWORD</span><span class="p">:</span><span class="w"> </span><span class="l">root  </span><span class="w"> </span><span class="c"># 指定MySQL的ROOT用户登录密码</span><span class="w">
+</span><span class="w">      </span><span class="nt">TZ</span><span class="p">:</span><span class="w"> </span><span class="l">Asia/Shanghai       </span><span class="w"> </span><span class="c"># 指定时区</span><span class="w">
 </span><span class="w">    </span><span class="nt">volumes</span><span class="p">:</span><span class="w">
-</span><span class="w">     </span>- <span class="l">~/docker_mysql/mysql_data:/var/lib/mysql   # 映射数据卷</span><span class="w">
+</span><span class="w">     </span>- <span class="l">~/docker_mysql/mysql_data:/var/lib/mysql  </span><span class="w"> </span><span class="c"># 映射数据卷</span><span class="w">
 </span><span class="w">  </span><span class="nt">go</span><span class="p">:</span><span class="w">
 </span><span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l">always</span><span class="w">
 </span><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">go:1.14.7</span><span class="w">
@@ -994,9 +994,9 @@ docker-compose logs -f
 </span><span class="w">  </span><span class="nt">ssm</span><span class="p">:</span><span class="w">
 </span><span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l">always</span><span class="w">
 </span><span class="w">    </span><span class="nt">build</span><span class="p">:</span><span class="w">            </span><span class="c"># 构建自定义镜像</span><span class="w">
-</span><span class="w">      </span><span class="nt">context</span><span class="p">:</span><span class="w"> </span><span class="l">../      # 指定dockerfile文件的所在路径</span><span class="w">
-</span><span class="w">      </span><span class="nt">dockerfile</span><span class="p">:</span><span class="w"> </span><span class="l">Dockerfile   # 指定Dockerfile文件名称</span><span class="w">
-</span><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">your_image_name:1.0.1 #指定你镜像的名称和版本</span><span class="w">
+</span><span class="w">      </span><span class="nt">context</span><span class="p">:</span><span class="w"> </span><span class="l">../     </span><span class="w"> </span><span class="c"># 指定dockerfile文件的所在路径</span><span class="w">
+</span><span class="w">      </span><span class="nt">dockerfile</span><span class="p">:</span><span class="w"> </span><span class="l">Dockerfile  </span><span class="w"> </span><span class="c"># 指定Dockerfile文件名称</span><span class="w">
+</span><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">your_image_name:1.0.1</span><span class="w"> </span><span class="c">#指定你镜像的名称和版本</span><span class="w">
 </span><span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l">容器名称</span><span class="w">
 </span><span class="w">    </span><span class="nt">ports</span><span class="p">:</span><span class="w">
 </span><span class="w">      </span>- <span class="m">8081</span><span class="p">:</span><span class="m">8080</span><span class="w">
@@ -1106,7 +1106,8 @@ docker-compose up -d --build
         </section>
     </div>
 
-    <div class="post-nav"><a href="/08-binarysearchtree/" class="prev" rel="prev" title="Go 数据结构与算法-二叉搜索树(Binarysearchtree)"><i class="fas fa-angle-left fa-fw"></i>Go 数据结构与算法-二叉搜索树(Binarysearchtree)</a></div>
+    <div class="post-nav"><a href="/08-binarysearchtree/" class="prev" rel="prev" title="Go 数据结构与算法-二叉搜索树(Binarysearchtree)"><i class="fas fa-angle-left fa-fw"></i>Go 数据结构与算法-二叉搜索树(Binarysearchtree)</a>
+            <a href="/go-decorator-json/" class="next" rel="next" title="使用装饰器模式封装Json的响应">使用装饰器模式封装Json的响应<i class="fas fa-angle-right fa-fw"></i></a></div>
 </div>
 <div id="comments"><div id="utterances"></div><noscript>
                 Please enable JavaScript to view the comments powered by <a href="https://utteranc.es/">Utterances</a>.
