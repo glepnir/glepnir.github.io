@@ -1,5 +1,5 @@
 +++
-title = "使用装饰器模式封装Json的响应"
+title = "Go-使用装饰器模式封装Json的响应"
 author = "Raphael Huan"
 date = "2020-10-27T19:37:04+08:00"
 description = "使用装饰器模式封装Json的响应"
