@@ -17,6 +17,7 @@
                     /></url><url>
             <loc>https://blog.gopherhub.org/tags/go/</loc><lastmod>2020-10-27T19:37:04&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
             <loc>https://blog.gopherhub.org/categories/go/</loc><lastmod>2020-10-27T19:37:04&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
+            <loc>https://blog.gopherhub.org/go-decorator-json/</loc><lastmod>2020-10-27T19:37:04&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
             <loc>https://blog.gopherhub.org/posts/</loc><lastmod>2020-10-27T19:37:04&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
             <loc>https://blog.gopherhub.org/</loc><lastmod>2020-10-27T19:37:04&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority><xhtml:link
                         rel="alternate"
@@ -44,7 +45,6 @@
                     hreflang="zh-cn"
                     href="https://blog.gopherhub.org/tags/"
                     /></url><url>
-            <loc>https://blog.gopherhub.org/go-decorator-json/</loc><lastmod>2020-10-27T19:37:04&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
             <loc>https://blog.gopherhub.org/tags/docker/</loc><lastmod>2020-08-25T22:06:20&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
             <loc>https://blog.gopherhub.org/categories/docker/</loc><lastmod>2020-08-25T22:06:20&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
             <loc>https://blog.gopherhub.org/docker/</loc><lastmod>2020-08-25T22:06:20&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
