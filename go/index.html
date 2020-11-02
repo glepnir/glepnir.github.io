@@ -29,7 +29,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/blog.gopherhub.org\/go\/"
-        },"image": ["https:\/\/blog.gopherhub.org\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "Go","wordcount":  15029 ,
+        },"image": ["https:\/\/blog.gopherhub.org\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "Go","wordcount":  14964 ,
         "url": "https:\/\/blog.gopherhub.org\/go\/","datePublished": "2020-11-02T21:46:17+08:00","dateModified": "2020-11-02T21:46:17+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
             "@type": "Organization",
             "name": "Raphael","logo": "https:\/\/blog.gopherhub.org\/img\/avatar.png"},"author": {
@@ -110,7 +110,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">Uber Go语言编码规范</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="https://github.com/glepnir" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Raphael Huan</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/go/"><i class="far fa-folder fa-fw"></i>Go</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-02">2020-11-02</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 15029 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-02">2020-11-02</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 14964 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 30 分钟&nbsp;
                 <i class="far fa-eye fa-fw"></i>
                   <span id="busuanzi_container_page_pv">
@@ -213,97 +213,7 @@
     <li><a href="#stargazers-over-time">Stargazers over time</a></li>
   </ul>
 </nav></div>
-            </div><div class="content" id="content"><!--
-
-Editing this document:
-
-- Discuss all changes in GitHub issues first.
-- Update the table of contents as new sections are added or removed.
-- Use tables for side-by-side code samples. See below.
-
-Code Samples:
-
-Use 2 spaces to indent. Horizontal real estate is important in side-by-side
-samples.
-
-For side-by-side code samples, use the following snippet.
-
-~~~
-<table>
-<thead><tr><th>Bad</th><th>Good</th></tr></thead>
-<tbody>
-<tr><td>
-
-```go
-BAD CODE GOES HERE
-```
-
-</td><td>
-
-```go
-GOOD CODE GOES HERE
-```
-
-</td></tr>
-</tbody></table>
-~~~
-
-(You need the empty lines between the <td> and code samples for it to be
-treated as Markdown.)
-
-If you need to add labels or descriptions below the code samples, add another
-row before the </tbody></table> line.
-
-~~~
-<tr>
-<td>DESCRIBE BAD CODE</td>
-<td>DESCRIBE GOOD CODE</td>
-</tr>
-~~~
-
-
-
--->
-<!--
-change.md
-
-# 2019-12-17
-- 函数选项：推荐 “Option” 接口的结构实现
-- 而不是用闭包捕获值。
-
-# 2019-11-26
-- 添加针对全局变量变异的指导。
-
-# 2020-01-11
-- 为`open（..）`调用添加缺少的参数。
-
-# 2020-02-03
-- 使用 `"time"` 处理时间的建议
-- 添加有关在公共结构中嵌入类型的指导。
-
-# 2020-02-25
-- 添加有关接口验证是否符合编译时检查的指导。
-
-# 2020-06-05
-- 添加避免使用内置名称的指导意见
-
-# 2020-06-10
-- 添加 init() 指导意见
-
-# 2020-06-16
-- 追加时优先指定切片容量
-- 添加有关指针接收器可调用性的说明
-
-# 2020-06-17
-- map和切片的联合指导
-
-# 2020-09-15
-- Remove main panic
--->
-<h1 id="uber-goguidehttpsgithubcomuber-goguide-的中文翻译"><a href="https://github.com/uber-go/guide" target="_blank" rel="noopener noreffer">uber-go/guide</a> 的中文翻译</h1>
-<h1 id="englishhttpsgithubcomuber-goguideblobmasterstylemd"><a href="https://github.com/uber-go/guide/blob/master/style.md" target="_blank" rel="noopener noreffer">English</a></h1>
-<h1 id="转载--原repohttpsgithubcomxxjwxcuber_go_guide_cnblobmasterreadmemd">转载&ndash;<a href="https://github.com/xxjwxc/uber_go_guide_cn/blob/master/README.md" target="_blank" rel="noopener noreffer">原repo</a></h1>
-<h1 id="uber-go-语言编码规范">Uber Go 语言编码规范</h1>
+            </div><div class="content" id="content"><h1 id="uber-go-语言编码规范">Uber Go 语言编码规范</h1>
 <p><a href="https://www.uber.com/" target="_blank" rel="noopener noreffer">Uber</a> 是一家美国硅谷的科技公司，也是 Go 语言的早期 adopter。其开源了很多 golang 项目，诸如被 Gopher 圈熟知的 <a href="https://github.com/uber-go/zap" target="_blank" rel="noopener noreffer">zap</a>、<a href="https://github.com/jaegertracing/jaeger" target="_blank" rel="noopener noreffer">jaeger</a> 等。2018 年年末 Uber 将内部的 <a href="https://github.com/uber-go/guide" target="_blank" rel="noopener noreffer">Go 风格规范</a> 开源到 GitHub，经过一年的积累和更新，该规范已经初具规模，并受到广大 Gopher 的关注。本文是该规范的中文版本。本版本会根据原版实时更新。</p>
 <h2 id="版本">版本</h2>
 <ul>
@@ -4691,6 +4601,7 @@ use one vs other -->
         data-sizes="auto"
         alt="https://starchart.cc/xxjwxc/uber_go_guide_cn.svg"
         title="Stargazers over time" /></a></p>
+<h1 id="转载--原repohttpsgithubcomxxjwxcuber_go_guide_cnblobmasterreadmemd">转载&ndash;<a href="https://github.com/xxjwxc/uber_go_guide_cn/blob/master/README.md" target="_blank" rel="noopener noreffer">原repo</a></h1>
 </div><div style="padding: 10px 0; margin: 20px auto; width: 100%; font-size:16px; text-align: center;">
   <span>如果您喜欢这篇文章或者对您有帮助欢迎打赏😘</span></br>
     <span>需要gopherhub.org域名邮箱请留言联系我😼</span>

@@ -10,7 +10,7 @@
     <pubDate>Mon, 02 Nov 2020 21:46:17 &#43;0800</pubDate>
     <author>作者</author>
     <guid>https://blog.gopherhub.org/go/</guid>
-    <description><![CDATA[BadGood ```go BAD CODE GOES HERE ``` ```go GOOD CODE GOES HERE ``` ~~~ (You need the empty lines between the and code samples for it to be treated as Markdown.) If you need to add labels or descriptions below the code samples, add another row before the line. ~~~ DESCRIBE BAD CODE DESCRIBE GOOD CODE ~~~ -- uber-go/guide 的中文翻译 English 转载&nd]]></description>
+    <description><![CDATA[Uber Go 语言编码规范 Uber 是一家美国硅谷的科技公司，也是 Go 语言的早期 adopter。其开源了很多 golang 项目，诸如被 Gopher 圈熟知的 zap、jaeger 等。20]]></description>
 </item><item>
     <title>Umijs-Request的封装以及使用</title>
     <link>https://blog.gopherhub.org/umijsrequest/</link>

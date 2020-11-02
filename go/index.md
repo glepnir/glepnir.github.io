@@ -1,101 +1,6 @@
 # Uber Go语言编码规范
 
 
-<!--
-
-Editing this document:
-
-- Discuss all changes in GitHub issues first.
-- Update the table of contents as new sections are added or removed.
-- Use tables for side-by-side code samples. See below.
-
-Code Samples:
-
-Use 2 spaces to indent. Horizontal real estate is important in side-by-side
-samples.
-
-For side-by-side code samples, use the following snippet.
-
-~~~
-<table>
-<thead><tr><th>Bad</th><th>Good</th></tr></thead>
-<tbody>
-<tr><td>
-
-```go
-BAD CODE GOES HERE
-```
-
-</td><td>
-
-```go
-GOOD CODE GOES HERE
-```
-
-</td></tr>
-</tbody></table>
-~~~
-
-(You need the empty lines between the <td> and code samples for it to be
-treated as Markdown.)
-
-If you need to add labels or descriptions below the code samples, add another
-row before the </tbody></table> line.
-
-~~~
-<tr>
-<td>DESCRIBE BAD CODE</td>
-<td>DESCRIBE GOOD CODE</td>
-</tr>
-~~~
-
-
-
--->
-
-<!--
-change.md
-
-# 2019-12-17
-- 函数选项：推荐 “Option” 接口的结构实现
-- 而不是用闭包捕获值。
-
-# 2019-11-26
-- 添加针对全局变量变异的指导。
-
-# 2020-01-11
-- 为`open（..）`调用添加缺少的参数。
-
-# 2020-02-03
-- 使用 `"time"` 处理时间的建议
-- 添加有关在公共结构中嵌入类型的指导。
-
-# 2020-02-25
-- 添加有关接口验证是否符合编译时检查的指导。
-
-# 2020-06-05
-- 添加避免使用内置名称的指导意见
-
-# 2020-06-10
-- 添加 init() 指导意见
-
-# 2020-06-16
-- 追加时优先指定切片容量
-- 添加有关指针接收器可调用性的说明
-
-# 2020-06-17
-- map和切片的联合指导
-
-# 2020-09-15
-- Remove main panic
--->
-
-# [uber-go/guide](https://github.com/uber-go/guide) 的中文翻译
-
-# [English](https://github.com/uber-go/guide/blob/master/style.md)
-
-# 转载--[原repo](https://github.com/xxjwxc/uber_go_guide_cn/blob/master/README.md)
-
 # Uber Go 语言编码规范
 
  [Uber](https://www.uber.com/) 是一家美国硅谷的科技公司，也是 Go 语言的早期 adopter。其开源了很多 golang 项目，诸如被 Gopher 圈熟知的 [zap](https://github.com/uber-go/zap)、[jaeger](https://github.com/jaegertracing/jaeger) 等。2018 年年末 Uber 将内部的 [Go 风格规范](https://github.com/uber-go/guide) 开源到 GitHub，经过一年的积累和更新，该规范已经初具规模，并受到广大 Gopher 的关注。本文是该规范的中文版本。本版本会根据原版实时更新。
@@ -3183,4 +3088,8 @@ golangci-lint 有[various-linters]可供使用。建议将上述linters作为基
 ## Stargazers over time
 
 [![Stargazers over time](https://starchart.cc/xxjwxc/uber_go_guide_cn.svg)](https://starchart.cc/xxjwxc/uber_go_guide_cn)
+
+
+# 转载--[原repo](https://github.com/xxjwxc/uber_go_guide_cn/blob/master/README.md)
+
 
