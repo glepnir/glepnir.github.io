@@ -2,7 +2,7 @@
     xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
     xmlns:xhtml="http://www.w3.org/1999/xhtml"
     ><url>
-            <loc>https://blog.gopherhub.org/categories/</loc><lastmod>2020-10-27T19:37:04&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority><xhtml:link
+            <loc>https://blog.gopherhub.org/categories/</loc><lastmod>2020-11-02T20:49:05&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority><xhtml:link
                         rel="alternate"
                         hreflang="en"
                         href="https://blog.gopherhub.org/en/categories/"
@@ -15,11 +15,8 @@
                     hreflang="zh-cn"
                     href="https://blog.gopherhub.org/categories/"
                     /></url><url>
-            <loc>https://blog.gopherhub.org/tags/go/</loc><lastmod>2020-10-27T19:37:04&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
-            <loc>https://blog.gopherhub.org/categories/go/</loc><lastmod>2020-10-27T19:37:04&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
-            <loc>https://blog.gopherhub.org/go-decorator-json/</loc><lastmod>2020-10-27T19:37:04&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
-            <loc>https://blog.gopherhub.org/posts/</loc><lastmod>2020-10-27T19:37:04&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
-            <loc>https://blog.gopherhub.org/</loc><lastmod>2020-10-27T19:37:04&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority><xhtml:link
+            <loc>https://blog.gopherhub.org/posts/</loc><lastmod>2020-11-02T20:49:05&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
+            <loc>https://blog.gopherhub.org/</loc><lastmod>2020-11-02T20:49:05&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority><xhtml:link
                         rel="alternate"
                         hreflang="en"
                         href="https://blog.gopherhub.org/en/"
@@ -32,7 +29,9 @@
                     hreflang="zh-cn"
                     href="https://blog.gopherhub.org/"
                     /></url><url>
-            <loc>https://blog.gopherhub.org/tags/</loc><lastmod>2020-10-27T19:37:04&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority><xhtml:link
+            <loc>https://blog.gopherhub.org/categories/react/</loc><lastmod>2020-11-02T20:49:05&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
+            <loc>https://blog.gopherhub.org/tags/reactumijs/</loc><lastmod>2020-11-02T20:49:05&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
+            <loc>https://blog.gopherhub.org/tags/</loc><lastmod>2020-11-02T20:49:05&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority><xhtml:link
                         rel="alternate"
                         hreflang="en"
                         href="https://blog.gopherhub.org/en/tags/"
@@ -45,6 +44,10 @@
                     hreflang="zh-cn"
                     href="https://blog.gopherhub.org/tags/"
                     /></url><url>
+            <loc>https://blog.gopherhub.org/umijsrequest/</loc><lastmod>2020-11-02T20:49:05&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
+            <loc>https://blog.gopherhub.org/tags/go/</loc><lastmod>2020-10-27T19:37:04&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
+            <loc>https://blog.gopherhub.org/categories/go/</loc><lastmod>2020-10-27T19:37:04&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
+            <loc>https://blog.gopherhub.org/go-decorator-json/</loc><lastmod>2020-10-27T19:37:04&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
             <loc>https://blog.gopherhub.org/tags/docker/</loc><lastmod>2020-08-25T22:06:20&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
             <loc>https://blog.gopherhub.org/categories/docker/</loc><lastmod>2020-08-25T22:06:20&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
             <loc>https://blog.gopherhub.org/docker/</loc><lastmod>2020-08-25T22:06:20&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>

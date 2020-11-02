@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>Umijs-Request的封装以及使用 - Raphael Blog</title><meta name="Description" content="umijs-Request 使用以及封装"><meta property="og:title" content="Umijs-Request的封装以及使用" />
+<meta property="og:description" content="umijs-Request 使用以及封装" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://blog.gopherhub.org/umijsrequest/" />
+<meta property="og:image" content="https://blog.gopherhub.org" />
+<meta property="article:published_time" content="2020-11-02T20:49:05+08:00" />
+<meta property="article:modified_time" content="2020-11-02T20:49:05+08:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://blog.gopherhub.org"/>
+
+<meta name="twitter:title" content="Umijs-Request的封装以及使用"/>
+<meta name="twitter:description" content="umijs-Request 使用以及封装"/>
+<meta name="application-name" content="Raphael的次元壁">
+<meta name="apple-mobile-web-app-title" content="Raphael的次元壁"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://blog.gopherhub.org/umijsrequest/" /><link rel="prev" href="https://blog.gopherhub.org/go-decorator-json/" /><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Umijs-Request的封装以及使用",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/blog.gopherhub.org\/umijsrequest\/"
+        },"image": ["https:\/\/blog.gopherhub.org\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "react,umijs","wordcount":  2084 ,
+        "url": "https:\/\/blog.gopherhub.org\/umijsrequest\/","datePublished": "2020-11-02T20:49:05+08:00","dateModified": "2020-11-02T20:49:05+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+            "@type": "Organization",
+            "name": "Raphael","logo": "https:\/\/blog.gopherhub.org\/img\/avatar.png"},"author": {
+                "@type": "Person",
+                "name": "Raphael Huan"
+            },"description": "umijs-Request 使用以及封装"
+    }
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('dark' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'dark' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="Raphael Blog"><span class="header-title-pre"><span><img src='/img/vim-go.png' style='height:45px;margin-left:6%'></span></span>Blog</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/sponsors/"> 赞赏 </a><a class="menu-item" href="/about/"> 关于 </a><a class="menu-item" href="https://github.com/glepnir" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item language" title="选择语言">简体中文<i class="fas fa-chevron-right fa-fw"></i>
+                        <select class="language-select" id="language-select-desktop" onchange="location = this.value;"><option value="/umijsrequest/" selected>简体中文</option></select>
+                    </a><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="Raphael Blog"><span class="header-title-pre"><span><img src='/img/vim-go.png' style='height:45px;margin-left:6%'></span></span>Blog</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        取消
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/sponsors/" title="">赞赏</a><a class="menu-item" href="/about/" title="">关于</a><a class="menu-item" href="https://github.com/glepnir" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a><a href="javascript:void(0);" class="menu-item" title="选择语言">简体中文<i class="fas fa-chevron-right fa-fw"></i>
+                    <select class="language-select" onchange="location = this.value;"><option value="/umijsrequest/" selected>简体中文</option></select>
+                </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">目录</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">Umijs-Request的封装以及使用</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="https://github.com/glepnir" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Raphael Huan</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/react/"><i class="far fa-folder fa-fw"></i>react</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-02">2020-11-02</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 2084 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 5 分钟&nbsp;
+                <i class="far fa-eye fa-fw"></i>
+                  <span id="busuanzi_container_page_pv">
+                    本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+                  </span>
+                </i></div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>目录</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#umijs">Umijs</a>
+      <ul>
+        <li><a href="#umijs-request">umijs-request</a></li>
+        <li><a href="#基本的封装">基本的封装</a></li>
+        <li><a href="#使用">使用</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h2 id="umijs">Umijs</h2>
+<p>本文基于 Umijs 3.2.24,关于什么是Umijs就不多赘述了，为什么选择Umijs因为之前断断续</p>
+<p>续的看过React的一些教程，而且我不喜欢Vue感觉不符合我的编程思想，我可是贯彻做一件</p>
+<p>事就把它做好的信念的人啊，一个Vue文件里又写html有写js css的，完全违背我的思想.</p>
+<p>所以就偶尔看看React正好又除了hooks简直不要太简单啊，React的上手难度直接降低了很</p>
+<p>多，不过还是不想慢慢的去学React那一大套的东西，直接选了个框架Umijs又是蚂蚁前端的</p>
+<p>起码文档什么的能有保证，就试了试。。结果文档这一块跟不上包更新的速度，不过还好挺</p>
+<p>简单的整体仔细研究一下也能想明白怎么用。</p>
+<h3 id="umijs-request">umijs-request</h3>
+<p>Umijs-request是基于fetch上封装的，又加了许多的功能,与fetch axios的对比</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">特性</th>
+<th style="text-align:left">umi-request</th>
+<th style="text-align:left">fetch</th>
+<th style="text-align:left">axios</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">实现</td>
+<td style="text-align:left">浏览器原生支持</td>
+<td style="text-align:left">浏览器原生支持</td>
+<td style="text-align:left">XMLHttpRequest</td>
+</tr>
+<tr>
+<td style="text-align:left">大小</td>
+<td style="text-align:left">9k</td>
+<td style="text-align:left">4k (polyfill)</td>
+<td style="text-align:left">14k</td>
+</tr>
+<tr>
+<td style="text-align:left">query 简化</td>
+<td style="text-align:left">✅</td>
+<td style="text-align:left">❌</td>
+<td style="text-align:left">✅</td>
+</tr>
+<tr>
+<td style="text-align:left">post 简化</td>
+<td style="text-align:left">✅</td>
+<td style="text-align:left">❌</td>
+<td style="text-align:left">❌</td>
+</tr>
+<tr>
+<td style="text-align:left">超时</td>
+<td style="text-align:left">✅</td>
+<td style="text-align:left">❌</td>
+<td style="text-align:left">✅</td>
+</tr>
+<tr>
+<td style="text-align:left">缓存</td>
+<td style="text-align:left">✅</td>
+<td style="text-align:left">❌</td>
+<td style="text-align:left">❌</td>
+</tr>
+<tr>
+<td style="text-align:left">错误检查</td>
+<td style="text-align:left">✅</td>
+<td style="text-align:left">❌</td>
+<td style="text-align:left">❌</td>
+</tr>
+<tr>
+<td style="text-align:left">错误处理</td>
+<td style="text-align:left">✅</td>
+<td style="text-align:left">❌</td>
+<td style="text-align:left">✅</td>
+</tr>
+<tr>
+<td style="text-align:left">拦截器</td>
+<td style="text-align:left">✅</td>
+<td style="text-align:left">❌</td>
+<td style="text-align:left">✅</td>
+</tr>
+<tr>
+<td style="text-align:left">前缀</td>
+<td style="text-align:left">✅</td>
+<td style="text-align:left">❌</td>
+<td style="text-align:left">❌</td>
+</tr>
+<tr>
+<td style="text-align:left">后缀</td>
+<td style="text-align:left">✅</td>
+<td style="text-align:left">❌</td>
+<td style="text-align:left">❌</td>
+</tr>
+<tr>
+<td style="text-align:left">处理 gbk</td>
+<td style="text-align:left">✅</td>
+<td style="text-align:left">❌</td>
+<td style="text-align:left">❌</td>
+</tr>
+<tr>
+<td style="text-align:left">中间件</td>
+<td style="text-align:left">✅</td>
+<td style="text-align:left">❌</td>
+<td style="text-align:left">❌</td>
+</tr>
+<tr>
+<td style="text-align:left">取消请求</td>
+<td style="text-align:left">✅</td>
+<td style="text-align:left">❌</td>
+<td style="text-align:left">✅</td>
+</tr>
+</tbody>
+</table>
+<p>功能相当的丰富了。所以我的这个第一个Umijs Crud的Demo直接用了umijs-request没用</p>
+<p>axios了，就是配套来吧。</p>
+<h3 id="基本的封装">基本的封装</h3>
+<p><code>servers/request.ts</code> 就是我的封装文件了，对于什么utils common等文件夹命名是真的</p>
+<p>很讨厌，模糊不清的命名并且任何功能都放在这种命名里显的很混乱源于我曾度过的一本</p>
+<p>书Robert Martin的<a href="https://www.amazon.co.uk/dp/0135974445/ref=pd_lpo_sbs_dp_ss_2/253-1946330-6751666?pf_rd_m=A3P5ROKL5A1OLE&amp;pf_rd_s=lpo-top-stripe&amp;pf_rd_r=23C4AHYV7EXGYHKD6G8Q&amp;pf_rd_t=201&amp;pf_rd_p=569136327&amp;pf_rd_i=0132760584" target="_blank" rel="noopener noreffer">Agile Software Development, Principles, Patterns, and
+Practices</a></p>
+<p>定义一些常用的http状态码的返回消息</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-typescript" data-lang="typescript"><span class="kr">import</span> <span class="p">{</span> <span class="nx">extend</span> <span class="p">}</span> <span class="kr">from</span> <span class="s1">&#39;umi-request&#39;</span>
+<span class="kr">import</span> <span class="p">{</span> <span class="nx">notification</span> <span class="p">}</span> <span class="kr">from</span> <span class="s1">&#39;antd&#39;</span>
+
+<span class="kr">type</span> <span class="nx">CodeMsg</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="p">[</span><span class="nx">key</span>: <span class="kt">number</span><span class="p">]</span><span class="o">:</span> <span class="kt">string</span>
+<span class="p">}</span>
+
+<span class="kr">const</span> <span class="nx">codeMessage</span>: <span class="kt">CodeMsg</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="mi">200</span><span class="o">:</span> <span class="s1">&#39;服务器成功返回请求的数据。&#39;</span><span class="p">,</span>
+  <span class="mi">201</span><span class="o">:</span> <span class="s1">&#39;新建或修改数据成功。&#39;</span><span class="p">,</span>
+  <span class="mi">202</span><span class="o">:</span> <span class="s1">&#39;一个请求已经进入后台排队（异步任务）。&#39;</span><span class="p">,</span>
+  <span class="mi">204</span><span class="o">:</span> <span class="s1">&#39;删除数据成功。&#39;</span><span class="p">,</span>
+  <span class="mi">400</span><span class="o">:</span> <span class="s1">&#39;发出的请求有错误，服务器没有进行新建或修改数据的操作。&#39;</span><span class="p">,</span>
+  <span class="mi">401</span><span class="o">:</span> <span class="s1">&#39;用户没有权限（令牌、用户名、密码错误）。&#39;</span><span class="p">,</span>
+  <span class="mi">403</span><span class="o">:</span> <span class="s1">&#39;用户得到授权，但是访问是被禁止的。&#39;</span><span class="p">,</span>
+  <span class="mi">404</span><span class="o">:</span> <span class="s1">&#39;发出的请求针对的是不存在的记录，服务器没有进行操作。&#39;</span><span class="p">,</span>
+  <span class="mi">406</span><span class="o">:</span> <span class="s1">&#39;请求的格式不可得。&#39;</span><span class="p">,</span>
+  <span class="mi">410</span><span class="o">:</span> <span class="s1">&#39;请求的资源被永久删除，且不会再得到的。&#39;</span><span class="p">,</span>
+  <span class="mi">422</span><span class="o">:</span> <span class="s1">&#39;当创建一个对象时，发生一个验证错误。&#39;</span><span class="p">,</span>
+  <span class="mi">500</span><span class="o">:</span> <span class="s1">&#39;服务器发生错误，请检查服务器。&#39;</span><span class="p">,</span>
+  <span class="mi">502</span><span class="o">:</span> <span class="s1">&#39;网关错误。&#39;</span><span class="p">,</span>
+  <span class="mi">503</span><span class="o">:</span> <span class="s1">&#39;服务不可用，服务器暂时过载或维护。&#39;</span><span class="p">,</span>
+  <span class="mi">504</span><span class="o">:</span> <span class="s1">&#39;网关超时。&#39;</span><span class="p">,</span>
+<span class="p">};</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><p>全局的错误处理器函数，只需要判断response有没有值即可</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-typescript" data-lang="typescript">
+<span class="kr">const</span> <span class="nx">errorHandler</span> <span class="o">=</span> <span class="p">(</span><span class="nx">error</span><span class="o">:</span> <span class="p">{</span> <span class="nx">response</span>: <span class="kt">Response</span> <span class="p">})</span><span class="o">:</span> <span class="nx">Response</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="p">{</span> <span class="nx">response</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">error</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">response</span> <span class="o">&amp;&amp;</span> <span class="nx">response</span><span class="p">.</span><span class="nx">status</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">errorText</span> <span class="o">=</span> <span class="nx">codeMessage</span><span class="p">[</span><span class="nx">response</span><span class="p">.</span><span class="nx">status</span><span class="p">]</span> <span class="o">||</span> <span class="nx">response</span><span class="p">.</span><span class="nx">statusText</span>
+    <span class="kr">const</span> <span class="p">{</span> <span class="nx">status</span><span class="p">,</span> <span class="nx">url</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">response</span>
+
+    <span class="nx">notification</span><span class="p">.</span><span class="nx">error</span><span class="p">({</span>
+      <span class="nx">message</span><span class="o">:</span> <span class="sb">`请求错误 </span><span class="si">${</span><span class="nx">status</span><span class="si">}</span><span class="sb">:</span><span class="si">${</span><span class="nx">url</span><span class="si">}</span><span class="sb">`</span><span class="p">,</span>
+      <span class="nx">description</span>: <span class="kt">errorText</span><span class="p">,</span>
+    <span class="p">})</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">response</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">notification</span><span class="p">.</span><span class="nx">error</span><span class="p">({</span>
+      <span class="nx">description</span><span class="o">:</span> <span class="s1">&#39;网络发生异常 无法连接服务器&#39;</span><span class="p">,</span>
+      <span class="nx">message</span><span class="o">:</span> <span class="s1">&#39;网络发生异常&#39;</span>
+    <span class="p">})</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nx">response</span>
+<span class="p">}</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><p>其实这里还可以进行更细粒度的处理，例如判断<code>status</code> 的值也就是http状态码，例如404</p>
+<p>跳转到404页面 或者401 等等,可以从umi中 引<code>history</code>进行一些路由的跳转处理</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-typescript" data-lang="typescript"><span class="k">if</span> <span class="p">(</span><span class="nx">status</span> <span class="o">===</span> <span class="mi">401</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">notification</span><span class="p">.</span><span class="nx">error</span><span class="p">({</span>
+      <span class="nx">message</span><span class="o">:</span> <span class="sb">`登录已过期，请重新登录`</span><span class="p">,</span>
+      <span class="nx">duration</span>: <span class="kt">2</span><span class="p">,</span>
+    <span class="p">});</span>
+    <span class="nx">history</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+    <span class="k">return</span>
+  <span class="p">}</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><p>从umi中引入<code>extend</code>实例化一个request，当然这里变量名可以是任意的如果想区分一下可以</p>
+<p>叫<code>HttpRequest</code> 等。字段的说明<a href="https://github.com/umijs/umi-request/blob/master/README_zh-CN.md#%E8%AF%B7%E6%B1%82%E9%85%8D%E7%BD%AE" target="_blank" rel="noopener noreffer">文档</a></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-typescript" data-lang="typescript">
+<span class="kr">const</span> <span class="nx">request</span> <span class="o">=</span> <span class="nx">extend</span><span class="p">({</span>
+  <span class="nx">prefix</span><span class="o">:</span> <span class="s1">&#39;/api/&#39;</span><span class="p">,</span>
+  <span class="nx">timeout</span>: <span class="kt">15000</span><span class="p">,</span>
+  <span class="nx">errorHandler</span><span class="p">,</span>
+  <span class="nx">credentials</span><span class="o">:</span> <span class="s1">&#39;include&#39;</span> <span class="o">--</span> <span class="err">是否携带</span><span class="nx">cookie</span>  <span class="nx">include为携带</span>
+<span class="p">})</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><p>定义请求的拦截器，这里是简单的版本实际上jwt的token直接存到<code>localStorage</code>里是不</p>
+<p>安全的存在xss攻击等可能性，存在cookie呢又会有一些Csrf攻击的问题，所以一种办法</p>
+<p>是将token拆成三部分分开存，在请求的时候可以在这里进行合并然后放到<code>Authorization</code></p>
+<p>里</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-typescript" data-lang="typescript">
+<span class="nx">request</span><span class="p">.</span><span class="nx">interceptors</span><span class="p">.</span><span class="nx">request</span><span class="p">.</span><span class="nx">use</span><span class="p">((</span><span class="nx">url</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="nx">token</span> <span class="o">=</span> <span class="nx">localStorage</span><span class="p">.</span><span class="nx">getItem</span><span class="p">(</span><span class="s1">&#39;xxx-token&#39;</span><span class="p">)</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">token</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">headers</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="s1">&#39;Content-Type&#39;</span><span class="o">:</span> <span class="s1">&#39;application/json; charset=utf-8&#39;</span><span class="p">,</span>
+      <span class="s1">&#39;Accept&#39;</span><span class="o">:</span> <span class="s1">&#39;application/json&#39;</span><span class="p">,</span>
+      <span class="s1">&#39;Authorization&#39;</span><span class="o">:</span> <span class="nx">token</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="p">{</span> <span class="nx">url</span><span class="p">,</span> <span class="nx">options</span><span class="o">:</span> <span class="p">{</span> <span class="p">...</span><span class="nx">options</span><span class="p">,</span> <span class="nx">headers</span> <span class="p">}</span> <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="p">{</span> <span class="nx">url</span><span class="p">,</span> <span class="nx">options</span> <span class="p">}</span>
+<span class="p">})</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><p>响应的拦截器就是通过判断后端传的<code>code</code>参数一般是业务逻辑的状态码</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-typescript" data-lang="typescript">
+<span class="nx">request</span><span class="p">.</span><span class="nx">interceptors</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="kr">async</span> <span class="nx">response</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="nx">res</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">response</span><span class="p">.</span><span class="nx">clone</span><span class="p">().</span><span class="nx">json</span><span class="p">()</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">res</span><span class="p">.</span><span class="nx">code</span> <span class="o">===</span> <span class="mi">1000</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">response</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="nx">notification</span><span class="p">.</span><span class="nx">error</span><span class="p">({</span>
+      <span class="nx">description</span>: <span class="kt">res.msg</span> <span class="o">||</span> <span class="s1">&#39;网络发生异常无法连接服务器&#39;</span><span class="p">,</span>
+      <span class="nx">message</span><span class="o">:</span> <span class="s1">&#39;请求错误&#39;</span><span class="p">,</span>
+    <span class="p">})</span>
+    <span class="k">return</span> <span class="nx">response</span>
+  <span class="p">}</span>
+<span class="p">})</span>
+
+<span class="kr">export</span> <span class="k">default</span> <span class="nx">request</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="使用">使用</h3>
+<p>例如请求一个课程的Demo <code>services/courseApi.ts</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-typescript" data-lang="typescript"><span class="kr">export</span> <span class="k">default</span> <span class="kr">async</span> <span class="kd">function</span> <span class="nx">fetchCourseList</span><span class="p">(</span><span class="nx">keywords</span>: <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="nx">res</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">request</span><span class="p">(</span><span class="s1">&#39;courseList&#39;</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">method</span><span class="o">:</span> <span class="s1">&#39;get&#39;</span><span class="p">,</span> <span class="nx">params</span><span class="o">:</span> <span class="p">{</span> <span class="nx">keywords</span> <span class="p">}</span>
+  <span class="p">})</span>
+  <span class="k">return</span> <span class="nx">res</span>
+<span class="p">}</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><p>使用<code>async/await</code>的写法实际上就是<code>yield/next</code>，typescript异步协程这里用的是libuv</p>
+<p>之前写过一些lua所以比较lua 的coroutine和libuv这里上手也比较简单。在组件中使用</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-typescript" data-lang="typescript">  <span class="kr">const</span> <span class="nx">getDatas</span> <span class="o">=</span> <span class="kr">async</span> <span class="p">(</span><span class="nx">keywords</span>: <span class="kt">string</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">res</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">fetchCourseList</span><span class="p">(</span><span class="nx">keywords</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">setDatas</span><span class="p">(</span><span class="nx">res</span><span class="p">.</span><span class="nx">datas</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">};</span>
+
+  <span class="nx">useEffect</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">getDatas</span><span class="p">(</span><span class="nx">keywords</span><span class="p">);</span>
+  <span class="p">},</span> <span class="p">[]);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>异步判断返回值如果有就调用useState提供的设置值的方法把数据传进去即可。总体来说</p>
+<p>我是大概看了几天就能上手了还是挺方便我们这些后端开发的。可能这篇文章没什么深度</p>
+<p>因为我对前端这块也就是偶尔看两眼现用先看的样子。理解的不够到位。作为个记录把</p>
+</div><div style="padding: 10px 0; margin: 20px auto; width: 100%; font-size:16px; text-align: center;">
+  <span>如果您喜欢这篇文章或者对您有帮助欢迎打赏😘</span></br>
+    <span>需要gopherhub.org域名邮箱请留言联系我😼</span>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+        <span>打赏</span></button>
+    <div id="QR" style="display: none;">
+        <div id="wechat" style="display: inline-block">
+            <a class="fancybox" rel="group">
+                <img id="wechat_qr" src="/img/donate/wechat.png" alt="WeChat Pay"></a>
+            <p>微信打赏</p>
+        </div>
+        <div id="alipay" style="display: inline-block">
+            <a class="fancybox" rel="group">
+                <img id="alipay_qr" src="/img/donate/alipay.png" alt="Alipay"></a>
+            <p>支付宝打赏</p>
+        </div>
+    </div>
+</div>
+<style type="text/css">
+.post-copyright {
+    border-top: 1px solid #e8e8e8;
+    border-bottom: 1px solid #e8e8e8;
+    padding: 0.5em 1em;
+    border-left: 2px solid #ff1700;
+    background-color: #f9f9f9;
+	line-height:1.6;
+}
+.post-copyright strong {
+	font-weight: 600;
+}
+.post-copyright li {
+	list-style: none;
+}
+.post-copyright a {
+	color: #2d96bd;
+}
+</style>
+<ul class="post-copyright">
+	<li class="post-copyright-author">
+		<strong>文章作者：</strong>Raphael Huan
+	</li>
+	<li class="post-copyright-link">
+    <strong>文章链接：</strong><a href="https://blog.gopherhub.org/umijsrequest/">https://blog.gopherhub.org/umijsrequest/</a>
+	</li>
+	<li class="post-copyright-license">
+		<strong>版权声明：</strong>本站所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="CC BY-NC-ND 4.0">CC BY-NC-ND 4.0</a> 转载请注明来自 <a href="https://blog.gopherhub.org/" target="_blank">Raphael Huan</a>
+	</li>
+</ul>
+<div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>更新于 2020-11-02</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/umijsrequest/index.md" target="_blank">阅读原始文档</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span>
+                    
+                     
+                    <link rel="stylesheet" href="/css/share.min.css" />
+<script src="/js/social-share.min.js"></script>
+
+<div class="social-share" data-sites="wechat,qq,weibo,twitter,facebook,douban" >分享到:</div>
+
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/reactumijs/">react,umijs</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/go-decorator-json/" class="prev" rel="prev" title="Go-使用装饰器模式封装Json的响应"><i class="fas fa-angle-left fa-fw"></i>Go-使用装饰器模式封装Json的响应</a></div>
+</div>
+<div id="comments"><div id="utterances"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://utteranc.es/">Utterances</a>.
+            </noscript></div></article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><i class="fas fa-eye fa-fw"></i>
+            <span id="busuanzi_container_site_pv">
+                本站总访问量<span id="busuanzi_value_site_pv"></span>次
+            </span>
+            <span id="busuanzi_container_site_uv">
+                您是本站第 <span id="busuanzi_value_site_uv"></span> 位访问者
+            </span>
+            <i class="fas fa-user-circle fa-fw"></i>
+
+            <div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="https://github.com/glepnir" target="_blank">Raphael</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.37.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lunr@2.3.8/lunr.min.js"></script><script type="text/javascript" src="/lib/lunr/lunr.stemmer.support.min.js"></script><script type="text/javascript" src="/lib/lunr/lunr.zh.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.2.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":100},"comment":{"utterances":{"darkTheme":"github-dark","issueTerm":"pathname","label":"","lightTheme":"github-light","repo":"glepnir/glepnir.github.io"}},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","lunrLanguageCode":"zh","lunrSegmentitURL":"/lib/lunr/lunr.segmentit.js","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":50,"type":"lunr"}};</script>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>
