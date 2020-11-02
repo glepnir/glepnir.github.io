@@ -4,7 +4,14 @@
         <link>https://blog.gopherhub.org/posts/</link>
         <description>所有文章 | Raphael Blog</description>
         <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>sawakitaeiji233@gmail.com (Raphael)</managingEditor>
-            <webMaster>sawakitaeiji233@gmail.com (Raphael)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Mon, 02 Nov 2020 20:49:05 &#43;0800</lastBuildDate><atom:link href="https://blog.gopherhub.org/posts/" rel="self" type="application/rss+xml" /><item>
+            <webMaster>sawakitaeiji233@gmail.com (Raphael)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Mon, 02 Nov 2020 21:46:17 &#43;0800</lastBuildDate><atom:link href="https://blog.gopherhub.org/posts/" rel="self" type="application/rss+xml" /><item>
+    <title>Uber Go语言编码规范</title>
+    <link>https://blog.gopherhub.org/go/</link>
+    <pubDate>Mon, 02 Nov 2020 21:46:17 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>https://blog.gopherhub.org/go/</guid>
+    <description><![CDATA[BadGood ```go BAD CODE GOES HERE ``` ```go GOOD CODE GOES HERE ``` ~~~ (You need the empty lines between the and code samples for it to be treated as Markdown.) If you need to add labels or descriptions below the code samples, add another row before the line. ~~~ DESCRIBE BAD CODE DESCRIBE GOOD CODE ~~~ -- uber-go/guide 的中文翻译 English 转载&nd]]></description>
+</item><item>
     <title>Umijs-Request的封装以及使用</title>
     <link>https://blog.gopherhub.org/umijsrequest/</link>
     <pubDate>Mon, 02 Nov 2020 20:49:05 &#43;0800</pubDate>
@@ -67,12 +74,5 @@
     <author>作者</author>
     <guid>https://blog.gopherhub.org/03-circularlinkedlist-go/</guid>
     <description><![CDATA[CircularLinkedList 环形链表 环形链表可以是单链表也可以是双链表，单链表的最后一个节点的 nextNode 是指向 nil 的，如果将它指向首节点 那么久形成了一个简单的环形链表，对于双向]]></description>
-</item><item>
-    <title>Go 数据结构与算法-双链表</title>
-    <link>https://blog.gopherhub.org/02-doublylinkedlist-go/</link>
-    <pubDate>Sat, 27 Jun 2020 00:00:00 &#43;0000</pubDate>
-    <author>作者</author>
-    <guid>https://blog.gopherhub.org/02-doublylinkedlist-go/</guid>
-    <description><![CDATA[双链表 双链表是在单链表的基础上再 node 节点添加一个指向前一个节点的指针。在双向链表中，所有节点在列表的任一 侧都有指向它们所连接的节点的指针。 这意]]></description>
 </item></channel>
 </rss>
