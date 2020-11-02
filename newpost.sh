@@ -1,7 +1,7 @@
 #!usr/bin/env bash
 
 PS1='Choose directory: '
-options=("datastructs" "go" "vim" "docker")
+options=("datastructs" "go" "vim" "docker" "react")
 select opt in "${options[@]}"
 do
     case $opt in
@@ -10,6 +10,10 @@ do
             break
             ;;
         "go")
+            post_diretory=$opt
+            break
+            ;;
+        "react")
             post_diretory=$opt
             break
             ;;
@@ -33,7 +37,7 @@ file=$HOME/blog/content/posts/$post_diretory/$post_name.md
 hugo new posts/$post_diretory/$post_name.md
 
 sed -i "" "s/^description =.*/description = \"$post_description\"/g" "$file"
-sed -i "" "s/^tags =.*/categories = [\"$post_tags\"]/g" "$file"
+sed -i "" "s/^tags =.*/tags = [\"$post_tags\"]/g" "$file"
 sed -i "" "s/^categories =.*/categories = [\"$post_categories\"]/g" "$file"
 
 echo -e "\033[0;32mCreate Post Success...\033[0m"
