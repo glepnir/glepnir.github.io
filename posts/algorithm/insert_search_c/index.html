@@ -1,37 +1,61 @@
-<!doctype html><html lang=en-us><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge"><title>glepnir/posts/algorithm/insert_search_c/</title><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="all,follow"><meta name=googlebot content="index,follow,snippet,archive"><link rel=stylesheet href=https://www.yupdo.org/console-plus/css/terminal-0.7.2.min.css><link rel=stylesheet href=https://www.yupdo.org/console-plus/css/animate-4.1.1.min.css><link rel=stylesheet href=https://www.yupdo.org/console-plus/css/console.css><!--[if lt IE 9]><script src=https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js></script>
-<script src=https://oss.maxcdn.com/respond/1.4.2/respond.min.js></script><![endif]--><meta property="og:title" content="Insert_search_c"><meta property="og:description" content><meta property="og:type" content="article"><meta property="og:url" content="https://www.yupdo.org/posts/algorithm/insert_search_c/"><meta property="article:published_time" content="2022-10-15T18:09:52+08:00"><meta name=twitter:title content="Insert_search_c"><meta name=twitter:description content="Insertion Sort (插入排序) 多语言实现
-插入排序（Insertion-Sort）的算法描述是一种简单直观的排序算法。它的工作原理是通过构建有序序列，对于"></head><body class=terminal><div class=container><div class=terminal-nav><header class=terminal-logo><div class="logo terminal-prompt"><a href=https://www.yupdo.org/ class="no-style site-name">glepnir</a>:~#
-<a href=https://www.yupdo.org/posts>posts</a>/<a href=https://www.yupdo.org/posts/algorithm>algorithm</a>/<a href=https://www.yupdo.org/posts/algorithm/insert_search_c>insert_search_c</a>/</div></header><nav class=terminal-menu><ul vocab="https://schema.org/" typeof="BreadcrumbList"><li><a href=https://www.yupdo.org/posts/ typeof="ListItem">posts/</a></li><li><a href=https://www.yupdo.org/tags/ typeof="ListItem">tags/</a></li><li><a href=https://www.yupdo.org/about/ typeof="ListItem">about/</a></li><li><a href=https://www.yupdo.org/sponsor/ typeof="ListItem">sponsor/</a></li></ul></nav></div></div><div class="container animated zoomIn fast"><h1>Insert_search_c</h1>Oct. 15, 2022<br><br><h2 id=insertion-sort-插入排序-多语言实现>Insertion Sort (插入排序) 多语言实现</h2><p>插入排序（Insertion-Sort）的算法描述是一种简单直观的排序算法。它的工作原理是通过构建有序序列，对于</p><p>未排序数据，在已排序序列中从后向前扫描，找到相应位置并插入。</p><p><strong>每步将一个待排序的元素，按其排序码大小插入到前面已经排好序的一组元素的适当位置上去，直到元素全部插入为止</strong></p><p><img src=/images/insert_sort/insert_sort_1.png alt=insert_sort></p><h2 id=算法描述如下>算法描述如下：</h2><ul><li><p>将待排序序列第一个元素看做一个有序序列，把第二个元素到最后一个元素当成是未排序序列；</p></li><li><p>取出下一个元素，在已经排序的元素序列中从后向前扫描；</p></li><li><p>如果该元素（已排序）大于新元素，将该元素移到下一位置；</p></li><li><p>重复步骤3，直到找到已排序的元素小于或者等于新元素的位置；</p></li><li><p>将新元素插入到该位置后；</p></li><li><p>重复步骤2~5。</p></li></ul><img src=/images/insert_sort/insert_sort_2.png><br><h2 id=语言的具体实现>语言的具体实现</h2><details><summary>C 实现</summary><ul><li>使用while:</li></ul><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-C data-lang=C><span style=display:flex><span><span style=color:#8ec07c>#include</span> <span style=color:#8ec07c;font-style:italic>&lt;stdio.h&gt;</span><span style=color:#8ec07c>
-</span></span></span><span style=display:flex><span><span style=color:#8ec07c>#define LEN 5
-</span></span></span><span style=display:flex><span><span style=color:#8ec07c></span>
-</span></span><span style=display:flex><span><span style=color:#fabd2f>void</span> <span style=color:#fabd2f>insert_sort</span>(<span style=color:#fabd2f>void</span>)
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content><title>Insert_search_c | glepnir</title><link rel=stylesheet href=/css/reset.css><link rel=stylesheet href=/css/font.css><link rel=stylesheet href=/css/smigle.css><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"></head><body><header><div id=brand><a class=icon-link href=https://yupdo.org><img class=icon src=/images/avatar.svg></a><div class=text><a href=https://yupdo.org><h1>glepnir</h1></a><h3>Software Engineer</h3></div></div><nav><a href=/><b>Home</b></a>
+|
+<a href=/posts/><b>Posts</b></a>
+|
+<a href=/donate/><b>Donate</b></a>
+|
+<a href=/categories/><b>Categories</b></a>
+|
+<a href=/tags/><b>Tags</b></a>
+|
+<a href=/about/><b>About</b></a></nav><hr></header><div id=content><main><article><h1>Insert_search_c</h1><div class=post-meta><strong><span>Posted on</span>
+<time>2022-10-15</time>
+<span>in</span>
+<a href=/categories/algorithm>algorithm</a>,
+<a href=/categories/c>c</a></strong>
+<span>• 153 words</span>
+<span>• 1 minute read</span><div><span>Tags:</span>
+<a href=/tags/algorithm>algorithm</a></div></div><div><h2 id=insertion-sort-插入排序-多语言实现>Insertion Sort (插入排序) 多语言实现</h2><p>插入排序（Insertion-Sort）的算法描述是一种简单直观的排序算法。它的工作原理是通过构建有序序列，对于</p><p>未排序数据，在已排序序列中从后向前扫描，找到相应位置并插入。</p><p><strong>每步将一个待排序的元素，按其排序码大小插入到前面已经排好序的一组元素的适当位置上去，直到元素全部插入为止</strong></p><p><img src=/images/insert_sort/insert_sort_1.png alt=insert_sort></p><h2 id=算法描述如下>算法描述如下：</h2><ul><li><p>将待排序序列第一个元素看做一个有序序列，把第二个元素到最后一个元素当成是未排序序列；</p></li><li><p>取出下一个元素，在已经排序的元素序列中从后向前扫描；</p></li><li><p>如果该元素（已排序）大于新元素，将该元素移到下一位置；</p></li><li><p>重复步骤3，直到找到已排序的元素小于或者等于新元素的位置；</p></li><li><p>将新元素插入到该位置后；</p></li><li><p>重复步骤2~5。</p></li></ul><h2 id=语言的具体实现>语言的具体实现</h2><ul><li>使用while:</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-C data-lang=C><span style=display:flex><span><span style=color:#75715e>#include</span> <span style=color:#75715e>&lt;stdio.h&gt;</span><span style=color:#75715e>
+</span></span></span><span style=display:flex><span><span style=color:#75715e>#define LEN 5
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>void</span> <span style=color:#a6e22e>insert_sort</span>(<span style=color:#66d9ef>void</span>)
 </span></span><span style=display:flex><span>{
-</span></span><span style=display:flex><span>  <span style=color:#fabd2f>int</span> key;
-</span></span><span style=display:flex><span>  <span style=color:#fabd2f>int</span> a[LEN] <span style=color:#fe8019>=</span> {<span style=color:#d3869b>3</span>, <span style=color:#d3869b>7</span>, <span style=color:#d3869b>1</span>, <span style=color:#d3869b>8</span>, <span style=color:#d3869b>5</span>};
-</span></span><span style=display:flex><span>  <span style=color:#fe8019>for</span> (<span style=color:#fabd2f>int</span> j <span style=color:#fe8019>=</span> <span style=color:#d3869b>1</span>; j <span style=color:#fe8019>&lt;</span> LEN; j<span style=color:#fe8019>++</span>) {
-</span></span><span style=display:flex><span>    key <span style=color:#fe8019>=</span> a[j];
-</span></span><span style=display:flex><span>    <span style=color:#fabd2f>int</span> i <span style=color:#fe8019>=</span> j <span style=color:#fe8019>-</span> <span style=color:#d3869b>1</span>;
-</span></span><span style=display:flex><span>    <span style=color:#fe8019>while</span> (i <span style=color:#fe8019>&gt;=</span> <span style=color:#d3869b>0</span> <span style=color:#fe8019>&amp;&amp;</span> a[i] <span style=color:#fe8019>&gt;</span> key) {
-</span></span><span style=display:flex><span>      a[j] <span style=color:#fe8019>=</span> a[i];
-</span></span><span style=display:flex><span>      i<span style=color:#fe8019>--</span>;
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>int</span> key;
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>int</span> a[LEN] <span style=color:#f92672>=</span> {<span style=color:#ae81ff>3</span>, <span style=color:#ae81ff>7</span>, <span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>8</span>, <span style=color:#ae81ff>5</span>};
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>int</span> j <span style=color:#f92672>=</span> <span style=color:#ae81ff>1</span>; j <span style=color:#f92672>&lt;</span> LEN; j<span style=color:#f92672>++</span>) {
+</span></span><span style=display:flex><span>    key <span style=color:#f92672>=</span> a[j];
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> j <span style=color:#f92672>-</span> <span style=color:#ae81ff>1</span>;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>while</span> (i <span style=color:#f92672>&gt;=</span> <span style=color:#ae81ff>0</span> <span style=color:#f92672>&amp;&amp;</span> a[i] <span style=color:#f92672>&gt;</span> key) {
+</span></span><span style=display:flex><span>      a[j] <span style=color:#f92672>=</span> a[i];
+</span></span><span style=display:flex><span>      i<span style=color:#f92672>--</span>;
 </span></span><span style=display:flex><span>    }
-</span></span><span style=display:flex><span>    a[i <span style=color:#fe8019>+</span> <span style=color:#d3869b>1</span>] <span style=color:#fe8019>=</span> key;
+</span></span><span style=display:flex><span>    a[i <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>] <span style=color:#f92672>=</span> key;
 </span></span><span style=display:flex><span>  }
 </span></span><span style=display:flex><span>}
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#fabd2f>int</span> <span style=color:#fabd2f>main</span>()
+</span></span><span style=display:flex><span><span style=color:#66d9ef>int</span> <span style=color:#a6e22e>main</span>()
 </span></span><span style=display:flex><span>{
 </span></span><span style=display:flex><span>  insert_sort();
-</span></span><span style=display:flex><span>  <span style=color:#fe8019>return</span> <span style=color:#d3869b>0</span>;
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>return</span> <span style=color:#ae81ff>0</span>;
 </span></span><span style=display:flex><span>}
-</span></span></code></pre></div><ul><li>使用两个for:</li></ul><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-C data-lang=C><span style=display:flex><span>    <span style=color:#fabd2f>int</span> a[LEN] <span style=color:#fe8019>=</span> {<span style=color:#d3869b>3</span>, <span style=color:#d3869b>7</span>, <span style=color:#d3869b>1</span>, <span style=color:#d3869b>8</span>, <span style=color:#d3869b>5</span>};
-</span></span><span style=display:flex><span>    <span style=color:#fabd2f>int</span> key;
+</span></span></code></pre></div><ul><li>使用两个for:</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-C data-lang=C><span style=display:flex><span>    <span style=color:#66d9ef>int</span> a[LEN] <span style=color:#f92672>=</span> {<span style=color:#ae81ff>3</span>, <span style=color:#ae81ff>7</span>, <span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>8</span>, <span style=color:#ae81ff>5</span>};
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>int</span> key;
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    <span style=color:#fe8019>for</span> (j <span style=color:#fe8019>=</span> <span style=color:#d3869b>1</span>; j <span style=color:#fe8019>&lt;</span> LEN; i<span style=color:#fe8019>++</span>) {
-</span></span><span style=display:flex><span>        key <span style=color:#fe8019>=</span> a[j];    <span style=color:#928374;font-style:italic>//待排序元素
-</span></span></span><span style=display:flex><span><span style=color:#928374;font-style:italic></span>        <span style=color:#fe8019>for</span> (i <span style=color:#fe8019>=</span> j <span style=color:#fe8019>-</span> <span style=color:#d3869b>1</span>; i <span style=color:#fe8019>&gt;=</span> <span style=color:#d3869b>0</span> <span style=color:#fe8019>&amp;&amp;</span> a[i] <span style=color:#fe8019>&gt;</span> key ; i<span style=color:#fe8019>--</span>) {
-</span></span><span style=display:flex><span>            a[j] <span style=color:#fe8019>=</span> a[i];
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>for</span> (j <span style=color:#f92672>=</span> <span style=color:#ae81ff>1</span>; j <span style=color:#f92672>&lt;</span> LEN; i<span style=color:#f92672>++</span>) {
+</span></span><span style=display:flex><span>        key <span style=color:#f92672>=</span> a[j];    <span style=color:#75715e>//待排序元素
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>        <span style=color:#66d9ef>for</span> (i <span style=color:#f92672>=</span> j <span style=color:#f92672>-</span> <span style=color:#ae81ff>1</span>; i <span style=color:#f92672>&gt;=</span> <span style=color:#ae81ff>0</span> <span style=color:#f92672>&amp;&amp;</span> a[i] <span style=color:#f92672>&gt;</span> key ; i<span style=color:#f92672>--</span>) {
+</span></span><span style=display:flex><span>            a[j] <span style=color:#f92672>=</span> a[i];
 </span></span><span style=display:flex><span>        }
-</span></span><span style=display:flex><span>        a[i <span style=color:#fe8019>+</span> <span style=color:#d3869b>1</span>] <span style=color:#fe8019>=</span> key;
+</span></span><span style=display:flex><span>        a[i <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>] <span style=color:#f92672>=</span> key;
 </span></span><span style=display:flex><span>    }
-</span></span></code></pre></div></details><br><details><summary>Go 实现</summary></details><br><details><summary>Rust 实现</summary></details><br><details><summary>Lua 实现</summary></details><br><h2 id=排序过程>排序过程:</h2><p>以上面的例子来说排序的对象是 3，7，1，8，5 数组长度为5，因为第一个元素可以认为已经被排序 所以for循环的次数是：</p><p>5（数组长度） - 1 = 4</p><ul><li><p>第一次for循环：</p><p>3>7不成立，插入待排序元素，数组不变，此时有序序列为3，7</p></li><li><p>第二次for循环：</p><p>7>1成立，数组变成3，7，7，8，5</p><p>3>1成立，数组变成3，3，7，8，5</p><p>插入待排序元素，此时数组为1，3，7，8，5，有序序列为1，3，7</p></li><li><p>第三次for循环：</p><p>7>8不成立，插入待排序元素，数组不变，此时有序序列为1，3，7，8</p></li><li><p>第四次for循环：</p><p>8>5成立，数组变成1，3，7，8，8</p><p>7>5成立，数组变成1，3，7，7，8</p><p>3>5不成立，插入待排序元素，此时数组为1，3，5，7，8，有序序列为1，3，5，7，8，排序完成</p></li></ul><p><img src=/images/insert_sort/insert_sort_3.jpeg alt=img></p><div align=center><b>其他语言版本请在算法分类中查看</b></div><div style=text-align:center;margin-bottom:30px;padding-top:20px><h5 style=font-weight:600;margin-bottom:10px;color:#b04161>「Buy me a coffee」</h5><div id=QR><div id=wechat style=display:inline-block><a class=fancybox rel=group><img id=wechat_qr src=https://www.yupdo.org/images/wechat.png alt="WeChat Pay"></a><h5 style=font-weight:600;margin-top:5px></h5></div><div id=alipay style=display:inline-block><a class=fancybox rel=group><img id=alipay_qr src=https://www.yupdo.org/images/alipay.png alt=Alipay></a><h5 style=font-weight:600;margin-top:5px></h5></div></div></div><script src=https://utteranc.es/client.js repo=glepnir/glepnir.github.io issue-term=title theme=dark-blue crossorigin=anonymous async></script><div class=footer>Copyright © 2022 author glepnir</div></div></body></html>
+</span></span></code></pre></div><h2 id=排序过程>排序过程:</h2><p>以上面的例子来说排序的对象是 3，7，1，8，5 数组长度为5，因为第一个元素可以认为已经被排序 所以for循环的次数是：</p><p>5（数组长度） - 1 = 4</p><ul><li><p>第一次for循环：</p><p>3>7不成立，插入待排序元素，数组不变，此时有序序列为3，7</p></li><li><p>第二次for循环：</p><p>7>1成立，数组变成3，7，7，8，5</p><p>3>1成立，数组变成3，3，7，8，5</p><p>插入待排序元素，此时数组为1，3，7，8，5，有序序列为1，3，7</p></li><li><p>第三次for循环：</p><p>7>8不成立，插入待排序元素，数组不变，此时有序序列为1，3，7，8</p></li><li><p>第四次for循环：</p><p>8>5成立，数组变成1，3，7，8，8</p><p>7>5成立，数组变成1，3，7，7，8</p><p>3>5不成立，插入待排序元素，此时数组为1，3，5，7，8，有序序列为1，3，5，7，8，排序完成</p></li></ul><p><img src=/images/insert_sort/insert_sort_3.jpeg alt=img></p></div></article></main></div><footer><hr><p id=social>Find me around the web:<br><a href=https://github.com/glepnir>GitHub</a>
+|
+<a href=https://space.bilibili.com/321783076>Bilibili</a></p><p class=copyright>Copyright © 2023
+<a href=https://yupdo.org><strong>glepnir</strong></a>.
+This work is licensed under the
+<a href=http://creativecommons.org/licenses/by-sa/4.0/>CC BY-SA 4.0</a> license.</p><p class=builtWith>Built with
+<a href=http://www.gohugo.io/>Hugo</a>,
+using the theme
+<a href=https://gitlab.com/ian-s-mcb/smigle-hugo-theme>smigle</a>,
+which was influenced by the theme
+<a href=https://github.com/sumnerevans/smol>smol</a>.</p></footer></body></html>
