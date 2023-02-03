@@ -9,7 +9,7 @@ html {
   --precolor: #fff;
   --prebgcolor: #000;
 }
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   :root {
      --bgcolor: black;
      --fontcolor: white;
@@ -18,7 +18,7 @@ html {
      --precolor: #fff;
      --prebgcolor: #383838;
   }
-}
+} */
 body {
   color: var(--fontcolor);
   background: var(--bgcolor);
