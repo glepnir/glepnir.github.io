@@ -1,14 +1,14 @@
 @font-face {
-  font-family: 'Iosevka';
-  src: local('Iosevka'),
-    url('/fonts/iosevka-regular.woff2') format("woff2");
+  font-family: 'Play';
+  src: local('Play'),
+    url('/fonts/Play-Regular.ttf') format("truetype");
   font-weight: normal;
   font-style: normal;
 }
 @font-face {
-  font-family: 'Iosevka';
-  src: local('Iosevka'),
-    url('/fonts/iosevka-bold.woff2') format("woff2");
+  font-family: 'Play';
+  src: local('Play'),
+    url('/fonts/Play-Bold.ttf') format("truetype");
   font-weight: bold;
   font-style: bold;
 }
