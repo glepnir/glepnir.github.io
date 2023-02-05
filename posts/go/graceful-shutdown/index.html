@@ -108,7 +108,7 @@ quit 就会取到值，那么 main 函数就会继续往下执行了。</p><div 
 </span></span></code></pre></div><p>最后可以看到 srv.Shutdown 就是用来处理『1. 关闭连接』及『2. 等待所有连接处理结束』
 可以看到传了一个 context 进 Shutdown，目的就是让程式最多等待 5 秒时间，如果超过 5 秒就强制关闭所有连线
 所以您需要根据 server 处理的资料时间来决定等待时间，设定太短就会造成强制关闭，建议依照自己的业务来设定
-至于服务 shutdown 后可以处理哪些事情就看开发者决定。</p></div></article></main></div><footer><hr><p id=social>Find me around the web:<br><a href=https://github.com/glepnir>GitHub</a>
+至于服务 shutdown 后可以处理哪些事情就看开发者决定。</p></div></article></main><script src=https://utteranc.es/client.js repo=glepnir/glepnir.github.io issue-term=title theme=github-light crossorigin=anonymous async></script></div><footer><hr><p id=social>Find me around the web:<br><a href=https://github.com/glepnir>GitHub</a>
 |
 <a href=https://space.bilibili.com/321783076>Bilibili</a></p><p class=copyright>Copyright © 2023
 <a href=https://yupdo.org><strong>glepnir</strong></a>.
