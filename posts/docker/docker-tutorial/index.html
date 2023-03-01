@@ -1,4 +1,4 @@
-<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content><title>Docker Tutorial | glepnir</title><link rel=stylesheet href=/css/reset.css><link rel=stylesheet href=/css/font.css><link rel=stylesheet href=/css/smigle.css><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"></head><body><header><div id=brand><a class=icon-link href=https://yupdo.org><img class=icon src=/images/avatar.svg></a><div class=text><a href=https://yupdo.org><h1>glepnir</h1></a><h3>A vimer work at neovim team and other open source project.</h3></div></div><nav><a href=/><b>Home</b></a>
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content><title>Docker Tutorial | glepnir</title><link rel=stylesheet href=/css/reset.css><link rel=stylesheet href=/css/font.css><link rel=stylesheet href=/css/smigle.css><link rel=stylesheet href=/css/syntax.css><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"></head><body><header><div id=brand><a class=icon-link href=https://yupdo.org><img class=icon src=/images/avatar.svg></a><div class=text><a href=https://yupdo.org><h1>glepnir</h1></a><h3>A vimer work at neovim team and other open source project.</h3></div></div><nav><a href=/><b>Home</b></a>
 |
 <a href=/posts/><b>Posts</b></a>
 |
@@ -10,71 +10,71 @@
 |
 <a href=/about/><b>About</b></a></nav><hr></header><div id=content><main><article><h1>Docker Tutorial</h1><div class=post-meta><strong><span>Posted on</span>
 <time>2022-09-06</time></strong>
-<span>• 896 words</span>
+<span>• 895 words</span>
 <span>• 5 minute read</span><div><span>Tags:</span>
-<a href=/tags/docker>docker</a></div></div><div><h2 id=安装docker>安装Docker</h2><p>在linux和mac上安装docker的方式如下:</p><ul><li>CentOS</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Shell data-lang=Shell><span style=display:flex><span>yum -y install yum-utils device-mapper-persistent-data lvm2
+<a href=/tags/docker>docker</a></div></div><div><p>在linux和mac上安装docker的方式如下:</p><ul><li>CentOS</li></ul><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Shell data-lang=Shell><span style=display:flex><span>yum -y install yum-utils device-mapper-persistent-data lvm2
 </span></span><span style=display:flex><span>yum makecache fast
 </span></span><span style=display:flex><span>yum -y install docker-ce
-</span></span></code></pre></div><ul><li>Mac 安装Docker for Mac即可</li></ul><h2 id=镜像加速>镜像加速</h2><ul><li>CentOS</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Shell data-lang=Shell><span style=display:flex><span>默认下载Docker会去国外服务器下载，速度较慢，可以设置为阿里云镜像源，速度更快
+</span></span></code></pre></div><ul><li>Mac 安装Docker for Mac即可</li></ul><h2 id=镜像加速>镜像加速</h2><ul><li>CentOS</li></ul><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Shell data-lang=Shell><span style=display:flex><span>默认下载Docker会去国外服务器下载，速度较慢，可以设置为阿里云镜像源，速度更快
 </span></span><span style=display:flex><span>yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
-</span></span></code></pre></div><ul><li>Mac</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>登陆到阿里云找到镜像中心/镜像加速器会看到属于你自己的镜像加速器地址
+</span></span></code></pre></div><ul><li>Mac</li></ul><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>登陆到阿里云找到镜像中心/镜像加速器会看到属于你自己的镜像加速器地址
 </span></span><span style=display:flex><span>https://cr.console.aliyun.com/cn-hangzhou/instances/mirrors
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>一般长这个样子
 </span></span><span style=display:flex><span>https://xxxxx.mirror.aliyuncs.com
 </span></span><span style=display:flex><span>将这个地址填写到docker的Preference的Docker Engine里 json的文件格式
-</span></span><span style=display:flex><span><span style=color:#f92672>{</span>
-</span></span><span style=display:flex><span>  <span style=color:#e6db74>&#34;debug&#34;</span>: true,
-</span></span><span style=display:flex><span>  <span style=color:#e6db74>&#34;experimental&#34;</span>: false,
-</span></span><span style=display:flex><span>  <span style=color:#e6db74>&#34;registry-mirrors&#34;</span>: <span style=color:#f92672>[</span>
-</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;https://xxxx.mirror.aliyuncs.com&#34;</span>
-</span></span><span style=display:flex><span>  <span style=color:#f92672>]</span>
-</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>  <span style=color:#0ff;font-weight:700>&#34;debug&#34;</span>: true,
+</span></span><span style=display:flex><span>  <span style=color:#0ff;font-weight:700>&#34;experimental&#34;</span>: false,
+</span></span><span style=display:flex><span>  <span style=color:#0ff;font-weight:700>&#34;registry-mirrors&#34;</span>: [
+</span></span><span style=display:flex><span>    <span style=color:#0ff;font-weight:700>&#34;https://xxxx.mirror.aliyuncs.com&#34;</span>
+</span></span><span style=display:flex><span>  ]
+</span></span><span style=display:flex><span>}
 </span></span><span style=display:flex><span>然后重启Docker
-</span></span></code></pre></div><h2 id=启动docker>启动docker</h2><p>完成上面的操作已经简单的配置好了docker.启动docker</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>安装成功后，需要手动启动，设置为开机启动，并测试一下 Docker
-</span></span><span style=display:flex><span><span style=color:#75715e>#启动docker服务</span>
+</span></span></code></pre></div><h2 id=启动docker>启动docker</h2><p>完成上面的操作已经简单的配置好了docker.启动docker</p><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>安装成功后，需要手动启动，设置为开机启动，并测试一下 Docker
+</span></span><span style=display:flex><span><span style=color:#007f7f>#启动docker服务</span>
 </span></span><span style=display:flex><span>systemctl start docker
-</span></span><span style=display:flex><span><span style=color:#75715e>#设置开机自动启动</span>
-</span></span><span style=display:flex><span>systemctl enable docker
+</span></span><span style=display:flex><span><span style=color:#007f7f>#设置开机自动启动</span>
+</span></span><span style=display:flex><span>systemctl <span style=color:#fff;font-weight:700>enable</span> docker
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>Mac 直接省略上面打开docker客户端设置开机启动，当然你可以使用brew
 </span></span><span style=display:flex><span>services的方式如果你使用brew cask安装的docker
-</span></span><span style=display:flex><span><span style=color:#75715e>#测试</span>
+</span></span><span style=display:flex><span><span style=color:#007f7f>#测试</span>
 </span></span><span style=display:flex><span>docker run hello-world
-</span></span></code></pre></div><h2 id=docker的仓库>Docker的仓库</h2><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>1.Docker官方的中央仓库设置镜像加速后速度就不会很慢推荐使用
+</span></span></code></pre></div><h2 id=docker的仓库>Docker的仓库</h2><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>1.Docker官方的中央仓库设置镜像加速后速度就不会很慢推荐使用
 </span></span><span style=display:flex><span>https://hub.docker.com/
 </span></span><span style=display:flex><span>2.国内的镜像网站：网易蜂巢，daoCloud等，下载速度快，但是镜像相对不全
 </span></span><span style=display:flex><span>https://c.163yun.com/hub#/home
 </span></span><span style=display:flex><span>http://hub.daocloud.io/
 </span></span><span style=display:flex><span>3.在公司内部会采用私服的方式拉取镜像（添加配置）一般都是用linux做服务器
-</span></span><span style=display:flex><span><span style=color:#75715e>#需要创建 /etc/docker/daemon.json，并添加如下内容</span>
-</span></span><span style=display:flex><span><span style=color:#f92672>{</span>
-</span></span><span style=display:flex><span>	<span style=color:#e6db74>&#34;registry-mirrors&#34;</span>:<span style=color:#f92672>[</span><span style=color:#e6db74>&#34;https://registry.docker-cn.com&#34;</span><span style=color:#f92672>]</span>,
-</span></span><span style=display:flex><span>	<span style=color:#e6db74>&#34;insecure-registries&#34;</span>:<span style=color:#f92672>[</span><span style=color:#e6db74>&#34;ip:port&#34;</span><span style=color:#f92672>]</span>
-</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
-</span></span><span style=display:flex><span><span style=color:#75715e>#重启两个服务</span>
+</span></span><span style=display:flex><span><span style=color:#007f7f>#需要创建 /etc/docker/daemon.json，并添加如下内容</span>
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>	<span style=color:#0ff;font-weight:700>&#34;registry-mirrors&#34;</span>:[<span style=color:#0ff;font-weight:700>&#34;https://registry.docker-cn.com&#34;</span>],
+</span></span><span style=display:flex><span>	<span style=color:#0ff;font-weight:700>&#34;insecure-registries&#34;</span>:[<span style=color:#0ff;font-weight:700>&#34;ip:port&#34;</span>]
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span><span style=color:#007f7f>#重启两个服务</span>
 </span></span><span style=display:flex><span>systemctl daemon-reload
 </span></span><span style=display:flex><span>systemctl restart docker
-</span></span></code></pre></div><h2 id=镜像的操作>镜像的操作</h2><ul><li>拉取镜像</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>从中央仓库拉取镜像到本地 一般不填tag会拉去最新的也就是latest
-</span></span><span style=display:flex><span>docker pull 镜像名称<span style=color:#f92672>[</span>:tag<span style=color:#f92672>]</span>
+</span></span></code></pre></div><h2 id=镜像的操作>镜像的操作</h2><ul><li>拉取镜像</li></ul><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>从中央仓库拉取镜像到本地 一般不填tag会拉去最新的也就是latest
+</span></span><span style=display:flex><span>docker pull 镜像名称[:tag]
 </span></span><span style=display:flex><span>例如 docker pull mongo
-</span></span></code></pre></div><ul><li>查看本地镜像</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>docker images
+</span></span></code></pre></div><ul><li>查看本地镜像</li></ul><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>docker images
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>你会看到这样的输出
 </span></span><span style=display:flex><span>REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
-</span></span><span style=display:flex><span>mongo               latest              409c3f937574        <span style=color:#ae81ff>5</span> days ago          493MB
-</span></span><span style=display:flex><span>hello-world         latest              bf756fb1ae65        <span style=color:#ae81ff>7</span> months ago        13.3kB
-</span></span></code></pre></div><ul><li>删除镜像</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span><span style=color:#75715e>#很好记rm 一般*nix的删除前缀 i就是image的i</span>
+</span></span><span style=display:flex><span>mongo               latest              409c3f937574        <span style=color:#ff0;font-weight:700>5</span> days ago          493MB
+</span></span><span style=display:flex><span>hello-world         latest              bf756fb1ae65        <span style=color:#ff0;font-weight:700>7</span> months ago        13.3kB
+</span></span></code></pre></div><ul><li>删除镜像</li></ul><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span><span style=color:#007f7f>#很好记rm 一般*nix的删除前缀 i就是image的i</span>
 </span></span><span style=display:flex><span>docker rmi ID
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>例如删除mongo
 </span></span><span style=display:flex><span>docker rmi 409c3f937574
-</span></span></code></pre></div><ul><li>镜像的导入导出</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>如果因为网络原因可以通过硬盘的方式传输镜像，虽然不规范，但是有效，但是这种方式导出的镜像名称和版本都是null，需要手动修改
-</span></span><span style=display:flex><span><span style=color:#75715e>#将本地的镜像导出</span>
+</span></span></code></pre></div><ul><li>镜像的导入导出</li></ul><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>如果因为网络原因可以通过硬盘的方式传输镜像，虽然不规范，但是有效，但是这种方式导出的镜像名称和版本都是null，需要手动修改
+</span></span><span style=display:flex><span><span style=color:#007f7f>#将本地的镜像导出</span>
 </span></span><span style=display:flex><span>docker save -o 导出的路径 镜像id
-</span></span><span style=display:flex><span><span style=color:#75715e>#加载本地的镜像文件</span>
+</span></span><span style=display:flex><span><span style=color:#007f7f>#加载本地的镜像文件</span>
 </span></span><span style=display:flex><span>docker load -i 镜像文件
-</span></span><span style=display:flex><span><span style=color:#75715e>#修改镜像文件</span>
+</span></span><span style=display:flex><span><span style=color:#007f7f>#修改镜像文件</span>
 </span></span><span style=display:flex><span>docker tag 镜像id 新镜像名称：版本
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>例如打包mongo镜像记得想创建你要导出的文件夹
@@ -83,258 +83,258 @@
 </span></span><span style=display:flex><span>docker load -i ~/dockerimage/mongo
 </span></span><span style=display:flex><span>然后docker images 查看一下
 </span></span><span style=display:flex><span>REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
-</span></span><span style=display:flex><span>&lt;none&gt;              &lt;none&gt;              409c3f937574        <span style=color:#ae81ff>5</span> days ago          493MB
-</span></span><span style=display:flex><span>hello-world         latest              bf756fb1ae65        <span style=color:#ae81ff>7</span> months ago        13.3kB
+</span></span><span style=display:flex><span>&lt;none&gt;              &lt;none&gt;              409c3f937574        <span style=color:#ff0;font-weight:700>5</span> days ago          493MB
+</span></span><span style=display:flex><span>hello-world         latest              bf756fb1ae65        <span style=color:#ff0;font-weight:700>7</span> months ago        13.3kB
 </span></span><span style=display:flex><span>这个none 就是加载的已经打包到本地的mongo ID大小都是一样的
 </span></span><span style=display:flex><span>改个name和tag none鬼知道是什么 40是ID的简写如果确保40是唯一
 </span></span><span style=display:flex><span>可以这么写如果多个40开头记得多写几个或者写全
-</span></span><span style=display:flex><span>docker tag <span style=color:#ae81ff>40</span> mongo:latest
+</span></span><span style=display:flex><span>docker tag <span style=color:#ff0;font-weight:700>40</span> mongo:latest
 </span></span><span style=display:flex><span>再用docker images查看一下 这样就顺眼了
 </span></span><span style=display:flex><span>REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
-</span></span><span style=display:flex><span>mongo               latest              409c3f937574        <span style=color:#ae81ff>5</span> days ago          493MB
-</span></span><span style=display:flex><span>hello-world         latest              bf756fb1ae65        <span style=color:#ae81ff>7</span> months ago        13.3kB
-</span></span></code></pre></div><h3 id=容器操作>容器操作</h3><ul><li>运行容器</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>运行容器需要定制具体镜像，如果镜像不存在，会直接下载
-</span></span><span style=display:flex><span><span style=color:#75715e>#简单操作</span>
-</span></span><span style=display:flex><span>docker run 镜像的标识|镜像的名称<span style=color:#f92672>[</span>:tag<span style=color:#f92672>]</span>
-</span></span><span style=display:flex><span><span style=color:#75715e>#常用的参数</span>
-</span></span><span style=display:flex><span>docker run -d -p 宿主机端口:容器端口 --name 容器名称 镜像的标识|镜像名称<span style=color:#f92672>[</span>:tag<span style=color:#f92672>]</span>
-</span></span><span style=display:flex><span><span style=color:#75715e>#-d:代表后台运行容器</span>
-</span></span><span style=display:flex><span><span style=color:#75715e>#-p 宿主机端口:容器端口：为了映射当前Linux的端口和容器的端口</span>
-</span></span><span style=display:flex><span><span style=color:#75715e>#--name 容器名称:指定容器的名称</span>
-</span></span></code></pre></div><ul><li>查看容器</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>查看全部正在运行的容器信息
-</span></span><span style=display:flex><span>docker ps <span style=color:#f92672>[</span>-qa<span style=color:#f92672>]</span>
-</span></span><span style=display:flex><span><span style=color:#75715e>#-a 查看全部的容器，包括没有运行</span>
-</span></span><span style=display:flex><span><span style=color:#75715e>#-q 只查看容器的标识</span>
+</span></span><span style=display:flex><span>mongo               latest              409c3f937574        <span style=color:#ff0;font-weight:700>5</span> days ago          493MB
+</span></span><span style=display:flex><span>hello-world         latest              bf756fb1ae65        <span style=color:#ff0;font-weight:700>7</span> months ago        13.3kB
+</span></span></code></pre></div><h3 id=容器操作>容器操作</h3><ul><li>运行容器</li></ul><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>运行容器需要定制具体镜像，如果镜像不存在，会直接下载
+</span></span><span style=display:flex><span><span style=color:#007f7f>#简单操作</span>
+</span></span><span style=display:flex><span>docker run 镜像的标识|镜像的名称[:tag]
+</span></span><span style=display:flex><span><span style=color:#007f7f>#常用的参数</span>
+</span></span><span style=display:flex><span>docker run -d -p 宿主机端口:容器端口 --name 容器名称 镜像的标识|镜像名称[:tag]
+</span></span><span style=display:flex><span><span style=color:#007f7f>#-d:代表后台运行容器</span>
+</span></span><span style=display:flex><span><span style=color:#007f7f>#-p 宿主机端口:容器端口：为了映射当前Linux的端口和容器的端口</span>
+</span></span><span style=display:flex><span><span style=color:#007f7f>#--name 容器名称:指定容器的名称</span>
+</span></span></code></pre></div><ul><li>查看容器</li></ul><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>查看全部正在运行的容器信息
+</span></span><span style=display:flex><span>docker ps [-qa]
+</span></span><span style=display:flex><span><span style=color:#007f7f>#-a 查看全部的容器，包括没有运行</span>
+</span></span><span style=display:flex><span><span style=color:#007f7f>#-q 只查看容器的标识</span>
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>会有这样的输出 当前容器的id
 </span></span><span style=display:flex><span>CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS                     PORTS               NAMES
-</span></span><span style=display:flex><span>d00f6136b0d7        bf                  <span style=color:#e6db74>&#34;/hello&#34;</span>            <span style=color:#ae81ff>5</span> seconds ago       Exited <span style=color:#f92672>(</span>0<span style=color:#f92672>)</span> <span style=color:#ae81ff>4</span> seconds ago                       hopeful_poitras
-</span></span></code></pre></div><ul><li>查看容器日志</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>查看容器日志，以查看容器运行的信息
+</span></span><span style=display:flex><span>d00f6136b0d7        bf                  <span style=color:#0ff;font-weight:700>&#34;/hello&#34;</span>            <span style=color:#ff0;font-weight:700>5</span> seconds ago       Exited (0) <span style=color:#ff0;font-weight:700>4</span> seconds ago                       hopeful_poitras
+</span></span></code></pre></div><ul><li>查看容器日志</li></ul><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>查看容器日志，以查看容器运行的信息
 </span></span><span style=display:flex><span>docker logs -f 容器id
-</span></span><span style=display:flex><span><span style=color:#75715e>#-f：可以滚动查看日志的最后几行</span>
-</span></span></code></pre></div><ul><li>进入容器的内部</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>可以进入容器的内部进行操作，例如进入容器内部的bash命令行
+</span></span><span style=display:flex><span><span style=color:#007f7f>#-f：可以滚动查看日志的最后几行</span>
+</span></span></code></pre></div><ul><li>进入容器的内部</li></ul><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>可以进入容器的内部进行操作，例如进入容器内部的bash命令行
 </span></span><span style=display:flex><span>exec是execute的简写执行的意思。记住单词也就记住了。
-</span></span><span style=display:flex><span>docker exec -it 容器id bash
-</span></span></code></pre></div><ul><li>重启&启动&停止&删除容器</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>容器的启动，停止，删除等操作，后续会经常使用到
-</span></span><span style=display:flex><span><span style=color:#75715e>#重新启动容器</span>
+</span></span><span style=display:flex><span>docker <span style=color:#fff;font-weight:700>exec</span> -it 容器id bash
+</span></span></code></pre></div><ul><li>重启&启动&停止&删除容器</li></ul><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>容器的启动，停止，删除等操作，后续会经常使用到
+</span></span><span style=display:flex><span><span style=color:#007f7f>#重新启动容器</span>
 </span></span><span style=display:flex><span>docker restart 容器id
-</span></span><span style=display:flex><span><span style=color:#75715e>#启动停止运行的容器</span>
+</span></span><span style=display:flex><span><span style=color:#007f7f>#启动停止运行的容器</span>
 </span></span><span style=display:flex><span>docker start 容器id
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#75715e>#停止指定的容器(删除容器前，需要先停止容器)</span>
+</span></span><span style=display:flex><span><span style=color:#007f7f>#停止指定的容器(删除容器前，需要先停止容器)</span>
 </span></span><span style=display:flex><span>docker stop 容器id
-</span></span><span style=display:flex><span><span style=color:#75715e>#停止全部容器</span>
-</span></span><span style=display:flex><span>docker stop <span style=color:#66d9ef>$(</span>docker ps -qa<span style=color:#66d9ef>)</span>
-</span></span><span style=display:flex><span><span style=color:#75715e>#删除指定容器</span>
+</span></span><span style=display:flex><span><span style=color:#007f7f>#停止全部容器</span>
+</span></span><span style=display:flex><span>docker stop <span style=color:#fff;font-weight:700>$(</span>docker ps -qa<span style=color:#fff;font-weight:700>)</span>
+</span></span><span style=display:flex><span><span style=color:#007f7f>#删除指定容器</span>
 </span></span><span style=display:flex><span>docker rm 容器id
-</span></span><span style=display:flex><span><span style=color:#75715e>#删除全部容器</span>
-</span></span><span style=display:flex><span>docker rm <span style=color:#66d9ef>$(</span>docker ps -qa<span style=color:#66d9ef>)</span>
+</span></span><span style=display:flex><span><span style=color:#007f7f>#删除全部容器</span>
+</span></span><span style=display:flex><span>docker rm <span style=color:#fff;font-weight:700>$(</span>docker ps -qa<span style=color:#fff;font-weight:700>)</span>
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#75715e>#例如删除hello-world容器首先停止容器</span>
+</span></span><span style=display:flex><span><span style=color:#007f7f>#例如删除hello-world容器首先停止容器</span>
 </span></span><span style=display:flex><span>docker ps -a 查看到ID
 </span></span><span style=display:flex><span>CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS                     PORTS               NAMES
-</span></span><span style=display:flex><span>d00f6136b0d7        bf                  <span style=color:#e6db74>&#34;/hello&#34;</span>            <span style=color:#ae81ff>5</span> seconds ago       Exited <span style=color:#f92672>(</span>0<span style=color:#f92672>)</span> <span style=color:#ae81ff>4</span> seconds ago                       hopeful_poitras
-</span></span><span style=display:flex><span><span style=color:#75715e>#停止容器</span>
+</span></span><span style=display:flex><span>d00f6136b0d7        bf                  <span style=color:#0ff;font-weight:700>&#34;/hello&#34;</span>            <span style=color:#ff0;font-weight:700>5</span> seconds ago       Exited (0) <span style=color:#ff0;font-weight:700>4</span> seconds ago                       hopeful_poitras
+</span></span><span style=display:flex><span><span style=color:#007f7f>#停止容器</span>
 </span></span><span style=display:flex><span>docker stop d00
-</span></span><span style=display:flex><span><span style=color:#75715e>#删除容器</span>
+</span></span><span style=display:flex><span><span style=color:#007f7f>#删除容器</span>
 </span></span><span style=display:flex><span>docker rm d00
-</span></span><span style=display:flex><span><span style=color:#75715e>#查看一下</span>
+</span></span><span style=display:flex><span><span style=color:#007f7f>#查看一下</span>
 </span></span><span style=display:flex><span>docker ps -a 没有了hello-world
-</span></span><span style=display:flex><span><span style=color:#75715e>#然后就可以删除掉hello-world镜像</span>
+</span></span><span style=display:flex><span><span style=color:#007f7f>#然后就可以删除掉hello-world镜像</span>
 </span></span><span style=display:flex><span>docker rmi hello-wolrd的id即可
-</span></span><span style=display:flex><span><span style=color:#75715e>#再用docker images查看一下</span>
-</span></span><span style=display:flex><span><span style=color:#75715e>#没有了hello-world的镜像</span>
-</span></span></code></pre></div><h2 id=启动mysql>启动mysql</h2><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span><span style=color:#75715e>#例如docker运行mysql</span>
+</span></span><span style=display:flex><span><span style=color:#007f7f>#再用docker images查看一下</span>
+</span></span><span style=display:flex><span><span style=color:#007f7f>#没有了hello-world的镜像</span>
+</span></span></code></pre></div><h2 id=启动mysql>启动mysql</h2><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span><span style=color:#007f7f>#例如docker运行mysql</span>
 </span></span><span style=display:flex><span>➜ docker pull mysql
-</span></span><span style=display:flex><span><span style=color:#75715e>#查看镜像</span>
+</span></span><span style=display:flex><span><span style=color:#007f7f>#查看镜像</span>
 </span></span><span style=display:flex><span>➜ docker images
 </span></span><span style=display:flex><span>REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
-</span></span><span style=display:flex><span>mysql               latest              0d64f46acfd1        <span style=color:#ae81ff>3</span> weeks ago         544MB
-</span></span><span style=display:flex><span><span style=color:#75715e>#后台运行容器 -e 加上初始化的root密码</span>
-</span></span><span style=display:flex><span>➜ docker run -d -p 3309:3306 -e MYSQL_ROOT_PASSWORD<span style=color:#f92672>=</span><span style=color:#ae81ff>123456</span>   --name mysql 0d                                                                                                                     30%  2.65G ─╯
+</span></span><span style=display:flex><span>mysql               latest              0d64f46acfd1        <span style=color:#ff0;font-weight:700>3</span> weeks ago         544MB
+</span></span><span style=display:flex><span><span style=color:#007f7f>#后台运行容器 -e 加上初始化的root密码</span>
+</span></span><span style=display:flex><span>➜ docker run -d -p 3309:3306 -e MYSQL_ROOT_PASSWORD=<span style=color:#ff0;font-weight:700>123456</span>   --name mysql 0d                                                                                                                     30%  2.65G ─╯
 </span></span><span style=display:flex><span>d20bfc8e2eaf35773a911a8e5e3af8b1bce024a16e7687000d9ef476c4fc3f0e
-</span></span><span style=display:flex><span><span style=color:#75715e># 查看当前的容器</span>
+</span></span><span style=display:flex><span><span style=color:#007f7f># 查看当前的容器</span>
 </span></span><span style=display:flex><span>➜ docker ps -a                                                                                                                                                                                   30%  2.65G ─╯
 </span></span><span style=display:flex><span>CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                               NAMES
-</span></span><span style=display:flex><span>d20bfc8e2eaf        0d                  <span style=color:#e6db74>&#34;docker-entrypoint.s…&#34;</span>   <span style=color:#ae81ff>3</span> seconds ago       Up <span style=color:#ae81ff>3</span> seconds        33060/tcp, 0.0.0.0:3309-&gt;3306/tcp   mysql
-</span></span><span style=display:flex><span><span style=color:#75715e># 进入容器的内部shell环境连接mysqlclient</span>
-</span></span><span style=display:flex><span>➜ docker exec -it mysql bash                                                                                                                                                                     30%  2.54G ─╯
+</span></span><span style=display:flex><span>d20bfc8e2eaf        0d                  <span style=color:#0ff;font-weight:700>&#34;docker-entrypoint.s…&#34;</span>   <span style=color:#ff0;font-weight:700>3</span> seconds ago       Up <span style=color:#ff0;font-weight:700>3</span> seconds        33060/tcp, 0.0.0.0:3309-&gt;3306/tcp   mysql
+</span></span><span style=display:flex><span><span style=color:#007f7f># 进入容器的内部shell环境连接mysqlclient</span>
+</span></span><span style=display:flex><span>➜ docker <span style=color:#fff;font-weight:700>exec</span> -it mysql bash                                                                                                                                                                     30%  2.54G ─╯
 </span></span><span style=display:flex><span>root@d20bfc8e2eaf:/# mysql -u root -p
 </span></span><span style=display:flex><span>Enter password:
-</span></span><span style=display:flex><span>Welcome to the MySQL monitor.  Commands end with ; or <span style=color:#ae81ff>\g</span>.
-</span></span><span style=display:flex><span>Your MySQL connection id is <span style=color:#ae81ff>10</span>
+</span></span><span style=display:flex><span>Welcome to the MySQL monitor.  Commands end with ; or <span style=color:#0ff;font-weight:700>\g</span>.
+</span></span><span style=display:flex><span>Your MySQL connection id is <span style=color:#ff0;font-weight:700>10</span>
 </span></span><span style=display:flex><span>Server version: 8.0.21 MySQL Community Server - GPL
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>Copyright <span style=color:#f92672>(</span>c<span style=color:#f92672>)</span> 2000, 2020, Oracle and/or its affiliates. All rights reserved.
+</span></span><span style=display:flex><span>Copyright (c) 2000, 2020, Oracle and/or its affiliates. All rights reserved.
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>Oracle is a registered trademark of Oracle Corporation and/or its
 </span></span><span style=display:flex><span>affiliates. Other names may be trademarks of their respective
 </span></span><span style=display:flex><span>owners.
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>Type <span style=color:#e6db74>&#39;help;&#39;</span> or <span style=color:#e6db74>&#39;\h&#39;</span> <span style=color:#66d9ef>for</span> help. Type <span style=color:#e6db74>&#39;\c&#39;</span> to clear the current input statement.
+</span></span><span style=display:flex><span>Type <span style=color:#0ff;font-weight:700>&#39;help;&#39;</span> or <span style=color:#0ff;font-weight:700>&#39;\h&#39;</span> <span style=color:#fff;font-weight:700>for</span> help. Type <span style=color:#0ff;font-weight:700>&#39;\c&#39;</span> to clear the current input statement.
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>mysql&gt;
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#75715e>#成功运行了mysql</span>
-</span></span><span style=display:flex><span><span style=color:#75715e># 退出mysql</span>
-</span></span><span style=display:flex><span>mysql&gt; <span style=color:#ae81ff>\q</span>
-</span></span><span style=display:flex><span><span style=color:#75715e># 退出容器</span>
-</span></span><span style=display:flex><span>root@d20bfc8e2eaf:/# exit
-</span></span></code></pre></div><p>go中使用docker的mysql</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {
-</span></span><span style=display:flex><span>	<span style=color:#a6e22e>ConnectSQL</span>(<span style=color:#e6db74>&#34;localhost&#34;</span>, <span style=color:#e6db74>&#34;3309&#34;</span>, <span style=color:#e6db74>&#34;root&#34;</span>, <span style=color:#e6db74>&#34;123456&#34;</span>, <span style=color:#e6db74>&#34;mysql&#34;</span>)
+</span></span><span style=display:flex><span><span style=color:#007f7f>#成功运行了mysql</span>
+</span></span><span style=display:flex><span><span style=color:#007f7f># 退出mysql</span>
+</span></span><span style=display:flex><span>mysql&gt; <span style=color:#0ff;font-weight:700>\q</span>
+</span></span><span style=display:flex><span><span style=color:#007f7f># 退出容器</span>
+</span></span><span style=display:flex><span>root@d20bfc8e2eaf:/# <span style=color:#fff;font-weight:700>exit</span>
+</span></span></code></pre></div><p>go中使用docker的mysql</p><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#fff;font-weight:700>func</span> main() {
+</span></span><span style=display:flex><span>	ConnectSQL(<span style=color:#0ff;font-weight:700>&#34;localhost&#34;</span>, <span style=color:#0ff;font-weight:700>&#34;3309&#34;</span>, <span style=color:#0ff;font-weight:700>&#34;root&#34;</span>, <span style=color:#0ff;font-weight:700>&#34;123456&#34;</span>, <span style=color:#0ff;font-weight:700>&#34;mysql&#34;</span>)
 </span></span><span style=display:flex><span>}
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#75715e>// ConnectSQL ...
-</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>ConnectSQL</span>(<span style=color:#a6e22e>host</span>, <span style=color:#a6e22e>port</span>, <span style=color:#a6e22e>uname</span>, <span style=color:#a6e22e>pass</span>, <span style=color:#a6e22e>dbname</span> <span style=color:#66d9ef>string</span>) {
-</span></span><span style=display:flex><span>	<span style=color:#a6e22e>dbSource</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Sprintf</span>(
-</span></span><span style=display:flex><span>		<span style=color:#e6db74>&#34;root:%s@tcp(%s:%s)/%s?charset=utf8&#34;</span>,
-</span></span><span style=display:flex><span>		<span style=color:#a6e22e>pass</span>,
-</span></span><span style=display:flex><span>		<span style=color:#a6e22e>host</span>,
-</span></span><span style=display:flex><span>		<span style=color:#a6e22e>port</span>,
-</span></span><span style=display:flex><span>		<span style=color:#a6e22e>dbname</span>,
+</span></span><span style=display:flex><span><span style=color:#007f7f>// ConnectSQL ...
+</span></span></span><span style=display:flex><span><span style=color:#007f7f></span><span style=color:#fff;font-weight:700>func</span> ConnectSQL(host, port, uname, pass, dbname <span style=color:#fff;font-weight:700>string</span>) {
+</span></span><span style=display:flex><span>	dbSource := fmt.Sprintf(
+</span></span><span style=display:flex><span>		<span style=color:#0ff;font-weight:700>&#34;root:%s@tcp(%s:%s)/%s?charset=utf8&#34;</span>,
+</span></span><span style=display:flex><span>		pass,
+</span></span><span style=display:flex><span>		host,
+</span></span><span style=display:flex><span>		port,
+</span></span><span style=display:flex><span>		dbname,
 </span></span><span style=display:flex><span>	)
-</span></span><span style=display:flex><span>	<span style=color:#a6e22e>d</span>, <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>sql</span>.<span style=color:#a6e22e>Open</span>(<span style=color:#e6db74>&#34;mysql&#34;</span>, <span style=color:#a6e22e>dbSource</span>)
-</span></span><span style=display:flex><span>	<span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
-</span></span><span style=display:flex><span>		panic(<span style=color:#a6e22e>err</span>)
+</span></span><span style=display:flex><span>	d, err := sql.Open(<span style=color:#0ff;font-weight:700>&#34;mysql&#34;</span>, dbSource)
+</span></span><span style=display:flex><span>	<span style=color:#fff;font-weight:700>if</span> err != <span style=color:#fff;font-weight:700>nil</span> {
+</span></span><span style=display:flex><span>		<span style=color:#fff;font-weight:700>panic</span>(err)
 </span></span><span style=display:flex><span>	}
-</span></span><span style=display:flex><span>	<span style=color:#a6e22e>err</span> = <span style=color:#a6e22e>d</span>.<span style=color:#a6e22e>Ping</span>()
-</span></span><span style=display:flex><span>	<span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
-</span></span><span style=display:flex><span>		panic(<span style=color:#a6e22e>err</span>)
+</span></span><span style=display:flex><span>	err = d.Ping()
+</span></span><span style=display:flex><span>	<span style=color:#fff;font-weight:700>if</span> err != <span style=color:#fff;font-weight:700>nil</span> {
+</span></span><span style=display:flex><span>		<span style=color:#fff;font-weight:700>panic</span>(err)
 </span></span><span style=display:flex><span>	}
-</span></span><span style=display:flex><span>	<span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;Connection success&#34;</span>)
+</span></span><span style=display:flex><span>	fmt.Println(<span style=color:#0ff;font-weight:700>&#34;Connection success&#34;</span>)
 </span></span><span style=display:flex><span>}
-</span></span></code></pre></div><p>极大的改善了开发体验，你可以简单有快速的安装不同版本和不同类型的数据库。</p><h3 id=数据卷>数据卷</h3><p>为什么要用数据卷因为镜像往往都是很纯净的甚至都没有vi，还需要去下载一个vi才能使用。如果使用docker部署不推荐在容器内部维护项目。</p><p>数据卷：将宿主机的一个目录映射到容器的一个目录中。可以在宿主机中操作目录中的内容，那么容器内部映射的文件，也会跟着一起改变。</p><ul><li>创建数据卷</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span><span style=color:#75715e>#创建数据卷后，默认会存放在一个目录下/var/lib/docker/volumes/数据卷名称/_data</span>
-</span></span><span style=display:flex><span><span style=color:#75715e># Mac 下的目录~/Library/Containers/com.docker.docker/Data/com.docker.driver.amd64-linux/tty</span>
+</span></span></code></pre></div><p>极大的改善了开发体验，你可以简单有快速的安装不同版本和不同类型的数据库。</p><h3 id=数据卷>数据卷</h3><p>为什么要用数据卷因为镜像往往都是很纯净的甚至都没有vi，还需要去下载一个vi才能使用。如果使用docker部署不推荐在容器内部维护项目。</p><p>数据卷：将宿主机的一个目录映射到容器的一个目录中。可以在宿主机中操作目录中的内容，那么容器内部映射的文件，也会跟着一起改变。</p><ul><li>创建数据卷</li></ul><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span><span style=color:#007f7f>#创建数据卷后，默认会存放在一个目录下/var/lib/docker/volumes/数据卷名称/_data</span>
+</span></span><span style=display:flex><span><span style=color:#007f7f># Mac 下的目录~/Library/Containers/com.docker.docker/Data/com.docker.driver.amd64-linux/tty</span>
 </span></span><span style=display:flex><span>docker volume create 数据卷名称
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#75715e>#创建一个go微服务数据卷</span>
+</span></span><span style=display:flex><span><span style=color:#007f7f>#创建一个go微服务数据卷</span>
 </span></span><span style=display:flex><span>➜ docker volume create go-microservices
 </span></span><span style=display:flex><span>go-microservices
-</span></span><span style=display:flex><span><span style=color:#75715e># 查看数据卷</span>
+</span></span><span style=display:flex><span><span style=color:#007f7f># 查看数据卷</span>
 </span></span><span style=display:flex><span>➜ docker volume ls
 </span></span><span style=display:flex><span>DRIVER              VOLUME NAME
-</span></span><span style=display:flex><span>local               3e1a82bbf69dc086edf161d5f5737c108d82f04a1c07fa24be77a48d6f7bd0de
-</span></span><span style=display:flex><span>local               55f0f0294ae7096d461ffc0319c8e52064856d18ce9ceb194794d39420b2c76a
-</span></span><span style=display:flex><span>local               460487207e610918020e8435d071e6127c98f33eb0292433a38a8c8bedaf4f38
-</span></span><span style=display:flex><span>local               dd189a79766f32b8da90ff16a7cc4bf97ef662fcd9387e322232cd60de791a36
-</span></span><span style=display:flex><span>local               go-microservices
-</span></span></code></pre></div><ul><li>查看数据卷</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span><span style=color:#75715e>#查看全部数据卷信息</span>
+</span></span><span style=display:flex><span><span style=color:#fff;font-weight:700>local</span>               3e1a82bbf69dc086edf161d5f5737c108d82f04a1c07fa24be77a48d6f7bd0de
+</span></span><span style=display:flex><span><span style=color:#fff;font-weight:700>local</span>               55f0f0294ae7096d461ffc0319c8e52064856d18ce9ceb194794d39420b2c76a
+</span></span><span style=display:flex><span><span style=color:#fff;font-weight:700>local</span>               460487207e610918020e8435d071e6127c98f33eb0292433a38a8c8bedaf4f38
+</span></span><span style=display:flex><span><span style=color:#fff;font-weight:700>local</span>               dd189a79766f32b8da90ff16a7cc4bf97ef662fcd9387e322232cd60de791a36
+</span></span><span style=display:flex><span><span style=color:#fff;font-weight:700>local</span>               go-microservices
+</span></span></code></pre></div><ul><li>查看数据卷</li></ul><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span><span style=color:#007f7f>#查看全部数据卷信息</span>
 </span></span><span style=display:flex><span>docker volume ls
-</span></span><span style=display:flex><span><span style=color:#75715e>#查看数据卷的详细信息，可以查询到存放的路径，创建时间等等</span>
+</span></span><span style=display:flex><span><span style=color:#007f7f>#查看数据卷的详细信息，可以查询到存放的路径，创建时间等等</span>
 </span></span><span style=display:flex><span>docker volume inspect 数据卷名称
-</span></span><span style=display:flex><span><span style=color:#e6db74>``</span>
+</span></span><span style=display:flex><span><span style=color:#0ff;font-weight:700>``</span>
 </span></span><span style=display:flex><span>- 删除数据卷
-</span></span><span style=display:flex><span><span style=color:#e6db74>```</span>sh
-</span></span><span style=display:flex><span><span style=color:#75715e>#删除指定的数据卷</span>
+</span></span><span style=display:flex><span><span style=color:#0ff;font-weight:700>```</span>sh
+</span></span><span style=display:flex><span><span style=color:#007f7f>#删除指定的数据卷</span>
 </span></span><span style=display:flex><span>docker volume rm 数据卷名称
-</span></span></code></pre></div><ul><li>容器映射数据卷</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span><span style=color:#75715e>#通过数据卷名称映射，如果数据卷不存在。Docker会帮你自动创建，会将容器内部自带的文件，存储在默认的存放路径中。</span>
+</span></span></code></pre></div><ul><li>容器映射数据卷</li></ul><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span><span style=color:#007f7f>#通过数据卷名称映射，如果数据卷不存在。Docker会帮你自动创建，会将容器内部自带的文件，存储在默认的存放路径中。</span>
 </span></span><span style=display:flex><span>docker run -v 数据卷名称:容器内部的路径 镜像id
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#75715e>#通过路径映射数据卷，直接指定一个路径作为数据卷的存放位置。但是这个路径下是空的。手动添加内容，推荐这种方式</span>
-</span></span><span style=display:flex><span>docker run -v 路径<span style=color:#f92672>(</span>/root/自己创建的文件夹<span style=color:#f92672>)</span>:容器内部的路径 镜像id
-</span></span></code></pre></div><h3 id=dockerfile自定义镜像>Dockerfile自定义镜像</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>创建自定义镜像就需要创建一个Dockerfiler,如下为Dockerfile的语言
+</span></span><span style=display:flex><span><span style=color:#007f7f>#通过路径映射数据卷，直接指定一个路径作为数据卷的存放位置。但是这个路径下是空的。手动添加内容，推荐这种方式</span>
+</span></span><span style=display:flex><span>docker run -v 路径(/root/自己创建的文件夹):容器内部的路径 镜像id
+</span></span></code></pre></div><h3 id=dockerfile自定义镜像>Dockerfile自定义镜像</h3><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>创建自定义镜像就需要创建一个Dockerfiler,如下为Dockerfile的语言
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>from：指定当前自定义镜像依赖的环境
 </span></span><span style=display:flex><span>copy：将相对路径下的内容复制到自定义镜像中
 </span></span><span style=display:flex><span>workdir：声明镜像的默认工作目录
 </span></span><span style=display:flex><span>run：执行的命令，可以编写多个
 </span></span><span style=display:flex><span>cmd：需要执行的命令（在workdir下执行的，cmd可以写多个，只以最后一个为准）
-</span></span></code></pre></div><h3 id=生成镜像>生成镜像</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span><span style=color:#75715e>#编写完Dockerfile后需要通过命令将其制作为镜像，并且要在Dockerfile的当前目录下，之后即可在镜像中查看到指定的镜像信息</span>
-</span></span><span style=display:flex><span><span style=color:#75715e># 点意味着生成在当前目录下</span>
-</span></span><span style=display:flex><span>docker build -t 镜像名称<span style=color:#f92672>[</span>:tag<span style=color:#f92672>]</span> .
+</span></span></code></pre></div><h3 id=生成镜像>生成镜像</h3><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span><span style=color:#007f7f>#编写完Dockerfile后需要通过命令将其制作为镜像，并且要在Dockerfile的当前目录下，之后即可在镜像中查看到指定的镜像信息</span>
+</span></span><span style=display:flex><span><span style=color:#007f7f># 点意味着生成在当前目录下</span>
+</span></span><span style=display:flex><span>docker build -t 镜像名称[:tag] .
 </span></span></code></pre></div><h3 id=dockercompose>DockerCompose</h3><p>以上面的方式运行一个容器需要添加许多参数。为了更加的方便使用Docker-Compose编写配置文件把参数写进去。
 Docker-Compose也可以批量的管理容器所以你只需要编写并维护一个docker-compose.yaml文件即可
 地址
 <a href=https://github.com/docker/compose>docker-compose</a>,可以在github的release下载已经打包好的
-mac下就直接brew装即可</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>➜ brew info docker-compose                                                                                                                                                                       30%  2.99G ─╯
-</span></span><span style=display:flex><span>docker-compose: stable 1.26.2 <span style=color:#f92672>(</span>bottled<span style=color:#f92672>)</span>, HEAD
+mac下就直接brew装即可</p><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>➜ brew info docker-compose                                                                                                                                                                       30%  2.99G ─╯
+</span></span><span style=display:flex><span>docker-compose: stable 1.26.2 (bottled), HEAD
 </span></span><span style=display:flex><span>Isolated development environments using Docker
 </span></span><span style=display:flex><span>https://docs.docker.com/compose/
 </span></span><span style=display:flex><span>Not installed
 </span></span><span style=display:flex><span>From: https://github.com/Homebrew/homebrew-core/blob/HEAD/Formula/docker-compose.rb
 </span></span><span style=display:flex><span>License: Apache-2.0
-</span></span><span style=display:flex><span><span style=color:#f92672>==</span>&gt; Dependencies
+</span></span><span style=display:flex><span>==&gt; Dependencies
 </span></span><span style=display:flex><span>Required: libyaml ✔, python@3.8 ✔
-</span></span><span style=display:flex><span><span style=color:#f92672>==</span>&gt; Options
+</span></span><span style=display:flex><span>==&gt; Options
 </span></span><span style=display:flex><span>--HEAD
 </span></span><span style=display:flex><span>        Install HEAD version
-</span></span><span style=display:flex><span><span style=color:#f92672>==</span>&gt; Analytics
-</span></span><span style=display:flex><span>install: 11,808 <span style=color:#f92672>(</span><span style=color:#ae81ff>30</span> days<span style=color:#f92672>)</span>, 41,559 <span style=color:#f92672>(</span><span style=color:#ae81ff>90</span> days<span style=color:#f92672>)</span>, 159,035 <span style=color:#f92672>(</span><span style=color:#ae81ff>365</span> days<span style=color:#f92672>)</span>
-</span></span><span style=display:flex><span>install-on-request: 11,689 <span style=color:#f92672>(</span><span style=color:#ae81ff>30</span> days<span style=color:#f92672>)</span>, 40,917 <span style=color:#f92672>(</span><span style=color:#ae81ff>90</span> days<span style=color:#f92672>)</span>, 155,728 <span style=color:#f92672>(</span><span style=color:#ae81ff>365</span> days<span style=color:#f92672>)</span>
-</span></span><span style=display:flex><span>build-error: <span style=color:#ae81ff>0</span> <span style=color:#f92672>(</span><span style=color:#ae81ff>30</span> days<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>==&gt; Analytics
+</span></span><span style=display:flex><span>install: 11,808 (<span style=color:#ff0;font-weight:700>30</span> days), 41,559 (<span style=color:#ff0;font-weight:700>90</span> days), 159,035 (<span style=color:#ff0;font-weight:700>365</span> days)
+</span></span><span style=display:flex><span>install-on-request: 11,689 (<span style=color:#ff0;font-weight:700>30</span> days), 40,917 (<span style=color:#ff0;font-weight:700>90</span> days), 155,728 (<span style=color:#ff0;font-weight:700>365</span> days)
+</span></span><span style=display:flex><span>build-error: <span style=color:#ff0;font-weight:700>0</span> (<span style=color:#ff0;font-weight:700>30</span> days)
 </span></span><span style=display:flex><span>➜ brew install docker-compose
-</span></span></code></pre></div><p>但是你也要熟悉linux下的操作。linux下</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span><span style=color:#75715e>#下载好docker-compose然后将DockerCompose文件的名称修改一下，给予DockerCompose文件一个可执行的权限</span>
+</span></span></code></pre></div><p>但是你也要熟悉linux下的操作。linux下</p><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span><span style=color:#007f7f>#下载好docker-compose然后将DockerCompose文件的名称修改一下，给予DockerCompose文件一个可执行的权限</span>
 </span></span><span style=display:flex><span>mv docker-compose-Linux-x86_64 docker-compose
-</span></span><span style=display:flex><span>chmod <span style=color:#ae81ff>777</span> docker-compose
-</span></span><span style=display:flex><span><span style=color:#75715e>#方便后期操作，配置一个环境变量</span>
-</span></span><span style=display:flex><span><span style=color:#75715e>#将docker-compose文件移动到了/usr/local/bin，修改了/etc/profile文件，给/usr/local/bin配置到了PATH中</span>
+</span></span><span style=display:flex><span>chmod <span style=color:#ff0;font-weight:700>777</span> docker-compose
+</span></span><span style=display:flex><span><span style=color:#007f7f>#方便后期操作，配置一个环境变量</span>
+</span></span><span style=display:flex><span><span style=color:#007f7f>#将docker-compose文件移动到了/usr/local/bin，修改了/etc/profile文件，给/usr/local/bin配置到了PATH中</span>
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>mv docker-compose /usr/local/bin
 </span></span><span style=display:flex><span>vi /etc/profile
-</span></span><span style=display:flex><span><span style=color:#75715e>#添加内容：export PATH=/usr/local/bin:$PATH</span>
-</span></span><span style=display:flex><span>source /etc/profile
-</span></span><span style=display:flex><span><span style=color:#75715e>#测试</span>
+</span></span><span style=display:flex><span><span style=color:#007f7f>#添加内容：export PATH=/usr/local/bin:$PATH</span>
+</span></span><span style=display:flex><span><span style=color:#fff;font-weight:700>source</span> /etc/profile
+</span></span><span style=display:flex><span><span style=color:#007f7f>#测试</span>
 </span></span><span style=display:flex><span>docker-compose -v
 </span></span></code></pre></div><h3 id=dockercompose-管理>DockerCompose 管理</h3><p>编写docker-compose.yml文件yml文件以key:value方式来指定配置信息
-多个配置信息以换行+缩进的方式来区分在docker-compose.yml文件中，不要使用制表符</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>version</span>: <span style=color:#e6db74>&#39;3.1&#39;</span>
-</span></span><span style=display:flex><span><span style=color:#f92672>services</span>:
-</span></span><span style=display:flex><span>  <span style=color:#f92672>mysql</span>:           <span style=color:#75715e># 服务的名称</span>
-</span></span><span style=display:flex><span>    <span style=color:#f92672>restart</span>: <span style=color:#ae81ff>always  </span> <span style=color:#75715e># 代表只要docker启动，那么这个容器就跟着一起启动</span>
-</span></span><span style=display:flex><span>    <span style=color:#f92672>image</span>: <span style=color:#ae81ff>daocloud.io/library/mysql:5.7.4 </span> <span style=color:#75715e># 指定镜像路径</span>
-</span></span><span style=display:flex><span>    <span style=color:#f92672>container_name</span>: <span style=color:#ae81ff>mysql </span> <span style=color:#75715e># 指定容器名称 docker ps 看到的名称</span>
-</span></span><span style=display:flex><span>    <span style=color:#f92672>ports</span>:
-</span></span><span style=display:flex><span>      - <span style=color:#ae81ff>3309</span>:<span style=color:#ae81ff>3306</span>   <span style=color:#75715e>#  指定端口号的映射</span>
-</span></span><span style=display:flex><span>    <span style=color:#f92672>environment</span>:
-</span></span><span style=display:flex><span>      <span style=color:#f92672>MYSQL_ROOT_PASSWORD</span>: <span style=color:#ae81ff>root  </span> <span style=color:#75715e># 指定MySQL的ROOT用户登录密码</span>
-</span></span><span style=display:flex><span>      <span style=color:#f92672>TZ</span>: <span style=color:#ae81ff>Asia/Shanghai       </span> <span style=color:#75715e># 指定时区</span>
-</span></span><span style=display:flex><span>    <span style=color:#f92672>volumes</span>:
-</span></span><span style=display:flex><span>     - <span style=color:#ae81ff>~/docker_mysql/mysql_data:/var/lib/mysql  </span> <span style=color:#75715e># 映射数据卷</span>
-</span></span><span style=display:flex><span>  <span style=color:#f92672>go</span>:
-</span></span><span style=display:flex><span>    <span style=color:#f92672>restart</span>: <span style=color:#ae81ff>always</span>
-</span></span><span style=display:flex><span>    <span style=color:#f92672>image</span>: <span style=color:#ae81ff>go:1.14.7</span>
-</span></span><span style=display:flex><span>    <span style=color:#f92672>container_name</span>: <span style=color:#ae81ff>go</span>
-</span></span><span style=display:flex><span>    <span style=color:#f92672>ports</span>:
-</span></span><span style=display:flex><span>      - <span style=color:#ae81ff>8080</span>:<span style=color:#ae81ff>8080</span>
-</span></span><span style=display:flex><span>    <span style=color:#f92672>environment</span>:
-</span></span><span style=display:flex><span>      <span style=color:#f92672>TZ</span>: <span style=color:#ae81ff>Asia/Shanghai</span>
-</span></span><span style=display:flex><span>    <span style=color:#f92672>volumes</span>:
-</span></span><span style=display:flex><span>      <span style=color:#75715e>#填数据卷</span>
-</span></span><span style=display:flex><span>  <span style=color:#75715e>#如果还有镜像容器可以一直往下写</span>
-</span></span></code></pre></div><h3 id=dockercompose-命令>DockerCompose 命令</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>在使用docker-compose的命令时，默认会在当前目录下找docker-compose.yml文件
+多个配置信息以换行+缩进的方式来区分在docker-compose.yml文件中，不要使用制表符</p><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=font-weight:700>version</span>: <span style=color:#0ff;font-weight:700>&#39;3.1&#39;</span>
+</span></span><span style=display:flex><span><span style=font-weight:700>services</span>:
+</span></span><span style=display:flex><span>  <span style=font-weight:700>mysql</span>:           <span style=color:#007f7f># 服务的名称</span>
+</span></span><span style=display:flex><span>    <span style=font-weight:700>restart</span>: always   <span style=color:#007f7f># 代表只要docker启动，那么这个容器就跟着一起启动</span>
+</span></span><span style=display:flex><span>    <span style=font-weight:700>image</span>: daocloud.io/library/mysql:5.7.4  <span style=color:#007f7f># 指定镜像路径</span>
+</span></span><span style=display:flex><span>    <span style=font-weight:700>container_name</span>: mysql  <span style=color:#007f7f># 指定容器名称 docker ps 看到的名称</span>
+</span></span><span style=display:flex><span>    <span style=font-weight:700>ports</span>:
+</span></span><span style=display:flex><span>      - <span style=color:#ff0;font-weight:700>3309</span>:<span style=color:#ff0;font-weight:700>3306</span>   <span style=color:#007f7f>#  指定端口号的映射</span>
+</span></span><span style=display:flex><span>    <span style=font-weight:700>environment</span>:
+</span></span><span style=display:flex><span>      <span style=font-weight:700>MYSQL_ROOT_PASSWORD</span>: root   <span style=color:#007f7f># 指定MySQL的ROOT用户登录密码</span>
+</span></span><span style=display:flex><span>      <span style=font-weight:700>TZ</span>: Asia/Shanghai        <span style=color:#007f7f># 指定时区</span>
+</span></span><span style=display:flex><span>    <span style=font-weight:700>volumes</span>:
+</span></span><span style=display:flex><span>     - ~/docker_mysql/mysql_data:/var/lib/mysql   <span style=color:#007f7f># 映射数据卷</span>
+</span></span><span style=display:flex><span>  <span style=font-weight:700>go</span>:
+</span></span><span style=display:flex><span>    <span style=font-weight:700>restart</span>: always
+</span></span><span style=display:flex><span>    <span style=font-weight:700>image</span>: go:1.14.7
+</span></span><span style=display:flex><span>    <span style=font-weight:700>container_name</span>: go
+</span></span><span style=display:flex><span>    <span style=font-weight:700>ports</span>:
+</span></span><span style=display:flex><span>      - <span style=color:#ff0;font-weight:700>8080</span>:<span style=color:#ff0;font-weight:700>8080</span>
+</span></span><span style=display:flex><span>    <span style=font-weight:700>environment</span>:
+</span></span><span style=display:flex><span>      <span style=font-weight:700>TZ</span>: Asia/Shanghai
+</span></span><span style=display:flex><span>    <span style=font-weight:700>volumes</span>:
+</span></span><span style=display:flex><span>      <span style=color:#007f7f>#填数据卷</span>
+</span></span><span style=display:flex><span>  <span style=color:#007f7f>#如果还有镜像容器可以一直往下写</span>
+</span></span></code></pre></div><h3 id=dockercompose-命令>DockerCompose 命令</h3><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>在使用docker-compose的命令时，默认会在当前目录下找docker-compose.yml文件
 </span></span><span style=display:flex><span> 
-</span></span><span style=display:flex><span><span style=color:#75715e>#1.基于docker-compose.yml启动管理的容器</span>
+</span></span><span style=display:flex><span><span style=color:#007f7f>#1.基于docker-compose.yml启动管理的容器</span>
 </span></span><span style=display:flex><span>docker-compose up -d
 </span></span><span style=display:flex><span> 
-</span></span><span style=display:flex><span><span style=color:#75715e>#2.关闭并删除容器</span>
+</span></span><span style=display:flex><span><span style=color:#007f7f>#2.关闭并删除容器</span>
 </span></span><span style=display:flex><span>docker-compose down
 </span></span><span style=display:flex><span> 
-</span></span><span style=display:flex><span><span style=color:#75715e>#3.开启|关闭|重启已经存在的由docker-compose维护的容器</span>
+</span></span><span style=display:flex><span><span style=color:#007f7f>#3.开启|关闭|重启已经存在的由docker-compose维护的容器</span>
 </span></span><span style=display:flex><span>docker-compose start|stop|restart
 </span></span><span style=display:flex><span> 
-</span></span><span style=display:flex><span><span style=color:#75715e>#4.查看由docker-compose管理的容器</span>
+</span></span><span style=display:flex><span><span style=color:#007f7f>#4.查看由docker-compose管理的容器</span>
 </span></span><span style=display:flex><span>docker-compose ps
 </span></span><span style=display:flex><span> 
-</span></span><span style=display:flex><span><span style=color:#75715e>#5.查看日志</span>
+</span></span><span style=display:flex><span><span style=color:#007f7f>#5.查看日志</span>
 </span></span><span style=display:flex><span>docker-compose logs -f
-</span></span></code></pre></div><h3 id=dockercompos配合dockerfile一起使用>DockerCompos配合Dockerfile一起使用</h3><p>docker-compose配合Dockerfile使用，就可以使用docker-compose管理自定义的镜像，它会帮你build然后启动。更加方便</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>version</span>: <span style=color:#e6db74>&#39;3.1&#39;</span>
-</span></span><span style=display:flex><span><span style=color:#f92672>services</span>:
-</span></span><span style=display:flex><span>  <span style=color:#f92672>ssm</span>:
-</span></span><span style=display:flex><span>    <span style=color:#f92672>restart</span>: <span style=color:#ae81ff>always</span>
-</span></span><span style=display:flex><span>    <span style=color:#f92672>build</span>:            <span style=color:#75715e># 构建自定义镜像</span>
-</span></span><span style=display:flex><span>      <span style=color:#f92672>context</span>: <span style=color:#ae81ff>../     </span> <span style=color:#75715e># 指定dockerfile文件的所在路径</span>
-</span></span><span style=display:flex><span>      <span style=color:#f92672>dockerfile</span>: <span style=color:#ae81ff>Dockerfile  </span> <span style=color:#75715e># 指定Dockerfile文件名称</span>
-</span></span><span style=display:flex><span>    <span style=color:#f92672>image</span>: <span style=color:#ae81ff>your_image_name:1.0.1</span> <span style=color:#75715e>#指定你镜像的名称和版本</span>
-</span></span><span style=display:flex><span>    <span style=color:#f92672>container_name</span>: <span style=color:#ae81ff>容器名称</span>
-</span></span><span style=display:flex><span>    <span style=color:#f92672>ports</span>:
-</span></span><span style=display:flex><span>      - <span style=color:#ae81ff>8081</span>:<span style=color:#ae81ff>8080</span>
-</span></span><span style=display:flex><span>    <span style=color:#f92672>environment</span>:
-</span></span><span style=display:flex><span>      <span style=color:#f92672>TZ</span>: <span style=color:#ae81ff>Asia/Shanghai</span>
-</span></span></code></pre></div><p>运行</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span><span style=color:#75715e>#可以直接基于docker-compose.yml以及Dockerfile文件构建的自定义镜像</span>
+</span></span></code></pre></div><h3 id=dockercompos配合dockerfile一起使用>DockerCompos配合Dockerfile一起使用</h3><p>docker-compose配合Dockerfile使用，就可以使用docker-compose管理自定义的镜像，它会帮你build然后启动。更加方便</p><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=font-weight:700>version</span>: <span style=color:#0ff;font-weight:700>&#39;3.1&#39;</span>
+</span></span><span style=display:flex><span><span style=font-weight:700>services</span>:
+</span></span><span style=display:flex><span>  <span style=font-weight:700>ssm</span>:
+</span></span><span style=display:flex><span>    <span style=font-weight:700>restart</span>: always
+</span></span><span style=display:flex><span>    <span style=font-weight:700>build</span>:            <span style=color:#007f7f># 构建自定义镜像</span>
+</span></span><span style=display:flex><span>      <span style=font-weight:700>context</span>: ../      <span style=color:#007f7f># 指定dockerfile文件的所在路径</span>
+</span></span><span style=display:flex><span>      <span style=font-weight:700>dockerfile</span>: Dockerfile   <span style=color:#007f7f># 指定Dockerfile文件名称</span>
+</span></span><span style=display:flex><span>    <span style=font-weight:700>image</span>: your_image_name:1.0.1 <span style=color:#007f7f>#指定你镜像的名称和版本</span>
+</span></span><span style=display:flex><span>    <span style=font-weight:700>container_name</span>: 容器名称
+</span></span><span style=display:flex><span>    <span style=font-weight:700>ports</span>:
+</span></span><span style=display:flex><span>      - <span style=color:#ff0;font-weight:700>8081</span>:<span style=color:#ff0;font-weight:700>8080</span>
+</span></span><span style=display:flex><span>    <span style=font-weight:700>environment</span>:
+</span></span><span style=display:flex><span>      <span style=font-weight:700>TZ</span>: Asia/Shanghai
+</span></span></code></pre></div><p>运行</p><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span><span style=color:#007f7f>#可以直接基于docker-compose.yml以及Dockerfile文件构建的自定义镜像</span>
 </span></span><span style=display:flex><span>docker-compose up -d
-</span></span><span style=display:flex><span><span style=color:#75715e># 如果自定义镜像不存在，会自动构建出自定义镜像，如果自定义镜像已经存在，会直接运行这个自定义镜像</span>
-</span></span><span style=display:flex><span><span style=color:#75715e>#重新构建自定义镜像</span>
+</span></span><span style=display:flex><span><span style=color:#007f7f># 如果自定义镜像不存在，会自动构建出自定义镜像，如果自定义镜像已经存在，会直接运行这个自定义镜像</span>
+</span></span><span style=display:flex><span><span style=color:#007f7f>#重新构建自定义镜像</span>
 </span></span><span style=display:flex><span>docker-compose build
-</span></span><span style=display:flex><span><span style=color:#75715e>#运行当前内容，并重新构建</span>
+</span></span><span style=display:flex><span><span style=color:#007f7f>#运行当前内容，并重新构建</span>
 </span></span><span style=display:flex><span>docker-compose up -d --build
 </span></span></code></pre></div></div></article></main><script src=https://utteranc.es/client.js repo=glepnir/glepnir.github.io issue-term=title theme=github-light crossorigin=anonymous async></script></div><footer><hr><p id=social>Find me around the web:<br><a href=https://github.com/glepnir>GitHub</a>
 |

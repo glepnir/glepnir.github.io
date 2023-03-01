@@ -1,4 +1,4 @@
-<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content><title>Graceful Shutdown | glepnir</title><link rel=stylesheet href=/css/reset.css><link rel=stylesheet href=/css/font.css><link rel=stylesheet href=/css/smigle.css><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"></head><body><header><div id=brand><a class=icon-link href=https://yupdo.org><img class=icon src=/images/avatar.svg></a><div class=text><a href=https://yupdo.org><h1>glepnir</h1></a><h3>A vimer work at neovim team and other open source project.</h3></div></div><nav><a href=/><b>Home</b></a>
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content><title>Graceful Shutdown | glepnir</title><link rel=stylesheet href=/css/reset.css><link rel=stylesheet href=/css/font.css><link rel=stylesheet href=/css/smigle.css><link rel=stylesheet href=/css/syntax.css><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"></head><body><header><div id=brand><a class=icon-link href=https://yupdo.org><img class=icon src=/images/avatar.svg></a><div class=text><a href=https://yupdo.org><h1>glepnir</h1></a><h3>A vimer work at neovim team and other open source project.</h3></div></div><nav><a href=/><b>Home</b></a>
 |
 <a href=/posts/><b>Posts</b></a>
 |
@@ -13,97 +13,97 @@
 <span>• 288 words</span>
 <span>• 2 minute read</span><div><span>Tags:</span>
 <a href=/tags/go>go</a></div></div><div><h2 id=一个简单的-http-服务>一个简单的 Http 服务</h2><p>使用gin框架构建一个简单的web服务。当然使用标准库构建也是可以，不过正好在写gin的教程顺便
-就拿来用一下。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+就拿来用一下。</p><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#fff;font-weight:700>package</span> main
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#f92672>import</span> (
-</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;log&#34;</span>
-</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;net/http&#34;</span>
-</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;time&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#fff;font-weight:700>import</span> (
+</span></span><span style=display:flex><span>    <span style=color:#0ff;font-weight:700>&#34;log&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#0ff;font-weight:700>&#34;net/http&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#0ff;font-weight:700>&#34;time&#34;</span>
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;github.com/gin-gonic/gin&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#0ff;font-weight:700>&#34;github.com/gin-gonic/gin&#34;</span>
 </span></span><span style=display:flex><span>)
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {
-</span></span><span style=display:flex><span>    <span style=color:#a6e22e>router</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>gin</span>.<span style=color:#a6e22e>Default</span>()
-</span></span><span style=display:flex><span>    <span style=color:#a6e22e>router</span>.<span style=color:#a6e22e>GET</span>(<span style=color:#e6db74>&#34;/&#34;</span>, <span style=color:#66d9ef>func</span>(<span style=color:#a6e22e>c</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>gin</span>.<span style=color:#a6e22e>Context</span>) {
-</span></span><span style=display:flex><span>        <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Sleep</span>(<span style=color:#ae81ff>5</span> <span style=color:#f92672>*</span> <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Second</span>)
-</span></span><span style=display:flex><span>        <span style=color:#a6e22e>c</span>.<span style=color:#a6e22e>String</span>(<span style=color:#a6e22e>http</span>.<span style=color:#a6e22e>StatusOK</span>, <span style=color:#e6db74>&#34;Welcome Gin Server&#34;</span>)
+</span></span><span style=display:flex><span><span style=color:#fff;font-weight:700>func</span> main() {
+</span></span><span style=display:flex><span>    router := gin.Default()
+</span></span><span style=display:flex><span>    router.GET(<span style=color:#0ff;font-weight:700>&#34;/&#34;</span>, <span style=color:#fff;font-weight:700>func</span>(c *gin.Context) {
+</span></span><span style=display:flex><span>        time.Sleep(<span style=color:#ff0;font-weight:700>5</span> * time.Second)
+</span></span><span style=display:flex><span>        c.String(http.StatusOK, <span style=color:#0ff;font-weight:700>&#34;Welcome Gin Server&#34;</span>)
 </span></span><span style=display:flex><span>    })
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    <span style=color:#a6e22e>srv</span> <span style=color:#f92672>:=</span> <span style=color:#f92672>&amp;</span><span style=color:#a6e22e>http</span>.<span style=color:#a6e22e>Server</span>{
-</span></span><span style=display:flex><span>        <span style=color:#a6e22e>Addr</span>:    <span style=color:#e6db74>&#34;:8080&#34;</span>,
-</span></span><span style=display:flex><span>        <span style=color:#a6e22e>Handler</span>: <span style=color:#a6e22e>router</span>,
+</span></span><span style=display:flex><span>    srv := &amp;http.Server{
+</span></span><span style=display:flex><span>        Addr:    <span style=color:#0ff;font-weight:700>&#34;:8080&#34;</span>,
+</span></span><span style=display:flex><span>        Handler: router,
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    <span style=color:#75715e>// service connections
-</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>srv</span>.<span style=color:#a6e22e>ListenAndServe</span>(); <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> <span style=color:#f92672>&amp;&amp;</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#a6e22e>http</span>.<span style=color:#a6e22e>ErrServerClosed</span> {
-</span></span><span style=display:flex><span>        <span style=color:#a6e22e>log</span>.<span style=color:#a6e22e>Fatalf</span>(<span style=color:#e6db74>&#34;listen: %s\n&#34;</span>, <span style=color:#a6e22e>err</span>)
+</span></span><span style=display:flex><span>    <span style=color:#007f7f>// service connections
+</span></span></span><span style=display:flex><span><span style=color:#007f7f></span>    <span style=color:#fff;font-weight:700>if</span> err := srv.ListenAndServe(); err != <span style=color:#fff;font-weight:700>nil</span> &amp;&amp; err != http.ErrServerClosed {
+</span></span><span style=display:flex><span>        log.Fatalf(<span style=color:#0ff;font-weight:700>&#34;listen: %s\n&#34;</span>, err)
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    <span style=color:#a6e22e>log</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;Server exiting&#34;</span>)
+</span></span><span style=display:flex><span>    log.Println(<span style=color:#0ff;font-weight:700>&#34;Server exiting&#34;</span>)
 </span></span><span style=display:flex><span>}
 </span></span></code></pre></div><p>上述的代码很简单，但是有个问题如果客户端还在发起请求服务端直接关闭，就会导致丢失数据，如果是一些交易网站
 等等包含重要数据的传输就会出现一些问题。Go 在 1.8 添加了一个<a href=https://golang.org/doc/go1.8#http_shutdown>shutdown</a>
-那么使用这个方法就可以实现更优雅的关闭。</p><h2 id=改进>改进</h2><p>需要理清楚一些思路才能写好代码，怎么做到优雅的关闭.</p><ul><li>关闭之后需要确保没有新的使用者连接</li><li>确保处理完所有的 http 连接才会正常的关闭</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#75715e>// +build go1.8
-</span></span></span><span style=display:flex><span><span style=color:#75715e></span>
-</span></span><span style=display:flex><span><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+那么使用这个方法就可以实现更优雅的关闭。</p><h2 id=改进>改进</h2><p>需要理清楚一些思路才能写好代码，怎么做到优雅的关闭.</p><ul><li>关闭之后需要确保没有新的使用者连接</li><li>确保处理完所有的 http 连接才会正常的关闭</li></ul><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#007f7f>// +build go1.8
+</span></span></span><span style=display:flex><span><span style=color:#007f7f></span>
+</span></span><span style=display:flex><span><span style=color:#fff;font-weight:700>package</span> main
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#f92672>import</span> (
-</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;context&#34;</span>
-</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;log&#34;</span>
-</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;net/http&#34;</span>
-</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;os&#34;</span>
-</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;os/signal&#34;</span>
-</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;syscall&#34;</span>
-</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;time&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#fff;font-weight:700>import</span> (
+</span></span><span style=display:flex><span>    <span style=color:#0ff;font-weight:700>&#34;context&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#0ff;font-weight:700>&#34;log&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#0ff;font-weight:700>&#34;net/http&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#0ff;font-weight:700>&#34;os&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#0ff;font-weight:700>&#34;os/signal&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#0ff;font-weight:700>&#34;syscall&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#0ff;font-weight:700>&#34;time&#34;</span>
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;github.com/gin-gonic/gin&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#0ff;font-weight:700>&#34;github.com/gin-gonic/gin&#34;</span>
 </span></span><span style=display:flex><span>)
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {
-</span></span><span style=display:flex><span>    <span style=color:#a6e22e>router</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>gin</span>.<span style=color:#a6e22e>Default</span>()
-</span></span><span style=display:flex><span>    <span style=color:#a6e22e>router</span>.<span style=color:#a6e22e>GET</span>(<span style=color:#e6db74>&#34;/&#34;</span>, <span style=color:#66d9ef>func</span>(<span style=color:#a6e22e>c</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>gin</span>.<span style=color:#a6e22e>Context</span>) {
-</span></span><span style=display:flex><span>        <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Sleep</span>(<span style=color:#ae81ff>5</span> <span style=color:#f92672>*</span> <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Second</span>)
-</span></span><span style=display:flex><span>        <span style=color:#a6e22e>c</span>.<span style=color:#a6e22e>String</span>(<span style=color:#a6e22e>http</span>.<span style=color:#a6e22e>StatusOK</span>, <span style=color:#e6db74>&#34;Welcome Gin Server&#34;</span>)
+</span></span><span style=display:flex><span><span style=color:#fff;font-weight:700>func</span> main() {
+</span></span><span style=display:flex><span>    router := gin.Default()
+</span></span><span style=display:flex><span>    router.GET(<span style=color:#0ff;font-weight:700>&#34;/&#34;</span>, <span style=color:#fff;font-weight:700>func</span>(c *gin.Context) {
+</span></span><span style=display:flex><span>        time.Sleep(<span style=color:#ff0;font-weight:700>5</span> * time.Second)
+</span></span><span style=display:flex><span>        c.String(http.StatusOK, <span style=color:#0ff;font-weight:700>&#34;Welcome Gin Server&#34;</span>)
 </span></span><span style=display:flex><span>    })
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    <span style=color:#a6e22e>srv</span> <span style=color:#f92672>:=</span> <span style=color:#f92672>&amp;</span><span style=color:#a6e22e>http</span>.<span style=color:#a6e22e>Server</span>{
-</span></span><span style=display:flex><span>        <span style=color:#a6e22e>Addr</span>:    <span style=color:#e6db74>&#34;:8080&#34;</span>,
-</span></span><span style=display:flex><span>        <span style=color:#a6e22e>Handler</span>: <span style=color:#a6e22e>router</span>,
+</span></span><span style=display:flex><span>    srv := &amp;http.Server{
+</span></span><span style=display:flex><span>        Addr:    <span style=color:#0ff;font-weight:700>&#34;:8080&#34;</span>,
+</span></span><span style=display:flex><span>        Handler: router,
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>go</span> <span style=color:#66d9ef>func</span>() {
-</span></span><span style=display:flex><span>        <span style=color:#75715e>// service connections
-</span></span></span><span style=display:flex><span><span style=color:#75715e></span>        <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>srv</span>.<span style=color:#a6e22e>ListenAndServe</span>(); <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> <span style=color:#f92672>&amp;&amp;</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#a6e22e>http</span>.<span style=color:#a6e22e>ErrServerClosed</span> {
-</span></span><span style=display:flex><span>            <span style=color:#a6e22e>log</span>.<span style=color:#a6e22e>Fatalf</span>(<span style=color:#e6db74>&#34;listen: %s\n&#34;</span>, <span style=color:#a6e22e>err</span>)
+</span></span><span style=display:flex><span>    <span style=color:#fff;font-weight:700>go</span> <span style=color:#fff;font-weight:700>func</span>() {
+</span></span><span style=display:flex><span>        <span style=color:#007f7f>// service connections
+</span></span></span><span style=display:flex><span><span style=color:#007f7f></span>        <span style=color:#fff;font-weight:700>if</span> err := srv.ListenAndServe(); err != <span style=color:#fff;font-weight:700>nil</span> &amp;&amp; err != http.ErrServerClosed {
+</span></span><span style=display:flex><span>            log.Fatalf(<span style=color:#0ff;font-weight:700>&#34;listen: %s\n&#34;</span>, err)
 </span></span><span style=display:flex><span>        }
 </span></span><span style=display:flex><span>    }()
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    <span style=color:#75715e>// Wait for interrupt signal to gracefully shutdown the server with
-</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    <span style=color:#75715e>// a timeout of 5 seconds.
-</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    <span style=color:#a6e22e>quit</span> <span style=color:#f92672>:=</span> make(<span style=color:#66d9ef>chan</span> <span style=color:#a6e22e>os</span>.<span style=color:#a6e22e>Signal</span>, <span style=color:#ae81ff>1</span>)
-</span></span><span style=display:flex><span>    <span style=color:#75715e>// kill (no param) default send syscall.SIGTERM
-</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    <span style=color:#75715e>// kill -2 is syscall.SIGINT
-</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    <span style=color:#75715e>// kill -9 is syscall.SIGKILL but can&#39;t be catch, so don&#39;t need add it
-</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    <span style=color:#a6e22e>signal</span>.<span style=color:#a6e22e>Notify</span>(<span style=color:#a6e22e>quit</span>, <span style=color:#a6e22e>syscall</span>.<span style=color:#a6e22e>SIGINT</span>, <span style=color:#a6e22e>syscall</span>.<span style=color:#a6e22e>SIGTERM</span>)
-</span></span><span style=display:flex><span>    <span style=color:#f92672>&lt;-</span><span style=color:#a6e22e>quit</span>
-</span></span><span style=display:flex><span>    <span style=color:#a6e22e>log</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;Shutdown Server ...&#34;</span>)
+</span></span><span style=display:flex><span>    <span style=color:#007f7f>// Wait for interrupt signal to gracefully shutdown the server with
+</span></span></span><span style=display:flex><span><span style=color:#007f7f></span>    <span style=color:#007f7f>// a timeout of 5 seconds.
+</span></span></span><span style=display:flex><span><span style=color:#007f7f></span>    quit := <span style=color:#fff;font-weight:700>make</span>(<span style=color:#fff;font-weight:700>chan</span> os.Signal, <span style=color:#ff0;font-weight:700>1</span>)
+</span></span><span style=display:flex><span>    <span style=color:#007f7f>// kill (no param) default send syscall.SIGTERM
+</span></span></span><span style=display:flex><span><span style=color:#007f7f></span>    <span style=color:#007f7f>// kill -2 is syscall.SIGINT
+</span></span></span><span style=display:flex><span><span style=color:#007f7f></span>    <span style=color:#007f7f>// kill -9 is syscall.SIGKILL but can&#39;t be catch, so don&#39;t need add it
+</span></span></span><span style=display:flex><span><span style=color:#007f7f></span>    signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+</span></span><span style=display:flex><span>    &lt;-quit
+</span></span><span style=display:flex><span>    log.Println(<span style=color:#0ff;font-weight:700>&#34;Shutdown Server ...&#34;</span>)
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    <span style=color:#a6e22e>ctx</span>, <span style=color:#a6e22e>cancel</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>context</span>.<span style=color:#a6e22e>WithTimeout</span>(<span style=color:#a6e22e>context</span>.<span style=color:#a6e22e>Background</span>(), <span style=color:#ae81ff>5</span><span style=color:#f92672>*</span><span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Second</span>)
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>defer</span> <span style=color:#a6e22e>cancel</span>()
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>srv</span>.<span style=color:#a6e22e>Shutdown</span>(<span style=color:#a6e22e>ctx</span>); <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
-</span></span><span style=display:flex><span>        <span style=color:#a6e22e>log</span>.<span style=color:#a6e22e>Fatal</span>(<span style=color:#e6db74>&#34;Server Shutdown: &#34;</span>, <span style=color:#a6e22e>err</span>)
+</span></span><span style=display:flex><span>    ctx, cancel := context.WithTimeout(context.Background(), <span style=color:#ff0;font-weight:700>5</span>*time.Second)
+</span></span><span style=display:flex><span>    <span style=color:#fff;font-weight:700>defer</span> cancel()
+</span></span><span style=display:flex><span>    <span style=color:#fff;font-weight:700>if</span> err := srv.Shutdown(ctx); err != <span style=color:#fff;font-weight:700>nil</span> {
+</span></span><span style=display:flex><span>        log.Fatal(<span style=color:#0ff;font-weight:700>&#34;Server Shutdown: &#34;</span>, err)
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    <span style=color:#a6e22e>log</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;Server exiting&#34;</span>)
+</span></span><span style=display:flex><span>    log.Println(<span style=color:#0ff;font-weight:700>&#34;Server exiting&#34;</span>)
 </span></span><span style=display:flex><span>}
-</span></span></code></pre></div><p>首先可以看到将 srv.ListenAndServe 直接丢到背景执行，这样才不会阻断后续的流程，接着宣告一个 os.Signal 信号的 Channel，并且接受系统 SIGINT 及 SIGTERM，也就是只要通过 kill 或者是 docker rm 就会收到信号关闭 quit 通道</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#f92672>&lt;-</span> <span style=color:#a6e22e>quit</span>
+</span></span></code></pre></div><p>首先可以看到将 srv.ListenAndServe 直接丢到背景执行，这样才不会阻断后续的流程，接着宣告一个 os.Signal 信号的 Channel，并且接受系统 SIGINT 及 SIGTERM，也就是只要通过 kill 或者是 docker rm 就会收到信号关闭 quit 通道</p><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>&lt;- quit
 </span></span></code></pre></div><p>整个 main 函数运行到这里就会阻塞。channel 的阻塞不了解的需要好好看下 channel 的部分了。假如按下<code>C-c</code>
 系统信号(SIGINT,SIGTERM) 就会发送值到 quit 那么
-quit 就会取到值，那么 main 函数就会继续往下执行了。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#a6e22e>ctx</span>, <span style=color:#a6e22e>cancel</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>context</span>.<span style=color:#a6e22e>WithTimeout</span>(<span style=color:#a6e22e>context</span>.<span style=color:#a6e22e>Background</span>(), <span style=color:#ae81ff>5</span><span style=color:#f92672>*</span><span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Second</span>)
-</span></span><span style=display:flex><span><span style=color:#66d9ef>defer</span> <span style=color:#a6e22e>cancel</span>()
-</span></span><span style=display:flex><span><span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>srv</span>.<span style=color:#a6e22e>Shutdown</span>(<span style=color:#a6e22e>ctx</span>); <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
-</span></span><span style=display:flex><span>    <span style=color:#a6e22e>log</span>.<span style=color:#a6e22e>Fatal</span>(<span style=color:#e6db74>&#34;Server Shutdown: &#34;</span>, <span style=color:#a6e22e>err</span>)
+quit 就会取到值，那么 main 函数就会继续往下执行了。</p><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>ctx, cancel := context.WithTimeout(context.Background(), <span style=color:#ff0;font-weight:700>5</span>*time.Second)
+</span></span><span style=display:flex><span><span style=color:#fff;font-weight:700>defer</span> cancel()
+</span></span><span style=display:flex><span><span style=color:#fff;font-weight:700>if</span> err := srv.Shutdown(ctx); err != <span style=color:#fff;font-weight:700>nil</span> {
+</span></span><span style=display:flex><span>    log.Fatal(<span style=color:#0ff;font-weight:700>&#34;Server Shutdown: &#34;</span>, err)
 </span></span><span style=display:flex><span>}
 </span></span></code></pre></div><p>最后可以看到 srv.Shutdown 就是用来处理『1. 关闭连接』及『2. 等待所有连接处理结束』
 可以看到传了一个 context 进 Shutdown，目的就是让程式最多等待 5 秒时间，如果超过 5 秒就强制关闭所有连线
