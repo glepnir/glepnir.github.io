@@ -10,9 +10,9 @@
 |
 <a href=/about/><b>About</b></a></nav><hr></header><div id=content><main><article><h1>Docker Tutorial</h1><div class=post-meta><strong><span>Posted on</span>
 <time>2020-09-06</time></strong>
-<span>• 881 words</span>
+<span>• 966 words</span>
 <span>• 5 minute read</span><div><span>Tags:</span>
-<a href=/tags/docker>docker</a></div></div><div><p>言简意赅的docker教程.可以迅速的学会并入手docker的各种操作.</p><p>在linux和mac上安装docker的方式如下:</p><ul><li>CentOS</li></ul><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-perl data-lang=perl><span style=display:flex><span>yum -y install yum-utils device-mapper-persistent-data lvm2
+<a href=/tags/docker>docker</a></div></div><div><p>言简意赅的docker教程.可以迅速的熟悉和学会docker的各种操作.</p><p>在linux和mac上安装docker的方式如下:</p><ul><li>CentOS</li></ul><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-perl data-lang=perl><span style=display:flex><span>yum -y install yum-utils device-mapper-persistent-data lvm2
 </span></span><span style=display:flex><span>yum makecache fast
 </span></span><span style=display:flex><span>yum -y install docker-ce
 </span></span></code></pre></div><ul><li>Mac 安装 <code>Docker for Mac</code> 即可</li></ul><h3 id=镜像加速>镜像加速</h3><ul><li>CentOS</li></ul><p>默认下载Docker会去国外服务器下载，速度较慢，可以设置为阿里云镜像源，速度更快</p><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-perl data-lang=perl><span style=display:flex><span>yum-config-manager --add-repo http:<span style=color:#0ff;font-weight:700>//mi</span>rrors.aliyun.com<span style=color:#0ff;font-weight:700>/docker-ce/</span>linux<span style=color:#0ff;font-weight:700>/centos/</span>docker-ce.repo
@@ -36,9 +36,7 @@
 </span></span><span style=display:flex><span><span style=color:#007f7f>#测试</span>
 </span></span><span style=display:flex><span>docker run hello-world
 </span></span></code></pre></div><h3 id=docker的仓库>Docker的仓库</h3><ol><li>Docker官方的中央仓库设置镜像加速后速度就不会很慢推荐使用</li></ol><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-perl data-lang=perl><span style=display:flex><span>https:<span style=color:#0ff;font-weight:700>//</span>hub.docker.com/
-</span></span></code></pre></div><ol start=2><li>国内的镜像网站：网易蜂巢，daoCloud等，下载速度快，但是镜像相对不全</li></ol><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-perl data-lang=perl><span style=display:flex><span>https:<span style=color:#0ff;font-weight:700>//c</span><span style=color:#ff0;font-weight:700>.163</span>yun.com<span style=color:#0ff;font-weight:700>/hub#/</span>home
-</span></span><span style=display:flex><span>http:<span style=color:#0ff;font-weight:700>//</span>hub.daocloud.io/
-</span></span></code></pre></div><ol start=3><li>在公司内部会采用私服的方式拉取镜像（添加配置）一般都是用linux做服务器</li></ol><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span><span style=color:#007f7f>//需要创建 /etc/docker/daemon.json，并添加如下内容
+</span></span></code></pre></div><ol start=2><li>在公司内部会采用私服的方式拉取镜像（添加配置）一般都是用linux做服务器</li></ol><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span><span style=color:#007f7f>//需要创建 /etc/docker/daemon.json，并添加如下内容
 </span></span></span><span style=display:flex><span><span style=color:#007f7f></span>{
 </span></span><span style=display:flex><span>    <span style=font-weight:700>&#34;registry-mirrors&#34;</span>:[<span style=color:#0ff;font-weight:700>&#34;https://registry.docker-cn.com&#34;</span>],
 </span></span><span style=display:flex><span>    <span style=font-weight:700>&#34;insecure-registries&#34;</span>:[<span style=color:#0ff;font-weight:700>&#34;ip:port&#34;</span>]
@@ -46,16 +44,27 @@
 </span></span></code></pre></div><p>添加后需要重启docker</p><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-perl data-lang=perl><span style=display:flex><span><span style=color:#007f7f>#重启两个服务</span>
 </span></span><span style=display:flex><span>systemctl daemon-reload
 </span></span><span style=display:flex><span>systemctl restart docker
-</span></span></code></pre></div><h3 id=镜像的操作>镜像的操作</h3><ul><li>拉取镜像</li></ul><p>从中央仓库拉取镜像到本地 一般不填 tag 会拉去最新的也就是 latest
+</span></span></code></pre></div><h3 id=镜像的操作>镜像的操作</h3><p>docke search 查找镜像
+当安装和配置好docker
+后在本地上是不存在任何镜像的,这时候就需要去镜像仓库拉取需要的镜像,在拉取之前可以通过查找的操作,来查看所需要的镜像是否在仓库之中.</p><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-perl data-lang=perl><span style=display:flex><span>docker search redis
+</span></span></code></pre></div><p>如果查找到了redis镜像的信息,它会输出一些关于该镜像的信息例如名称,描述,star,是否官方等等,如果没有那么仓库就不存在该镜像需要换一个仓库.</p><p><code>--limit</code> 参数可以进行输出镜像的结果数量限制.一般都是使用官方镜像.</p><p>docke pull 拉取镜像</p><p>从中央仓库拉取镜像到本地 一般不填 tag 会拉去最新的也就是 latest
 docker pull 镜像名称[:tag]</p><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-perl data-lang=perl><span style=display:flex><span><span style=color:#007f7f>#例如</span>
 </span></span><span style=display:flex><span>docker pull mongo
-</span></span></code></pre></div><ul><li>查看本地镜像 docker images</li></ul><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-perl data-lang=perl><span style=display:flex><span><span style=color:#007f7f>#输出的格式如下</span>
+</span></span></code></pre></div><p>查看本地镜像 docker images 还可以再后面加入一些参数 -q 只显示镜像id 默认是-a
+列出所有镜像</p><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-perl data-lang=perl><span style=display:flex><span><span style=color:#007f7f>#输出的格式如下</span>
 </span></span><span style=display:flex><span>REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
 </span></span><span style=display:flex><span>mongo               latest              <span style=color:#ff0;font-weight:700>409</span>c3f937574        <span style=color:#ff0;font-weight:700>5</span> days ago          <span style=color:#ff0;font-weight:700>493</span>MB
 </span></span><span style=display:flex><span>hello-world         latest              bf756fb1ae65        <span style=color:#ff0;font-weight:700>7</span> months ago        <span style=color:#ff0;font-weight:700>13.3</span>kB
-</span></span></code></pre></div><p>镜像ID就是sha256 的字符串.</p><ul><li>删除镜像 docker rmi 镜像ID rm 一般*nix的删除前缀 i就是image的i</li></ul><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-perl data-lang=perl><span style=display:flex><span><span style=color:#007f7f>#例如删除mongo</span>
+</span></span></code></pre></div><p>镜像ID就是sha256 的字符串. 下载带有tag的镜像例如redis 6系列版本的镜像</p><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-perl data-lang=perl><span style=display:flex><span>docker pull redis:6<span style=color:#ff0;font-weight:700>.0.8</span>
+</span></span></code></pre></div><p>删除镜像 docker rmi (-f) 镜像ID rm 一般*nix的删除前缀 i就是image的i -f
+就是强制删除.当镜像在容器中时则需要-f 强制删除</p><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-perl data-lang=perl><span style=display:flex><span><span style=color:#007f7f>#例如删除mongo</span>
 </span></span><span style=display:flex><span>docker rmi <span style=color:#ff0;font-weight:700>409</span>c3f937574
-</span></span></code></pre></div><p>删除已启动容器的镜像需要先删除容器(查看容器章节后)</p><ul><li>镜像的导入导出</li></ul><p>如果因为网络原因可以通过硬盘的方式传输镜像，虽然不规范，但是有效，但是这种方式导出的镜像名称和版本都是null，需要手动修改</p><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-perl data-lang=perl><span style=display:flex><span><span style=color:#007f7f>#将本地的镜像导出</span>
+</span></span><span style=display:flex><span><span style=color:#007f7f>#如果要删除多个镜像</span>
+</span></span><span style=display:flex><span>docker rmi id1 id2
+</span></span><span style=display:flex><span><span style=color:#007f7f>#删除全部的容器</span>
+</span></span><span style=display:flex><span>docker rmi -f $<span style=color:red>(</span>docker images -qa)
+</span></span></code></pre></div><p>查看docker 镜像容器数据卷的占用信息</p><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-perl data-lang=perl><span style=display:flex><span>docker <span style=color:#fff;font-weight:700>system</span> df
+</span></span></code></pre></div><p>镜像的导入导出</p><p>如果因为网络原因可以通过硬盘的方式传输镜像，虽然不规范，但是有效，但是这种方式导出的镜像名称和版本都是null，需要手动修改</p><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-perl data-lang=perl><span style=display:flex><span><span style=color:#007f7f>#将本地的镜像导出</span>
 </span></span><span style=display:flex><span>docker save -o 导出的文件路径 镜像id
 </span></span><span style=display:flex><span><span style=color:#007f7f>#加载本地的镜像文件</span>
 </span></span><span style=display:flex><span>docker load -i 镜像文件
@@ -80,31 +89,38 @@ docker pull 镜像名称[:tag]</p><div class=highlight><pre tabindex=0 style=col
 </span></span><span style=display:flex><span>REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
 </span></span><span style=display:flex><span><span style=color:#0ff;font-weight:700>&lt;none&gt;</span>              <span style=color:#0ff;font-weight:700>&lt;none&gt;</span>              <span style=color:#ff0;font-weight:700>409</span>c3f937574        <span style=color:#ff0;font-weight:700>5</span> days ago          <span style=color:#ff0;font-weight:700>493</span>MB
 </span></span><span style=display:flex><span>hello-world         latest              bf756fb1ae65        <span style=color:#ff0;font-weight:700>7</span> months ago        <span style=color:#ff0;font-weight:700>13.3</span>kB
-</span></span><span style=display:flex><span><span style=color:#007f7f>#这个none 就是加载的已经打包到本地的mongo ID大小都是一样的</span>
-</span></span><span style=display:flex><span><span style=color:#007f7f>#修改name 和tag</span>
-</span></span><span style=display:flex><span>docker tag ImageID mongo:latest
+</span></span></code></pre></div><p>这个 <code>none</code> 就是加载的已经打包到本地的mongo ID大小都是一样的. none 这个镜像叫做虚悬镜像(dangling
+iamge)</p><p>修改这个虚悬镜像的name 和tag</p><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-perl data-lang=perl><span style=display:flex><span>docker tag ImageID mongo:latest
 </span></span><span style=display:flex><span><span style=color:#007f7f>#再用docker images查看一下 这样就顺眼了</span>
 </span></span><span style=display:flex><span>REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
 </span></span><span style=display:flex><span>mongo               latest              <span style=color:#ff0;font-weight:700>409</span>c3f937574        <span style=color:#ff0;font-weight:700>5</span> days ago          <span style=color:#ff0;font-weight:700>493</span>MB
 </span></span><span style=display:flex><span>hello-world         latest              bf756fb1ae65        <span style=color:#ff0;font-weight:700>7</span> months ago        <span style=color:#ff0;font-weight:700>13.3</span>kB
 </span></span></code></pre></div><h3 id=容器操作>容器操作</h3><p>运行容器需要定制具体镜像，如果镜像不存在，会直接下载</p><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-perl data-lang=perl><span style=display:flex><span>docker run 镜像的ID|镜像的名称[:tag]
-</span></span></code></pre></div><p>常用的参数</p><ul><li><code>-d</code>(daemon):代表后台运行容器</li><li><code>-p</code>(port):宿主机端口:容器端口：为了映射当前Linux的端口和容器的端口</li><li><code>--name</code>:容器名称:指定容器的名称</li></ul><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-perl data-lang=perl><span style=display:flex><span>docker run -d -p 宿主机端口:容器端口 --name 容器名称 镜像ID 或者 镜像名称[:tag]
+</span></span></code></pre></div><p>常用的参数</p><ul><li><code>-d</code>(daemon):代表后台运行容器</li><li><code>-p</code>(port):宿主机端口:容器端口：为了映射当前Linux的端口和容器的端口</li><li><code>-P</code>随机端口</li><li><code>-i</code>(interactive): 交互启动</li><li><code>-t</code>(tty): 分配一个伪终端一般与 -i一起使用</li><li><code>--name</code>:容器名称:指定容器的名称</li></ul><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-perl data-lang=perl><span style=display:flex><span>docker run -d -p 宿主机端口:容器端口 --name 容器名称 镜像ID 或者 镜像名称[:tag]
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span><span style=color:#007f7f>#例如启动mysql 之后会看到容器id的输出即为启动容器成功</span>
 </span></span><span style=display:flex><span>docker run -d -p <span style=color:#ff0;font-weight:700>3309</span>:<span style=color:#ff0;font-weight:700>3306</span> --name mysql <span style=color:#ff0;font-weight:700>0</span>d
-</span></span></code></pre></div><p>查看全部正在运行的容器信息</p><ul><li>-a 查看全部的容器，包括没有运行</li><li>-q 只查看容器的标识</li></ul><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-perl data-lang=perl><span style=display:flex><span>docker ps [-qa]
+</span></span></code></pre></div><p>查看全部正在运行的容器信息</p><ul><li>-a 查看全部的容器，包括没有运行</li><li>-q 只查看容器的标识</li><li>-l 显示最近创建的容器</li><li>-n 显示最近n个创建的容器</li></ul><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-perl data-lang=perl><span style=display:flex><span>docker ps [-qa]
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span><span style=color:#007f7f>#会有这样的输出 当前容器的id</span>
 </span></span><span style=display:flex><span>CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS                     PORTS               NAMES
 </span></span><span style=display:flex><span>d00f6136b0d7        bf                  <span style=color:#0ff;font-weight:700>&#34;/hello&#34;</span>            <span style=color:#ff0;font-weight:700>5</span> seconds ago       Exited (<span style=color:#ff0;font-weight:700>0</span>) <span style=color:#ff0;font-weight:700>4</span> seconds ago                       hopeful_poitras
-</span></span></code></pre></div><p>查看容器日志，以查看容器运行的信息</p><ul><li>-f：可以滚动查看日志的最后几行</li></ul><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-perl data-lang=perl><span style=display:flex><span>docker logs -f 容器id
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#007f7f>#只显示最近创建的容器</span>
+</span></span><span style=display:flex><span>docke ps -l
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#007f7f>#只显示1个创建的容器</span>
+</span></span><span style=display:flex><span>docker ps -n <span style=color:#ff0;font-weight:700>1</span>
+</span></span></code></pre></div><p>退出容器</p><p>当以交互式的形式启动容器后 dock run -it ubuntu bash.
+会进入到容器的bash中.那么如何退出当前的容器两种办法:</p><ul><li>输入exit 会停掉正在运行的容器</li><li>快捷键ctrl+p+q 退出.不会停掉容器</li></ul><p>查看容器日志，以查看容器运行的信息</p><ul><li>-f：可以滚动查看日志的最后几行</li></ul><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-perl data-lang=perl><span style=display:flex><span>docker logs -f 容器id
 </span></span></code></pre></div><p>进入容器的内部进行操作，例如进入容器内部的shell(默认是bash)
 exec是execute的简写执行的意思。记住单词也就记住了。</p><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-perl data-lang=perl><span style=display:flex><span>docker <span style=color:#fff;font-weight:700>exec</span> -it 容器id bash
-</span></span></code></pre></div><p>进入后可通过输入exit 退出回到当前的环境</p><p>容器的启动，停止，删除等操作，后续会经常使用到</p><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-perl data-lang=perl><span style=display:flex><span><span style=color:#007f7f>#重新启动容器</span>
+</span></span></code></pre></div><p>进入后可通过输入exit 退出回到当前的环境</p><p>查看容器内部运行的进程</p><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-perl data-lang=perl><span style=display:flex><span>docker top 容器id
+</span></span></code></pre></div><p>打印容器信息</p><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-perl data-lang=perl><span style=display:flex><span>docker inspect 容器id
+</span></span></code></pre></div><p>容器的启动，停止，删除等操作，后续会经常使用到</p><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-perl data-lang=perl><span style=display:flex><span><span style=color:#007f7f>#重新启动容器</span>
 </span></span><span style=display:flex><span>docker restart 容器id
 </span></span><span style=display:flex><span><span style=color:#007f7f>#启动运行的容器</span>
 </span></span><span style=display:flex><span>docker start 容器id
-</span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span><span style=color:#007f7f>#停止指定的容器(删除容器前，需要先停止容器)</span>
 </span></span><span style=display:flex><span>docker stop 容器id
 </span></span><span style=display:flex><span><span style=color:#007f7f>#停止全部容器</span>
@@ -113,6 +129,10 @@ exec是execute的简写执行的意思。记住单词也就记住了。</p><div 
 </span></span><span style=display:flex><span>docker rm 容器id
 </span></span><span style=display:flex><span><span style=color:#007f7f>#删除全部容器</span>
 </span></span><span style=display:flex><span>docker rm $<span style=color:red>(</span>docker ps -qa)
+</span></span><span style=display:flex><span><span style=color:#007f7f>#另一种方式使用管道的形式</span>
+</span></span><span style=display:flex><span>docker ps -a -<span style=color:#0ff;font-weight:700>q | </span>xargs docker rm
+</span></span><span style=display:flex><span><span style=color:#007f7f>#强制停止容器</span>
+</span></span><span style=display:flex><span>docker <span style=color:#fff;font-weight:700>kill</span> 容器id
 </span></span></code></pre></div><p>例如删除hello-world容器</p><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-perl data-lang=perl><span style=display:flex><span><span style=color:#007f7f>#查看到ID</span>
 </span></span><span style=display:flex><span>docker ps -a 
 </span></span><span style=display:flex><span>CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS                     PORTS               NAMES
@@ -143,7 +163,6 @@ exec是execute的简写执行的意思。记住单词也就记住了。</p><div 
 </span></span><span style=display:flex><span>CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                               NAMES
 </span></span><span style=display:flex><span>d20bfc8e2eaf        <span style=color:#ff0;font-weight:700>0</span>d                  <span style=color:#0ff;font-weight:700>&#34;docker-entrypoint.s…&#34;</span>   <span style=color:#ff0;font-weight:700>3</span> seconds ago       Up <span style=color:#ff0;font-weight:700>3</span> seconds        <span style=color:#ff0;font-weight:700>33060</span><span style=color:#0ff;font-weight:700>/tcp, 0.0.0.0:3309-&gt;3306/</span>tcp   mysql
 </span></span><span style=display:flex><span><span style=color:#007f7f># 进入容器的内部shell环境连接mysqlclient</span>
-</span></span><span style=display:flex><span><span style=color:red>➜</span> docker <span style=color:#fff;font-weight:700>exec</span> -it mysql bash                                                                                                                                                                    <span style=color:red></span> <span style=color:#ff0;font-weight:700>30</span>% <span style=color:red></span> 2<span style=color:#ff0;font-weight:700>.54</span>G <span style=color:red>─╯</span>
 </span></span><span style=display:flex><span>root@d20bfc8e2eaf:/<span style=color:#007f7f># mysql -u root -p</span>
 </span></span><span style=display:flex><span>Enter password:
 </span></span><span style=display:flex><span>Welcome to the MySQL monitor.  Commands end with ; or \g.
