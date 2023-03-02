@@ -10,8 +10,8 @@
 |
 <a href=/about/><b>About</b></a></nav><hr></header><div id=content><main><article><h1>Docker Tutorial</h1><div class=post-meta><strong><span>Posted on</span>
 <time>2020-09-06</time></strong>
-<span>• 990 words</span>
-<span>• 5 minute read</span><div><span>Tags:</span>
+<span>• 1177 words</span>
+<span>• 6 minute read</span><div><span>Tags:</span>
 <a href=/tags/docker>docker</a></div></div><div><p>言简意赅的docker教程.可以迅速的熟悉和学会docker的各种操作.</p><p>在linux和mac上安装docker的方式如下:</p><ul><li>CentOS</li></ul><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-perl data-lang=perl><span style=display:flex><span>yum -y install yum-utils device-mapper-persistent-data lvm2
 </span></span><span style=display:flex><span>yum makecache fast
 </span></span><span style=display:flex><span>yum -y install docker-ce
@@ -121,18 +121,22 @@ exec是execute的简写执行的意思。记住单词也就记住了。</p><div 
 </span></span><span style=display:flex><span><span style=color:#007f7f>#注意这里如果继续使用exit 退出容器仍然会停掉容器</span>
 </span></span></code></pre></div><p>查看容器内部运行的进程</p><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-perl data-lang=perl><span style=display:flex><span>docker top 容器id
 </span></span></code></pre></div><p>打印容器信息</p><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-perl data-lang=perl><span style=display:flex><span>docker inspect 容器id
-</span></span></code></pre></div><p>容器的启动，停止，删除等操作，后续会经常使用到</p><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-perl data-lang=perl><span style=display:flex><span><span style=color:#007f7f>#重新启动容器</span>
+</span></span></code></pre></div><p>容器的启动，暂停，停止，删除等操作，后续会经常使用到</p><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-perl data-lang=perl><span style=display:flex><span><span style=color:#007f7f>#暂停容器</span>
+</span></span><span style=display:flex><span>docker pause 容器id
+</span></span><span style=display:flex><span><span style=color:#007f7f>#恢复容器</span>
+</span></span><span style=display:flex><span>docker unpause 容器id
+</span></span><span style=display:flex><span><span style=color:#007f7f>#重新启动容器</span>
 </span></span><span style=display:flex><span>docker restart 容器id
 </span></span><span style=display:flex><span><span style=color:#007f7f>#启动运行的容器</span>
 </span></span><span style=display:flex><span>docker start 容器id
-</span></span><span style=display:flex><span><span style=color:#007f7f>#停止指定的容器(删除容器前，需要先停止容器)</span>
+</span></span><span style=display:flex><span><span style=color:#007f7f>#停止指定的容器</span>
 </span></span><span style=display:flex><span>docker stop 容器id
 </span></span><span style=display:flex><span><span style=color:#007f7f>#停止全部容器</span>
 </span></span><span style=display:flex><span>docker stop $<span style=color:red>(</span>docker ps -qa)
 </span></span><span style=display:flex><span><span style=color:#007f7f>#删除指定容器</span>
 </span></span><span style=display:flex><span>docker rm 容器id
-</span></span><span style=display:flex><span><span style=color:#007f7f>#删除全部容器</span>
-</span></span><span style=display:flex><span>docker rm $<span style=color:red>(</span>docker ps -qa)
+</span></span><span style=display:flex><span><span style=color:#007f7f>#删除全部容器 -f 就是force 强制删除可以删除正在运行的容器</span>
+</span></span><span style=display:flex><span>docker rm (-f) $<span style=color:red>(</span>docker ps -qa)
 </span></span><span style=display:flex><span><span style=color:#007f7f>#另一种方式使用管道的形式</span>
 </span></span><span style=display:flex><span>docker ps -a -<span style=color:#0ff;font-weight:700>q | </span>xargs docker rm
 </span></span><span style=display:flex><span><span style=color:#007f7f>#强制停止容器</span>
@@ -152,7 +156,7 @@ exec是execute的简写执行的意思。记住单词也就记住了。</p><div 
 </span></span><span style=display:flex><span>docker rmi hello-wolrd的id即可
 </span></span><span style=display:flex><span><span style=color:#007f7f>#再用docker images查看一下</span>
 </span></span><span style=display:flex><span><span style=color:#007f7f>#没有了hello-world的镜像</span>
-</span></span></code></pre></div><p>实例启动mysql容器</p><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-perl data-lang=perl><span style=display:flex><span><span style=color:#007f7f>#例如docker运行mysql</span>
+</span></span></code></pre></div><p>当然可以通过使用docker rm -f hello-world 强制删除不过在开发时候为了确保不出意外一般都是先停止在删除.</p><p>实例启动mysql容器</p><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-perl data-lang=perl><span style=display:flex><span><span style=color:#007f7f>#例如docker运行mysql</span>
 </span></span><span style=display:flex><span><span style=color:red>➜</span> docker pull mysql
 </span></span><span style=display:flex><span><span style=color:#007f7f>#查看镜像</span>
 </span></span><span style=display:flex><span><span style=color:red>➜</span> docker images
@@ -212,7 +216,58 @@ exec是execute的简写执行的意思。记住单词也就记住了。</p><div 
 </span></span><span style=display:flex><span>	}
 </span></span><span style=display:flex><span>	fmt.Println(<span style=color:#0ff;font-weight:700>&#34;Connection success&#34;</span>)
 </span></span><span style=display:flex><span>}
-</span></span></code></pre></div><p>极大的改善了开发体验，你可以简单有快速的安装不同版本和不同类型的数据库。</p><p>容器拷贝文件到主机</p><p>首先启动一个Ubuntu容器,然后进入到这个ubuntu容器中</p><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-perl data-lang=perl><span style=display:flex><span>docker run -it ubuntu bash
+</span></span></code></pre></div><p>极大的改善了开发体验，你可以简单有快速的安装不同版本和不同类型的数据库。</p><p>容器拷贝文件到主机 docker cp 容器id:容器内路径 目标主机路径</p><p>首先启动一个Ubuntu容器,然后进入到这个ubuntu容器中</p><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-perl data-lang=perl><span style=display:flex><span><span style=color:#007f7f>#启动ubuntu容器</span>
+</span></span><span style=display:flex><span>docker run -it ubuntu bash
+</span></span><span style=display:flex><span><span style=color:#007f7f>#目前已经在ubuntu容器内了在任何目录创建一个文件</span>
+</span></span><span style=display:flex><span>touch a.txt
+</span></span><span style=display:flex><span><span style=color:#007f7f>#使用重定向的方式写入一些字符串</span>
+</span></span><span style=display:flex><span>echo <span style=color:#0ff;font-weight:700>&#39;from ubuntu&#39;</span> &gt; a.txt
+</span></span><span style=display:flex><span><span style=color:#007f7f>#使用cat命令查看是否写入成功</span>
+</span></span><span style=display:flex><span>cat a.txt
+</span></span><span style=display:flex><span><span style=color:#007f7f>#正常情况会输出刚写入的字符串 from ubuntu</span>
+</span></span><span style=display:flex><span><span style=color:#007f7f>#使用ctrl+p+q退出这个容器 前面讲过快捷键不会停掉容器</span>
+</span></span><span style=display:flex><span><span style=color:#007f7f>#使用cp命令把刚才创建的a.txt文件拷贝到当前目录下</span>
+</span></span><span style=display:flex><span>docker cp 容器id:<span style=color:#0ff;font-weight:700>/a.txt ./</span>
+</span></span><span style=display:flex><span><span style=color:#007f7f>#通过ls 命令查看存在a.txt文件已经拷贝成功了</span>
+</span></span><span style=display:flex><span><span style=color:#007f7f>#cat a.txt 会输出from ubuntu</span>
+</span></span></code></pre></div><p>导出容器 docker export 容器id > 文件名.tar</p><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-perl data-lang=perl><span style=display:flex><span><span style=color:#007f7f>#注意导出是不会停掉正在运行的容器的</span>
+</span></span><span style=display:flex><span>docker export ubuntu容器id &gt; ubuntu.tar
+</span></span><span style=display:flex><span><span style=color:#007f7f>#ubuntu容器仍然在运行</span>
+</span></span><span style=display:flex><span>docker  ps -a
+</span></span></code></pre></div><p>导入容器镜像 cat 镜像.tar | docker import - 镜像用户/镜像名:镜像版本号</p><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-perl data-lang=perl><span style=display:flex><span><span style=color:#007f7f>#首先强制删除刚才的ubuntu镜像</span>
+</span></span><span style=display:flex><span>docker rm -f ubuntu容器id
+</span></span><span style=display:flex><span><span style=color:#007f7f>#查看确认已经没有了ubuntu容器</span>
+</span></span><span style=display:flex><span>docker ps -a
+</span></span><span style=display:flex><span><span style=color:#007f7f>#导入刚才导出的ubuntu容器镜像 这里就可以随便写一些信息</span>
+</span></span><span style=display:flex><span>cat ubuntu.tar | docker <span style=color:#fff;font-weight:700>import</span> -test/test:0<span style=color:#ff0;font-weight:700>.1.0</span>
+</span></span><span style=display:flex><span><span style=color:#007f7f>#导入完成后会看到sha256的id输出 使用</span>
+</span></span><span style=display:flex><span>docker images
+</span></span><span style=display:flex><span><span style=color:#007f7f>#查看全部的镜像会看到刚导入的镜像</span>
+</span></span></code></pre></div><h3 id=镜像>镜像</h3><p>是一种轻量级，可独立的独立软件包，它包含运行某个应用程序所需的所有内容，把应用程序和配置依赖打包成一个可交付的运行环境，这个打包好的运行环境就简称为镜像</p><p>分层镜像</p><p>当使用pull命令拉取一个新的镜像时经常看到是这样的输出</p><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-perl data-lang=perl><span style=display:flex><span>docker pull mongo
+</span></span><span style=display:flex><span><span style=color:#007f7f># output</span>
+</span></span><span style=display:flex><span>latest: Pulling from library/mongo
+</span></span><span style=display:flex><span>b65bcf19d144: Pulling fs layer
+</span></span><span style=display:flex><span><span style=color:#ff0;font-weight:700>83449</span>d568304: Pulling fs layer
+</span></span><span style=display:flex><span><span style=color:#ff0;font-weight:700>20</span>d982b8a1de: Waiting
+</span></span><span style=display:flex><span><span style=color:#ff0;font-weight:700>40</span>b500d3ec7f: Waiting
+</span></span></code></pre></div><p>在上面的输出中会看到许多的fs layer 文件层,一个镜像是由许多个文件构成的.底层的原理就是
+Union fs(联合文件系统).</p><p>Union Fs (联合文件系统)
+是一种分层,轻量级的高性能文件系统,它支持对文件系统的修改作为一次提交来一层层的叠加.同时可以将不同的目录挂载到通一个虚拟文件系统下.
+Union文件系统是docker镜像的基础.镜像可以通过分层来继承.基于基础的镜像可以制作各种不同应用的镜像.</p><p>特性:
+一次同时加载多个文件系统,但从外面看起来,只能看到一个文件系统,联合加载会把各层文件叠加起来,这样最终的文件系统会包含所有底层的文件和目录.</p><h4 id=docker镜像加载原理>Docker镜像加载原理</h4><p>docker的镜像实际上由一层一层的文件系统组成,这种层级的文件系统叫做UnionFs.</p><p>bootfs(boot file system)主要包含bootloader和kernel,
+bootloader主要是加载kernel,linux刚启动的时候会加载bootfs文件系统,在docker镜像的最底层就是引导文件系统bootfs.这一层与典型的linux或者unix系统是一样的.
+当boot加载完成之后整个内核就在内存中了,此时的内存使用权就由boot转交给了kernel,此时系统也会卸载bootfs</p><p>rootfs(root file system)在bootfs之上,包含的就是典型的linux或者unix系统中的/dev /proc /bin
+/etc等标准目录和文件, rootfs就是各种不同操作系统的发行版例如ubuntu centos 等等.</p><h3 id=镜像提交commit>镜像提交commit</h3><p>docker commit -m=&ldquo;提交的信息&rdquo; -a=&ldquo;作者&rdquo; 容器id 要创建的镜像名:tag</p><p>之前创建的ubuntu容器使用的官方镜像.这种镜像一般只包含一个linux
+kernel没有其他任何常用的一些外部程序例如vim等.
+尝试安装一个vim然后提交打包这个ubuntu容器成为一个新的带有vim的ubuntu镜像.</p><p>ubuntu的包管理器使用的是apt-get。所以先尝试更新下包管理器</p><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-perl data-lang=perl><span style=display:flex><span><span style=color:#007f7f>#更新</span>
+</span></span><span style=display:flex><span>docker run -it ubuntu bash
+</span></span><span style=display:flex><span>apt-get update
+</span></span><span style=display:flex><span><span style=color:#007f7f>#安装vim</span>
+</span></span><span style=display:flex><span>apt-get -y install vim
+</span></span><span style=display:flex><span><span style=color:#007f7f>#安装完成后打开vim测试一下都正常的.提交这个镜像 用户名要与hub.docker上面一致</span>
+</span></span><span style=display:flex><span>docker commit -m=<span style=color:#0ff;font-weight:700>&#34;ubuntu with vim&#34;</span> -a=<span style=color:#0ff;font-weight:700>&#34;glepnir&#34;</span> <span style=color:#ff0;font-weight:700>3730</span> glephunter/myubuntu:0<span style=color:#ff0;font-weight:700>.1.0</span>
+</span></span><span style=display:flex><span><span style=color:#007f7f>#提交镜像到hub.docker去</span>
+</span></span><span style=display:flex><span>docker <span style=color:#fff;font-weight:700>push</span> glephunter/myubuntu:0<span style=color:#ff0;font-weight:700>.1.0</span>
 </span></span></code></pre></div><h3 id=数据卷>数据卷</h3><p>为什么要用数据卷因为镜像往往都是很纯净的甚至都没有vi，还需要去下载一个vi才能使用。如果使用docker部署不推荐在容器内部维护项目。</p><p>数据卷：将宿主机的一个目录映射到容器的一个目录中。可以在宿主机中操作目录中的内容，那么容器内部映射的文件，也会跟着一起改变。</p><p>创建数据卷后，默认会存放在一个目录下/var/lib/docker/volumes/数据卷名称/_data</p><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-perl data-lang=perl><span style=display:flex><span>docker volume create 数据卷名称
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span><span style=color:#007f7f>#创建一个go微服务数据卷</span>
