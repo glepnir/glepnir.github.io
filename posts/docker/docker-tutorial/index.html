@@ -257,7 +257,7 @@ Union文件系统是docker镜像的基础.镜像可以通过分层来继承.基�
 一次同时加载多个文件系统,但从外面看起来,只能看到一个文件系统,联合加载会把各层文件叠加起来,这样最终的文件系统会包含所有底层的文件和目录.</p><h4 id=docker镜像加载原理>Docker镜像加载原理</h4><p>docker的镜像实际上由一层一层的文件系统组成,这种层级的文件系统叫做UnionFs.</p><p>bootfs(boot file system)主要包含bootloader和kernel,
 bootloader主要是加载kernel,linux刚启动的时候会加载bootfs文件系统,在docker镜像的最底层就是引导文件系统bootfs.这一层与典型的linux或者unix系统是一样的.
 当boot加载完成之后整个内核就在内存中了,此时的内存使用权就由boot转交给了kernel,此时系统也会卸载bootfs</p><p>rootfs(root file system)在bootfs之上,包含的就是典型的linux或者unix系统中的/dev /proc /bin
-/etc等标准目录和文件, rootfs就是各种不同操作系统的发行版例如ubuntu centos 等等.</p><h3 id=镜像提交commit>镜像提交commit</h3><p>docker commit -m=&ldquo;提交的信息&rdquo; -a=&ldquo;作者&rdquo; 容器id 要创建的镜像名:tag</p><p>之前创建的ubuntu容器使用的官方镜像.这种镜像一般只包含一个linux
+/etc等标准目录和文件, rootfs就是各种不同操作系统的发行版例如ubuntu centos 等等.</p><h3 id=镜像提交>镜像提交</h3><p>docker commit -m=&ldquo;提交的信息&rdquo; -a=&ldquo;作者&rdquo; 容器id 要创建的镜像名:tag</p><p>之前创建的ubuntu容器使用的官方镜像.这种镜像一般只包含一个linux
 kernel没有其他任何常用的一些外部程序例如vim等.
 尝试安装一个vim然后提交打包这个ubuntu容器成为一个新的带有vim的ubuntu镜像.</p><p>ubuntu的包管理器使用的是apt-get。所以先尝试更新下包管理器</p><div class=highlight><pre tabindex=0 style=color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-perl data-lang=perl><span style=display:flex><span><span style=color:#007f7f>#更新</span>
 </span></span><span style=display:flex><span>docker run -it ubuntu bash
