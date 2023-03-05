@@ -804,7 +804,7 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 	border-right-width: 1px;
 	border-bottom-width: 0;
 	border-left-width: 1px;
-	margin-left: 4%;
+	margin-left: 2%;
 	margin-top: 5%;
 	position:fixed;
 }
