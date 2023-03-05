@@ -1,3 +1,21 @@
+@font-face {
+  font-family: 'Play';
+  src: local('Play'),
+    url('/fonts/Play-Regular.ttf') format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+@font-face {
+  font-family: 'Play';
+  src: local('Play'),
+    url('/fonts/Play-Bold.ttf') format("truetype");
+  font-weight: bold;
+  font-style: bold;
+  font-display: block;
+}
+
+
 *,
 *::before,
 *::after {
@@ -43,9 +61,9 @@ html {
 
 body {
 	margin: 0;
-	font-family: 'Open Sans', Helvetica, Arial, sans-serif;
+	font-family: Play,'Open Sans', Helvetica, Arial, sans-serif;
 	font-size: 14px;
-	font-size: .875rem;
+	font-size: 1.0rem;
 	line-height: 1.6;
 	word-wrap: break-word;
 	background: #f7f7f7;
@@ -254,7 +272,7 @@ pre,
 code,
 kbd,
 samp {
-	font-family: SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+	font-family: Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
 	font-size: inherit;
 }
 
