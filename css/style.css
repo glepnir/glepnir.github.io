@@ -1,4 +1,13 @@
 @font-face {
+  font-family: 'WenYue SXSChunWuYuTi J';
+  src: local('WenYue SXSChunWuYuTi J'),
+    url('/fonts/WenYue_SXSChunWuYuTi_J.ttf') format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+@font-face {
   font-family: 'Play';
   src: local('Play'),
     url('/fonts/Play-Regular.ttf') format("truetype");
@@ -61,7 +70,7 @@ html {
 
 body {
 	margin: 0;
-	font-family: Play,'Open Sans', Helvetica, Arial, sans-serif;
+	font-family: Play,'WenYue SXSChunWuYuTi J', Helvetica, Arial, sans-serif;
 	font-size: 14px;
 	font-size: 1.0rem;
 	line-height: 1.6;
@@ -414,6 +423,7 @@ select {
 
 .logo__img {
 	max-height: 256px;
+	border-radius: 50%;
 }
 
 .logo__text {
@@ -608,13 +618,13 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 
 .meta {
 	font-size: 13px;
-	font-size: .8125rem;
+	font-size: 1.0rem;
 	vertical-align: baseline;
 }
 
 .meta,
 .meta a {
-	color: #666;
+	color: #3e8585;
 }
 
 .meta a:hover {
@@ -794,7 +804,7 @@ button:not(:-moz-focusring):focus > .menu__btn-title {
 	border-right-width: 1px;
 	border-bottom-width: 0;
 	border-left-width: 1px;
-	margin-left: 5%;
+	margin-left: 4%;
 	margin-top: 5%;
 	position:fixed;
 }
