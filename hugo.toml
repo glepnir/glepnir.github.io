@@ -50,6 +50,12 @@ copyright = "© Copyright notice"
 	referenceBook = "The Metamorphosis"
 	referenceAuthor = "Franz Kafka"
 
+[params.utteranc]
+  enable = true
+  repo = "glepnir/glepnir.github.io"
+  issueTerm = "title"
+  theme = "github-light"
+
 # Nav.
 [[menu.main]]
 name = "Home"
