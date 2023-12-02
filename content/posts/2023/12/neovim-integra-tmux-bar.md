@@ -1,5 +1,5 @@
 ---
-title: 'Neovim Integra Tmux Bar'
+title: 'Neovim Integration Tmux Bar'
 date: 2023-12-02T18:50:57+08:00
 draft: false
 description: "Integration tmux status bar with neovim"
