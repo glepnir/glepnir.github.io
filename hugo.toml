@@ -1,4 +1,4 @@
-baseURL = "http://example.org/"
+baseURL = "http://yupdo.org/"
 languageCode = "en-us"
 title = "glepnir's blog"
 theme = "ink-free"
