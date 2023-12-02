@@ -7,7 +7,7 @@ tags: [neovim, tmux]
 categories: [neovim, tmux]
 ---
 
-![image](../../../asserts/tmux_bar.png)
+![image](../../../asset/tmux_bar.png)
 
 ## Introduction
 
