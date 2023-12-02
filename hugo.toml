@@ -1,0 +1,112 @@
+baseURL = "http://example.org/"
+languageCode = "en-us"
+title = "glepnir's blog"
+theme = "ink-free"
+paginate = 5
+
+copyright = "© Copyright notice"
+# Demo only
+#ignoreErrors = ["error-missing-instagram-accesstoken"]
+
+[permalinks]
+  posts = "/:year/:month/:title"
+
+[params]
+	subtitle = "vimer and write C C++ rust lua python etc"
+
+	# Optional 64x64 avatar image.
+	avatar = "https://avatars.githubusercontent.com/u/41671631?s=96&v=4"
+
+	featherIconsCDN = false
+
+	# Site color - dark/light/auto
+	mode = "light"
+
+	# Enable a table of contents:
+	# Either "static"/true, "floating", "both", or "none" (default: static)
+	# The floating TOC dissapears on mobile and adds 200px vertical space
+	toc = "both"
+  wordcount = 100
+	# Whether to truncate everything but H1/H2 headings if the last element in a TOC isn't visible. Enabled by default
+	enableTocTrunate = true
+
+	# Max tags
+	maxTags = 7
+
+	# Define words per minute to approximate reading time
+	wpm = 250
+
+	# Stupid footers :)
+	footers = [ 
+		"Keep learning",
+	]
+
+	# Github base url
+	github = "https://github.com/glepnir/glepnir.github.io"
+
+	# For statistics, we can compare the total word count against a book of your choice
+	statisticsEnabled = true
+	referenceBookWords = 11500.0
+	referenceBook = "The Metamorphosis"
+	referenceAuthor = "Franz Kafka"
+
+# Nav.
+[[menu.main]]
+name = "Home"
+url = "/"
+weight = 1
+
+[[menu.main]]
+name = "All posts"
+url = "/posts"
+weight = 2
+
+[[menu.main]]
+name = "About"
+url = "/about"
+weight = 3
+
+[[menu.main]]
+name = "Tags & Stats"
+url = "/tags"
+weight = 4
+
+[[params.social]]
+name = "Github"
+icon = "github"
+url = "https://github.com/glepnir/"
+
+[[params.social]]
+name = "bilibili"
+icon = "tv"
+url = "https://space.bilibili.com/321783076"
+
+[[params.social]]
+name = "youtube"
+icon = "youtube"
+url = "https://www.youtube.com/channel/UCvlERaXQD8L2jzNC_s-I5xw"
+
+[[params.social]]
+name = "RSS"
+icon = "rss"
+url = "/index.xml"
+
+[taxonomies]
+   tag = "tags"
+
+[markup]
+  [markup.highlight]
+    codeFences = true
+    guessSyntax = false
+    hl_Lines = ""
+    lineNoStart = 1
+    lineNos = true
+    lineNumbersInTable = true
+    noClasses = true
+    style = "monokai"
+    tabWidth = 4
+
+  [markup.tableOfContents]
+    endLevel = 3
+    ordered = true
+    startLevel = 2 
