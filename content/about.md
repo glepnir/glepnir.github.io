@@ -24,3 +24,13 @@ Sometimes will stream in bilibili a Chinese website.
 
 ### Media:
 Post some videos on bilibili and youtube you can find link on top right.
+
+### System
+Arch linux or macos
+
+### Monitor
+AOC U27U2DS
+
+### KeyBoard:
+HHKB BT White
+
