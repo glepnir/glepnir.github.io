@@ -28,9 +28,11 @@ Post some videos on bilibili and youtube you can find link on top right.
 ### System
 Arch linux or macos
 
+### KeyBoard:
+HHKB Type-S Bt White
+
+![hhkb](../../asset/hhkb.jpg)
+
 ### Monitor
 AOC U27U2DS
-
-### KeyBoard:
-HHKB BT White
 
