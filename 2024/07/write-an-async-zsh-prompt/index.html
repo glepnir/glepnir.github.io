@@ -1,0 +1,315 @@
+<!doctype html><html><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><title>Write an Async Zsh Prompt - glepnir's blog</title><meta name=viewport content="width=device-width,initial-scale=1">
+<meta itemprop=name content="Write an Async Zsh Prompt"><meta itemprop=description content="Write an Async Zsh Prompt"><meta itemprop=datePublished content="2024-07-02T20:54:03+08:00"><meta itemprop=dateModified content="2024-07-02T20:54:03+08:00"><meta itemprop=wordCount content="1116"><meta itemprop=keywords content="terminal,zsh,"><meta property="og:title" content="Write an Async Zsh Prompt"><meta property="og:description" content="Write an Async Zsh Prompt"><meta property="og:type" content="article"><meta property="og:url" content="https://glepnir.github.io/2024/07/write-an-async-zsh-prompt/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2024-07-02T20:54:03+08:00"><meta property="article:modified_time" content="2024-07-02T20:54:03+08:00"><meta name=twitter:card content="summary"><meta name=twitter:title content="Write an Async Zsh Prompt"><meta name=twitter:description content="Write an Async Zsh Prompt"><link rel=stylesheet type=text/css media=screen href=https://glepnir.github.io/css/normalize.css><link rel=stylesheet type=text/css media=screen href=https://glepnir.github.io/css/main.css><link id=dark-scheme rel=stylesheet type=text/css href=https://glepnir.github.io/css/dark.css><script src=https://glepnir.github.io/js/feather.min.js></script><script src=https://glepnir.github.io/js/main.js></script></head><body><div class="container-wide wrapper"><div class=header><div class=avatar><a href=https://glepnir.github.io/><img src="https://avatars.githubusercontent.com/u/41671631?s=96&amp;v=4" alt="glepnir's blog"></a></div><h1 class=site-title><a href=https://glepnir.github.io/>glepnir's blog</a></h1><div class=site-description><p>vimer and write C C++ rust lua python etc</p><nav class="nav social"><ul class=flat><li><a href=https://github.com/glepnir/ title=Github><i data-feather=github></i></a></li><li><a href=https://space.bilibili.com/321783076 title=bilibili><i data-feather=tv></i></a></li><li><a href=https://www.youtube.com/channel/UCvlERaXQD8L2jzNC_s-I5xw title=youtube><i data-feather=youtube></i></a></li><li><a href=/index.xml title=RSS><i data-feather=rss></i></a></li></ul></nav></div><nav class=nav><ul class=flat><li><a href=/>Home</a></li><li><a href=/posts>All posts</a></li><li><a href=/about>About</a></li><li><a href=/tags>Tags & Stats</a></li></ul></nav></div><div class=article-nav id=article-nav-id><div class=post><div class=post-header><div class=meta><div class=date><span class=day>02</span>
+<span class=rest>Jul 2024</span></div></div><div class=matter><h1 class=title>Write an Async Zsh Prompt</h1></div></div><aside class=toc id=static-toc><header><h3>Contents</h3></header><nav id=TableOfContents><ol><li><a href=#function-to-get-git-status>Function to Get Git Status</a></li><li><a href=#function-to-define-the-prompt>Function to Define the Prompt</a></li><li><a href=#function-to-handle-async-response>Function to Handle Async Response</a></li><li><a href=#function-to-run-before-each-prompt>Function to Run Before Each Prompt</a></li></ol></nav></aside><h1 id=why-not-use-p10k>Why Not Use P10k</h1><p>P10k is a fantastic asynchronous Zsh prompt plugin. It is fast, the author is
+very active, and it provides convenient customization commands, allowing you to
+easily generate a Zsh prompt you like. However, when you look at the content of
+the generated file, it is enormous. This is because the author has provided support
+for many aspects, such as displaying different language environments, language
+versions, Git information, prompt formatting, styles, custom function hooks, etc.
+This is the path a plugin should take to meet the needs of most people. However,
+I usually don&rsquo;t use so many features. I once generated a minimal pure theme based
+on P10k. One day, while organizing my dotfiles, I wanted to modify some styles.
+But even with the minimal pure theme style, P10k still generated hundreds of lines
+of shell code. So I decided to get rid of it.</p><h1 id=synchronous-zsh-prompt>Synchronous Zsh Prompt</h1><p>Writing a simple Zsh theme is easy. First, define some color variables, such
+as <code>RED="%F{red}"</code>. Then, create a simple function to generate the desired prompt
+string and pass it to the <code>PROMPT</code> variable.</p><div class=highlight><div style=color:#cdd6f4;background-color:#1e1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#cdd6f4;background-color:#1e1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">13
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#cdd6f4;background-color:#1e1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span><span style=color:#6c7086;font-style:italic># Function to get current directory and Git branch</span>
+</span></span><span style=display:flex><span>prompt_info<span style=color:#89dceb;font-weight:700>()</span> <span style=color:#89dceb;font-weight:700>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#89dceb>local</span> cwd git_branch
+</span></span><span style=display:flex><span>  <span style=color:#f5e0dc>cwd</span><span style=color:#89dceb;font-weight:700>=</span><span style=color:#cba6f7>$(</span><span style=color:#89dceb>pwd</span> | sed <span style=color:#a6e3a1>&#34;s|</span><span style=color:#f5e0dc>$HOME</span><span style=color:#a6e3a1>|~|&#34;</span><span style=color:#cba6f7>)</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#cba6f7>if</span> git rev-parse --is-inside-work-tree &amp;&gt; /dev/null; <span style=color:#cba6f7>then</span>
+</span></span><span style=display:flex><span>    <span style=color:#f5e0dc>git_branch</span><span style=color:#89dceb;font-weight:700>=</span><span style=color:#cba6f7>$(</span>git rev-parse --abbrev-ref HEAD<span style=color:#cba6f7>)</span>
+</span></span><span style=display:flex><span>    <span style=color:#f5e0dc>git_commit</span><span style=color:#89dceb;font-weight:700>=</span><span style=color:#cba6f7>$(</span>git rev-parse --short HEAD<span style=color:#cba6f7>)</span>
+</span></span><span style=display:flex><span>    <span style=color:#89dceb>echo</span> <span style=color:#a6e3a1>&#34;</span><span style=color:#a6e3a1>${</span><span style=color:#f5e0dc>GREEN</span><span style=color:#a6e3a1>}</span><span style=color:#a6e3a1>in </span><span style=color:#a6e3a1>${</span><span style=color:#f5e0dc>BLUE</span><span style=color:#a6e3a1>}</span><span style=color:#f5e0dc>$cwd</span><span style=color:#a6e3a1> </span><span style=color:#a6e3a1>${</span><span style=color:#f5e0dc>YELLOW</span><span style=color:#a6e3a1>}</span><span style=color:#f5e0dc>$git_branch</span><span style=color:#a6e3a1> </span><span style=color:#a6e3a1>${</span><span style=color:#f5e0dc>MAGENTA</span><span style=color:#a6e3a1>}</span><span style=color:#f5e0dc>$git_commit</span><span style=color:#a6e3a1>${</span><span style=color:#f5e0dc>RESET</span><span style=color:#a6e3a1>}</span><span style=color:#a6e3a1>&#34;</span>
+</span></span><span style=display:flex><span>  <span style=color:#cba6f7>else</span>
+</span></span><span style=display:flex><span>    <span style=color:#89dceb>echo</span> <span style=color:#a6e3a1>&#34;</span><span style=color:#a6e3a1>${</span><span style=color:#f5e0dc>GREEN</span><span style=color:#a6e3a1>}</span><span style=color:#a6e3a1>in </span><span style=color:#a6e3a1>${</span><span style=color:#f5e0dc>BLUE</span><span style=color:#a6e3a1>}</span><span style=color:#f5e0dc>$cwd</span><span style=color:#a6e3a1>${</span><span style=color:#f5e0dc>RESET</span><span style=color:#a6e3a1>}</span><span style=color:#a6e3a1>&#34;</span>
+</span></span><span style=display:flex><span>  <span style=color:#cba6f7>fi</span>
+</span></span><span style=display:flex><span><span style=color:#89dceb;font-weight:700>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>This is simple: when working within a Git project, it gets the branch and commit
+information and outputs it via <code>echo</code>. Then, wrap this in an <code>update_prompt</code>
+function and call it in <code>.zshrc</code> file, finally appending it to <code>precmd_functions</code>.
+Everything is done.</p><div class=highlight><div style=color:#cdd6f4;background-color:#1e1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#cdd6f4;background-color:#1e1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">5
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#cdd6f4;background-color:#1e1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span><span style=color:#6c7086;font-style:italic># Function to update the prompt</span>
+</span></span><span style=display:flex><span>update_prompt<span style=color:#89dceb;font-weight:700>()</span> <span style=color:#89dceb;font-weight:700>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#f5e0dc>PROMPT</span><span style=color:#89dceb;font-weight:700>=</span><span style=color:#a6e3a1>&#34;</span><span style=color:#cba6f7>$(</span>prompt_info<span style=color:#cba6f7>)</span><span style=color:#a6e3a1>
+</span></span></span><span style=display:flex><span><span style=color:#a6e3a1></span><span style=color:#a6e3a1>${</span><span style=color:#f5e0dc>CYAN</span><span style=color:#a6e3a1>}</span><span style=color:#a6e3a1>λ </span><span style=color:#a6e3a1>${</span><span style=color:#f5e0dc>RESET</span><span style=color:#a6e3a1>}</span><span style=color:#a6e3a1>&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#89dceb;font-weight:700>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>I like to have the input on the second line, so I use a newline in the <code>PROMPT</code>
+format string.</p><p><img src=../../../asset/zsh_sync.png alt=image></p><h1 id=asynchronous-implementation>Asynchronous Implementation</h1><p>When working on a PR in Vim, I wanted to see some commit information, so I tried
+adding commit info to the <code>prompt_info</code> function. Then, when I opened a new shell,
+it was as slow as a turtle. This is why asynchronous P10k is the best among all
+Zsh themes. So I tried to get Git information asynchronously and update the
+<code>PROMPT</code> using Zsh&rsquo;s asynchronous jobs.</p><p><img src=../../../asset/zsh_async.gif alt=image></p><h2 id=function-to-get-git-status>Function to Get Git Status</h2><div class=highlight><div style=color:#cdd6f4;background-color:#1e1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#cdd6f4;background-color:#1e1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">13
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">14
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">15
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">16
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">17
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">18
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">19
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">20
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">21
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">22
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">23
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">24
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">25
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">26
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">27
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">28
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">29
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">30
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">31
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">32
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">33
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">34
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">35
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">36
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">37
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">38
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">39
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">40
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">41
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">42
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">43
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">44
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">45
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">46
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">47
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">48
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">49
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">50
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">51
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">52
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">53
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">54
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">55
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">56
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">57
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">58
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">59
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">60
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">61
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">62
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">63
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">64
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">65
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">66
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">67
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">68
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">69
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">70
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#cdd6f4;background-color:#1e1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span><span style=color:#6c7086;font-style:italic># Function to get Git status</span>
+</span></span><span style=display:flex><span>prompt_git_status<span style=color:#89dceb;font-weight:700>()</span> <span style=color:#89dceb;font-weight:700>{</span>
+</span></span><span style=display:flex><span>  git rev-parse --git-dir &gt;&amp;- 2&gt;&amp;- <span style=color:#89dceb;font-weight:700>||</span> <span style=color:#89dceb;font-weight:700>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#89dceb>echo</span> -n <span style=color:#a6e3a1>$&#39;\0&#39;</span>
+</span></span><span style=display:flex><span>    <span style=color:#cba6f7>return</span>
+</span></span><span style=display:flex><span>  <span style=color:#89dceb;font-weight:700>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#89dceb>local</span> -a parts
+</span></span><span style=display:flex><span>  <span style=color:#89dceb>local</span> fd line head ahead behind conflicts staged changed untracked commithash
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#89dceb>exec</span> <span style=color:#89dceb;font-weight:700>{</span>fd<span style=color:#89dceb;font-weight:700>}</span>&lt; &lt;<span style=color:#89dceb;font-weight:700>(</span>git status --porcelain<span style=color:#89dceb;font-weight:700>=</span>v2 --branch<span style=color:#89dceb;font-weight:700>)</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#cba6f7>while</span> <span style=color:#89dceb>read</span> -A -u <span style=color:#f5e0dc>$fd</span> line; <span style=color:#cba6f7>do</span>
+</span></span><span style=display:flex><span>    <span style=color:#cba6f7>case</span> <span style=color:#a6e3a1>&#34;</span><span style=color:#f5e0dc>$line</span><span style=color:#a6e3a1>&#34;</span> in
+</span></span><span style=display:flex><span>      <span style=color:#a6e3a1>&#39;# branch.oid&#39;</span>*<span style=color:#89dceb;font-weight:700>)</span>
+</span></span><span style=display:flex><span>        <span style=color:#cba6f7>if</span> <span style=color:#89dceb;font-weight:700>[[</span> <span style=color:#a6e3a1>&#34;</span><span style=color:#a6e3a1>${</span><span style=color:#f5e0dc>line</span>[3]<span style=color:#a6e3a1>}</span><span style=color:#a6e3a1>&#34;</span> !<span style=color:#89dceb;font-weight:700>=</span> <span style=color:#a6e3a1>&#34;(initial)&#34;</span> <span style=color:#89dceb;font-weight:700>]]</span>; <span style=color:#cba6f7>then</span>
+</span></span><span style=display:flex><span>          <span style=color:#f5e0dc>commit_hash</span><span style=color:#89dceb;font-weight:700>=</span><span style=color:#a6e3a1>&#34;</span><span style=color:#a6e3a1>${</span><span style=color:#f5e0dc>line</span>[3]:<span style=color:#f5e0dc>0</span>:<span style=color:#f5e0dc>7</span><span style=color:#a6e3a1>}</span><span style=color:#a6e3a1>&#34;</span>
+</span></span><span style=display:flex><span>        <span style=color:#cba6f7>fi</span>
+</span></span><span style=display:flex><span>        ;;
+</span></span><span style=display:flex><span>      <span style=color:#a6e3a1>&#39;# branch.head&#39;</span>*<span style=color:#89dceb;font-weight:700>)</span> <span style=color:#6c7086;font-style:italic># Current branch</span>
+</span></span><span style=display:flex><span>        <span style=color:#f5e0dc>head</span><span style=color:#89dceb;font-weight:700>=</span><span style=color:#a6e3a1>&#34;</span><span style=color:#f5e0dc>$line</span><span style=color:#a6e3a1>[3]&#34;</span>
+</span></span><span style=display:flex><span>        <span style=color:#89dceb;font-weight:700>[[</span> <span style=color:#f5e0dc>$head</span> <span style=color:#89dceb;font-weight:700>==</span> <span style=color:#a6e3a1>&#34;(detached)&#34;</span> <span style=color:#89dceb;font-weight:700>]]</span> <span style=color:#89dceb;font-weight:700>&amp;&amp;</span> <span style=color:#f5e0dc>head</span><span style=color:#89dceb;font-weight:700>=</span><span style=color:#a6e3a1>&#34;</span><span style=color:#cba6f7>$(</span><span style=color:#89dceb>echo</span> <span style=color:#a6e3a1>&#34;:</span><span style=color:#cba6f7>$(</span>git rev-parse --short HEAD<span style=color:#cba6f7>)</span><span style=color:#a6e3a1>&#34;</span><span style=color:#cba6f7>)</span><span style=color:#a6e3a1>&#34;</span>
+</span></span><span style=display:flex><span>        ;;
+</span></span><span style=display:flex><span>      <span style=color:#a6e3a1>&#39;# branch.ab&#39;</span>*<span style=color:#89dceb;font-weight:700>)</span> <span style=color:#6c7086;font-style:italic># Divergence from upstream</span>
+</span></span><span style=display:flex><span>        <span style=color:#f5e0dc>ahead</span><span style=color:#89dceb;font-weight:700>=</span><span style=color:#a6e3a1>&#34;</span><span style=color:#a6e3a1>${</span><span style=color:#f5e0dc>line</span>[3]/#+<span style=color:#a6e3a1>}</span><span style=color:#a6e3a1>&#34;</span>
+</span></span><span style=display:flex><span>        <span style=color:#f5e0dc>behind</span><span style=color:#89dceb;font-weight:700>=</span><span style=color:#a6e3a1>&#34;</span><span style=color:#a6e3a1>${</span><span style=color:#f5e0dc>line</span>[4]/#-<span style=color:#a6e3a1>}</span><span style=color:#a6e3a1>&#34;</span>
+</span></span><span style=display:flex><span>        ;;
+</span></span><span style=display:flex><span>      <span style=color:#89dceb;font-weight:700>(</span>1|2<span style=color:#89dceb;font-weight:700>)</span>*<span style=color:#89dceb;font-weight:700>)</span> <span style=color:#6c7086;font-style:italic># Modified or renamed/copied</span>
+</span></span><span style=display:flex><span>        <span style=color:#89dceb;font-weight:700>[[</span> <span style=color:#a6e3a1>&#34;</span><span style=color:#a6e3a1>${${</span><span style=color:#f5e0dc>line</span>[2]<span style=color:#a6e3a1>}</span>[1]<span style=color:#a6e3a1>}</span><span style=color:#a6e3a1>&#34;</span> !<span style=color:#89dceb;font-weight:700>=</span> <span style=color:#a6e3a1>&#34;.&#34;</span> <span style=color:#89dceb;font-weight:700>]]</span> <span style=color:#89dceb;font-weight:700>&amp;&amp;</span> <span style=color:#89dceb;font-weight:700>((</span>staged++<span style=color:#89dceb;font-weight:700>))</span>
+</span></span><span style=display:flex><span>        <span style=color:#89dceb;font-weight:700>[[</span> <span style=color:#a6e3a1>&#34;</span><span style=color:#a6e3a1>${${</span><span style=color:#f5e0dc>line</span>[2]<span style=color:#a6e3a1>}</span>[2]<span style=color:#a6e3a1>}</span><span style=color:#a6e3a1>&#34;</span> !<span style=color:#89dceb;font-weight:700>=</span> <span style=color:#a6e3a1>&#34;.&#34;</span> <span style=color:#89dceb;font-weight:700>]]</span> <span style=color:#89dceb;font-weight:700>&amp;&amp;</span> <span style=color:#89dceb;font-weight:700>((</span>changed++<span style=color:#89dceb;font-weight:700>))</span>
+</span></span><span style=display:flex><span>        ;;
+</span></span><span style=display:flex><span>      <span style=color:#a6e3a1>&#39;u&#39;</span>*<span style=color:#89dceb;font-weight:700>)</span> <span style=color:#6c7086;font-style:italic># Unmerged</span>
+</span></span><span style=display:flex><span>        <span style=color:#89dceb;font-weight:700>((</span>conflicts++<span style=color:#89dceb;font-weight:700>))</span>
+</span></span><span style=display:flex><span>        ;;
+</span></span><span style=display:flex><span>      <span style=color:#a6e3a1>&#39;?&#39;</span>*<span style=color:#89dceb;font-weight:700>)</span> <span style=color:#6c7086;font-style:italic># Untracked</span>
+</span></span><span style=display:flex><span>        <span style=color:#89dceb;font-weight:700>((</span>untracked++<span style=color:#89dceb;font-weight:700>))</span>
+</span></span><span style=display:flex><span>        ;;
+</span></span><span style=display:flex><span>    <span style=color:#cba6f7>esac</span>
+</span></span><span style=display:flex><span>  <span style=color:#cba6f7>done</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#89dceb>exec</span> <span style=color:#89dceb;font-weight:700>{</span>fd<span style=color:#89dceb;font-weight:700>}</span>&lt;&amp;-
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#f5e0dc>parts</span><span style=color:#89dceb;font-weight:700>+=</span><span style=color:#a6e3a1>&#34;%F{8}</span><span style=color:#f5e0dc>$head</span><span style=color:#a6e3a1>%f&#34;</span>
+</span></span><span style=display:flex><span>  <span style=color:#cba6f7>if</span> <span style=color:#89dceb;font-weight:700>[[</span> -n <span style=color:#a6e3a1>&#34;</span><span style=color:#f5e0dc>$commit_hash</span><span style=color:#a6e3a1>&#34;</span> <span style=color:#89dceb;font-weight:700>]]</span>; <span style=color:#cba6f7>then</span>
+</span></span><span style=display:flex><span>    <span style=color:#f5e0dc>parts</span><span style=color:#89dceb;font-weight:700>+=</span><span style=color:#a6e3a1>&#34;%F{magenta}</span><span style=color:#f5e0dc>$commit_hash</span><span style=color:#a6e3a1>%f&#34;</span>
+</span></span><span style=display:flex><span>  <span style=color:#cba6f7>fi</span>
+</span></span><span style=display:flex><span>  <span style=color:#89dceb>local</span> -a upstream_divergence
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#89dceb;font-weight:700>[[</span> <span style=color:#f5e0dc>$ahead</span> &gt; <span style=color:#fab387>0</span> <span style=color:#89dceb;font-weight:700>]]</span> <span style=color:#89dceb;font-weight:700>&amp;&amp;</span> <span style=color:#f5e0dc>upstream_divergence</span><span style=color:#89dceb;font-weight:700>+=</span><span style=color:#a6e3a1>&#34;%F{blue}↑</span><span style=color:#f5e0dc>$ahead</span><span style=color:#a6e3a1>%f&#34;</span>
+</span></span><span style=display:flex><span>  <span style=color:#89dceb;font-weight:700>[[</span> <span style=color:#f5e0dc>$behind</span> &gt; <span style=color:#fab387>0</span> <span style=color:#89dceb;font-weight:700>]]</span> <span style=color:#89dceb;font-weight:700>&amp;&amp;</span> <span style=color:#f5e0dc>upstream_divergence</span><span style=color:#89dceb;font-weight:700>+=</span><span style=color:#a6e3a1>&#34;%F{blue}↓</span><span style=color:#f5e0dc>$behind</span><span style=color:#a6e3a1>%f&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#cba6f7>if</span> <span style=color:#89dceb;font-weight:700>[[</span> <span style=color:#f5e0dc>$#</span>upstream_divergence &gt; <span style=color:#fab387>0</span> <span style=color:#89dceb;font-weight:700>]]</span>; <span style=color:#cba6f7>then</span>
+</span></span><span style=display:flex><span>    <span style=color:#f5e0dc>parts</span><span style=color:#89dceb;font-weight:700>+=</span><span style=color:#a6e3a1>&#34;</span><span style=color:#a6e3a1>${</span>(j::)upstream_divergence<span style=color:#a6e3a1>}</span><span style=color:#a6e3a1>&#34;</span>
+</span></span><span style=display:flex><span>  <span style=color:#cba6f7>fi</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#89dceb>local</span> -a working_info
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#89dceb;font-weight:700>[[</span> <span style=color:#f5e0dc>$conflicts</span> &gt; <span style=color:#fab387>0</span> <span style=color:#89dceb;font-weight:700>]]</span> <span style=color:#89dceb;font-weight:700>&amp;&amp;</span> <span style=color:#f5e0dc>working_info</span><span style=color:#89dceb;font-weight:700>+=</span><span style=color:#a6e3a1>&#34;%F{red}×</span><span style=color:#f5e0dc>$conflicts</span><span style=color:#a6e3a1>%f&#34;</span>
+</span></span><span style=display:flex><span>  <span style=color:#89dceb;font-weight:700>[[</span> <span style=color:#f5e0dc>$staged</span> &gt; <span style=color:#fab387>0</span> <span style=color:#89dceb;font-weight:700>]]</span> <span style=color:#89dceb;font-weight:700>&amp;&amp;</span> <span style=color:#f5e0dc>working_info</span><span style=color:#89dceb;font-weight:700>+=</span><span style=color:#a6e3a1>&#34;%F{green}●</span><span style=color:#f5e0dc>$staged</span><span style=color:#a6e3a1>%f&#34;</span>
+</span></span><span style=display:flex><span>  <span style=color:#89dceb;font-weight:700>[[</span> <span style=color:#f5e0dc>$changed</span> &gt; <span style=color:#fab387>0</span> <span style=color:#89dceb;font-weight:700>]]</span> <span style=color:#89dceb;font-weight:700>&amp;&amp;</span> <span style=color:#f5e0dc>working_info</span><span style=color:#89dceb;font-weight:700>+=</span><span style=color:#a6e3a1>&#34;%F{208}✻</span><span style=color:#f5e0dc>$changed</span><span style=color:#a6e3a1>%f&#34;</span>
+</span></span><span style=display:flex><span>  <span style=color:#89dceb;font-weight:700>[[</span> <span style=color:#f5e0dc>$untracked</span> &gt; <span style=color:#fab387>0</span> <span style=color:#89dceb;font-weight:700>]]</span> <span style=color:#89dceb;font-weight:700>&amp;&amp;</span> <span style=color:#f5e0dc>working_info</span><span style=color:#89dceb;font-weight:700>+=</span><span style=color:#a6e3a1>&#34;%F{red}+</span><span style=color:#f5e0dc>$untracked</span><span style=color:#a6e3a1>%f&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#cba6f7>if</span> <span style=color:#89dceb;font-weight:700>[[</span> <span style=color:#f5e0dc>$#</span>working_info &gt; <span style=color:#fab387>0</span> <span style=color:#89dceb;font-weight:700>]]</span>; <span style=color:#cba6f7>then</span>
+</span></span><span style=display:flex><span>    <span style=color:#f5e0dc>parts</span><span style=color:#89dceb;font-weight:700>+=</span><span style=color:#a6e3a1>&#34;</span><span style=color:#a6e3a1>${</span>(j::)working_info<span style=color:#a6e3a1>}</span><span style=color:#a6e3a1>&#34;</span>
+</span></span><span style=display:flex><span>  <span style=color:#cba6f7>else</span>
+</span></span><span style=display:flex><span>    <span style=color:#f5e0dc>parts</span><span style=color:#89dceb;font-weight:700>+=</span><span style=color:#a6e3a1>&#34;%F{green}✔%f&#34;</span>
+</span></span><span style=display:flex><span>  <span style=color:#cba6f7>fi</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#89dceb>echo</span> -n <span style=color:#a6e3a1>&#34;</span><span style=color:#a6e3a1>${</span>(j: :)parts<span style=color:#a6e3a1>}</span><span style=color:#a6e3a1>&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#89dceb;font-weight:700>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>The prompt_git_status function asynchronously fetches the Git status and details
+for the current repository. It uses the <code>git status --porcelain=v2 --branch</code>
+command to retrieve information about the repository. Here&rsquo;s what each part of
+the function does:</p><ol><li><p>Initial Check: Verifies if the current directory is a Git repository.
+If not, it returns early with a null character.</p></li><li><p>Variables and File Descriptors: Initializes necessary variables and opens a
+file descriptor to read the Git status output.</p></li><li><p>Parsing Git Status: Iterates over each line of the Git status output, parsing
+various details such as the branch name, commit hash, upstream divergence,
+and file changes (staged, modified, untracked, and conflicts).</p></li><li><p>Output Construction: Constructs the prompt output based on the parsed Git status.</p></li></ol><h2 id=function-to-define-the-prompt>Function to Define the Prompt</h2><div class=highlight><div style=color:#cdd6f4;background-color:#1e1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#cdd6f4;background-color:#1e1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">13
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">14
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">15
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">16
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">17
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">18
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">19
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">20
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">21
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">22
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">23
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">24
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#cdd6f4;background-color:#1e1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span><span style=color:#6c7086;font-style:italic># Function to define the prompt</span>
+</span></span><span style=display:flex><span>prompt_git_define_prompt<span style=color:#89dceb;font-weight:700>()</span> <span style=color:#89dceb;font-weight:700>{</span>
+</span></span><span style=display:flex><span>  setopt localoptions extendedglob
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#89dceb>local</span> -a <span style=color:#f5e0dc>parts</span><span style=color:#89dceb;font-weight:700>=()</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#6c7086;font-style:italic># Abbreviated current working directory</span>
+</span></span><span style=display:flex><span>  <span style=color:#f5e0dc>parts</span><span style=color:#89dceb;font-weight:700>+=</span><span style=color:#a6e3a1>&#34;%F{green}in %F{blue}</span><span style=color:#a6e3a1>${${</span><span style=color:#f5e0dc>PWD</span>/#<span style=color:#f5e0dc>$HOME</span>/~<span style=color:#a6e3a1>}}</span><span style=color:#a6e3a1>%f&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#6c7086;font-style:italic># Git info (loaded async)</span>
+</span></span><span style=display:flex><span>  <span style=color:#cba6f7>if</span> <span style=color:#89dceb;font-weight:700>[[</span> <span style=color:#a6e3a1>&#34;</span><span style=color:#f5e0dc>$1</span><span style=color:#a6e3a1>&#34;</span> !<span style=color:#89dceb;font-weight:700>=</span> <span style=color:#a6e3a1>$&#39;\0&#39;</span> <span style=color:#89dceb;font-weight:700>]]</span>; <span style=color:#cba6f7>then</span>
+</span></span><span style=display:flex><span>    <span style=color:#cba6f7>if</span> <span style=color:#89dceb;font-weight:700>[[</span> -n <span style=color:#a6e3a1>&#34;</span><span style=color:#f5e0dc>$1</span><span style=color:#a6e3a1>&#34;</span> <span style=color:#89dceb;font-weight:700>]]</span>; <span style=color:#cba6f7>then</span>
+</span></span><span style=display:flex><span>      <span style=color:#f5e0dc>parts</span><span style=color:#89dceb;font-weight:700>+=</span><span style=color:#a6e3a1>&#34;</span><span style=color:#f5e0dc>$1</span><span style=color:#a6e3a1>&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#cba6f7>else</span>
+</span></span><span style=display:flex><span>      <span style=color:#f5e0dc>parts</span><span style=color:#89dceb;font-weight:700>+=</span><span style=color:#a6e3a1>&#34;...&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#cba6f7>fi</span>
+</span></span><span style=display:flex><span>  <span style=color:#cba6f7>fi</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#6c7086;font-style:italic># Prompt arrow (red for non-zero status)</span>
+</span></span><span style=display:flex><span>  <span style=color:#f5e0dc>parts</span><span style=color:#89dceb;font-weight:700>+=</span><span style=color:#a6e3a1>&#34;%(?.%F{8}.%F{red})
+</span></span></span><span style=display:flex><span><span style=color:#a6e3a1>%F{cyan}λ%f&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#f5e0dc>PROMPT</span><span style=color:#89dceb;font-weight:700>=</span><span style=color:#a6e3a1>&#34;</span><span style=color:#a6e3a1>${</span>(j: :)parts<span style=color:#a6e3a1>}</span><span style=color:#a6e3a1> &#34;</span>
+</span></span><span style=display:flex><span><span style=color:#89dceb;font-weight:700>}</span>
+</span></span></code></pre></td></tr></table></div></div><ol><li><p>Abbreviated Current Directory: Shortens the current working
+directory path, replacing the home directory with ~.</p></li><li><p>Git Information: If available, appends Git status information to the prompt.</p></li><li><p>Prompt Arrow: Adds the prompt arrow, which changes color based on
+the previous command&rsquo;s exit status.</p></li><li><p>Setting PROMPT: Combines all parts and sets the <code>PROMPT</code> variable.</p></li></ol><h2 id=function-to-handle-async-response>Function to Handle Async Response</h2><div class=highlight><div style=color:#cdd6f4;background-color:#1e1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#cdd6f4;background-color:#1e1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">11
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#cdd6f4;background-color:#1e1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span><span style=color:#6c7086;font-style:italic># Function to handle async response</span>
+</span></span><span style=display:flex><span>prompt_git_response<span style=color:#89dceb;font-weight:700>()</span> <span style=color:#89dceb;font-weight:700>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#89dceb>typeset</span> -g _prompt_git_fd
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  prompt_git_define_prompt <span style=color:#a6e3a1>&#34;</span><span style=color:#cba6f7>$(</span>&lt;&amp;<span style=color:#f5e0dc>$1</span><span style=color:#cba6f7>)</span><span style=color:#a6e3a1>&#34;</span>
+</span></span><span style=display:flex><span>  zle reset-prompt
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  zle -F <span style=color:#f5e0dc>$1</span>
+</span></span><span style=display:flex><span>  <span style=color:#89dceb>exec</span> <span style=color:#89dceb;font-weight:700>{</span>1<span style=color:#89dceb;font-weight:700>}</span>&lt;&amp;-
+</span></span><span style=display:flex><span>  <span style=color:#89dceb>unset</span> _prompt_git_fd
+</span></span><span style=display:flex><span><span style=color:#89dceb;font-weight:700>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>This function handles the asynchronous response from the Git status
+command:</p><ol><li><p>Reads Response: Reads the Git status from the file descriptor.</p></li><li><p>Defines Prompt: Calls prompt_git_define_prompt with the Git
+status information.</p></li><li><p>Resets Prompt: Uses zle reset-prompt to update the prompt.</p></li></ol><h2 id=function-to-run-before-each-prompt>Function to Run Before Each Prompt</h2><div class=highlight><div style=color:#cdd6f4;background-color:#1e1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#cdd6f4;background-color:#1e1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">13
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">14
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#cdd6f4;background-color:#1e1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span><span style=color:#6c7086;font-style:italic># Function to run before each prompt</span>
+</span></span><span style=display:flex><span>prompt_git_precmd<span style=color:#89dceb;font-weight:700>()</span> <span style=color:#89dceb;font-weight:700>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#89dceb>typeset</span> -g _prompt_git_fd
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  prompt_git_define_prompt
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#89dceb;font-weight:700>[[</span> -n <span style=color:#f5e0dc>$_prompt_git_fd</span> <span style=color:#89dceb;font-weight:700>]]</span> <span style=color:#89dceb;font-weight:700>&amp;&amp;</span> <span style=color:#89dceb;font-weight:700>{</span>
+</span></span><span style=display:flex><span>    zle -F <span style=color:#f5e0dc>$_prompt_git_fd</span>
+</span></span><span style=display:flex><span>    <span style=color:#89dceb>exec</span> <span style=color:#89dceb;font-weight:700>{</span>_prompt_git_fd<span style=color:#89dceb;font-weight:700>}</span>&lt;&amp;-
+</span></span><span style=display:flex><span>  <span style=color:#89dceb;font-weight:700>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#89dceb>exec</span> <span style=color:#89dceb;font-weight:700>{</span>_prompt_git_fd<span style=color:#89dceb;font-weight:700>}</span>&lt; &lt;<span style=color:#89dceb;font-weight:700>(</span>prompt_git_status<span style=color:#89dceb;font-weight:700>)</span>
+</span></span><span style=display:flex><span>  zle -F <span style=color:#f5e0dc>$_prompt_git_fd</span> prompt_git_response
+</span></span><span style=display:flex><span><span style=color:#89dceb;font-weight:700>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>in the end need add into zsh hook</p><div class=highlight><div style=color:#cdd6f4;background-color:#1e1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#cdd6f4;background-color:#1e1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f849c">2
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#cdd6f4;background-color:#1e1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span><span style=color:#6c7086;font-style:italic># Add hook to run before each prompt</span>
+</span></span><span style=display:flex><span>add-zsh-hook precmd prompt_git_precmd
+</span></span></code></pre></td></tr></table></div></div><p>The <code>add-zsh-hook precmd prompt_git_precmd</code> command adds the
+<code>prompt_git_precmd</code> function to the list of functions that are run
+before each prompt. This ensures that the prompt is updated with the
+latest Git status information every time a new prompt is displayed.</p></div><nav class="hide-on-mobile section-nav"><nav id=TableOfContents><ol><li><a href=#function-to-get-git-status>Function to Get Git Status</a></li><li><a href=#function-to-define-the-prompt>Function to Define the Prompt</a></li><li><a href=#function-to-handle-async-response>Function to Handle Async Response</a></li><li><a href=#function-to-run-before-each-prompt>Function to Run Before Each Prompt</a></li></ol></nav></nav></div><div class=post><hr class=footer-separator><div class=tags><ul class=flat><li class=tag-li><a href=/tags/terminal>terminal</a></li><li class=tag-li><a href=/tags/zsh>zsh</a></li></ul></div><div class=back><a href=https://github.com/glepnir/glepnir.github.io/blob/master/content/posts/2024-07/Write-An-Async-Zsh-Prompt.md title=github><i data-feather=github></i> Edit this on GitHub</a></div><div class=back><a href=https://glepnir.github.io/><span aria-hidden=true>← Back</span></a></div><div class=back>Next time, we'll talk about <i>"Keep learning"</i></div><script src=https://utteranc.es/client.js repo=glepnir/glepnir.github.io issue-term=title theme=github-light crossorigin=anonymous async></script></div></div><div class="footer wrapper"><nav class=nav><div>2024 © Copyright notice</div></nav></div><script>feather.replace()</script><script>var enableTruncate=!0,filterDepth=!1;const MAX_DEPTH=9;window.addEventListener("DOMContentLoaded",()=>{const e=new IntersectionObserver(e=>{e.reverse().forEach(e=>{const n=e.target.getAttribute("id");if(e.intersectionRatio>0){var t=document.querySelectorAll(`nav li a[href="#${n}"]`);t!=null&&t.forEach(e=>{if(e!=null){var t=getDepth(e.parentElement);filterDepth&&t<=MAX_DEPTH&&(clearActiveStatesInTableOfContents(),e.parentElement.classList.add("active"))}else filterDepth||(clearActiveStatesInTableOfContents(),e.parentElement.classList.add("active"))})}})});document.querySelectorAll("h1[id],h2[id],h3[id],h4[id]").forEach(t=>{e.observe(t)})});function isVisible(e){if(!(e instanceof Element))return!1;const n=getComputedStyle(e);if(n.display==="none")return!1;if(n.visibility!=="visible")return!1;if(n.opacity<.1)return!1;if(e.offsetWidth+e.offsetHeight+e.getBoundingClientRect().height+e.getBoundingClientRect().width===0)return!1;const t={x:e.getBoundingClientRect().left+e.offsetWidth/2,y:e.getBoundingClientRect().top+e.offsetHeight/2};if(t.x<0)return!1;if(t.x>(document.documentElement.clientWidth||window.innerWidth))return!1;if(t.y<0)return!1;if(t.y>(document.documentElement.clientHeight||window.innerHeight))return!1;let s=document.elementFromPoint(t.x,t.y);do if(s===e)return!0;while(s=s.parentNode)return!1}function clearActiveStatesInTableOfContents(){document.querySelectorAll("nav li").forEach(e=>{e.classList.remove("active")})}function getDepth(e){for(var t=0;e!==null&&e.tagName.toLowerCase()!=="ul";)t++,e=e.parentElement;return t}function navItems(){var e=document.querySelectorAll("nav nav li a");return Array.from(e).filter(e=>e.href!=null&&e.hash.startsWith("#"))}function lasItemInNavBarVisible(){var e=navItems().slice(-1)[0];return isVisible(e)}document.addEventListener("DOMContentLoaded",function(){if(!enableTruncate)return;var e=navItems();lasItemInNavBarVisible()||(filterDepth=!0,e.forEach(function(e){var t=getDepth(e.parentElement);t>MAX_DEPTH&&e.parentElement.classList.add("depth-nested")}))})</script></body></html>
