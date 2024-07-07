@@ -1,0 +1,10 @@
+{{ define "main" }}
+  <main>
+    <article>
+      <h1 class="title">{{ .Title }}</h1>
+      {{ with .Params.subtitle }}<h3 class="subtitle">{{ . }}</h3>{{ end }}
+      {{ partial "postMetaDetailed.html" . }}
+      <div class="content">{{ .Content }}</div>
+    </article>
+  </main>
+{{ end }}
