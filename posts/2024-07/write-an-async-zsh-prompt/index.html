@@ -1,0 +1,197 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content><title>Write an Async Zsh Prompt | </title><link rel=stylesheet href=/css/reset.css><link rel=stylesheet href=/css/font.css><link rel=stylesheet href=/css/smigle.css><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"></head><body><div id=root><header><div id=brand><a class=icon-link href=https://glepnir.github.io/><img class=icon src=/images/brandIcon.svg></a><div class=text><a href=https://glepnir.github.io/><h1></h1></a><h3>Thoughts and links about programming</h3></div></div><nav><a href=/><b>Home</b></a>
+|
+<a href=/about/><b>About</b></a>
+|
+<a href=/posts/><b>Posts</b></a>
+|
+<a href=/categories/><b>Categories</b></a>
+|
+<a href=/tags/><b>Tags</b></a>
+|
+<a href=/index.xml><b>RSS</b></a></nav><hr></header><div id=content><main><article><h1 class=title>Write an Async Zsh Prompt</h1><div class=post-meta><strong><span>Posted on</span>
+<time>2024-07-02</time>
+<span>in</span>
+<a href=/categories/terminal>terminal</a>,
+<a href=/categories/zsh>zsh</a>
+</strong><span>• 977 words</span>
+<span>• 5 minute read</span><div><span>Tags:</span>
+<a href=/tags/terminal>terminal</a>,
+<a href=/tags/zsh>zsh</a></div></div><div class=content><h1 id=why-not-use-p10k>Why Not Use P10k</h1><p>P10k is a fantastic asynchronous Zsh prompt plugin. It is fast, the author is
+very active, and it provides convenient customization commands, allowing you to
+easily generate a Zsh prompt you like. However, when you look at the content of
+the generated file, it is enormous. This is because the author has provided support
+for many aspects, such as displaying different language environments, language
+versions, Git information, prompt formatting, styles, custom function hooks, etc.
+This is the path a plugin should take to meet the needs of most people. However,
+I usually don&rsquo;t use so many features. I once generated a minimal pure theme based
+on P10k. One day, while organizing my dotfiles, I wanted to modify some styles.
+But even with the minimal pure theme style, P10k still generated hundreds of lines
+of shell code. So I decided to get rid of it.</p><h1 id=synchronous-zsh-prompt>Synchronous Zsh Prompt</h1><p>Writing a simple Zsh theme is easy. First, define some color variables, such
+as <code>RED="%F{red}"</code>. Then, create a simple function to generate the desired prompt
+string and pass it to the <code>PROMPT</code> variable.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span><span style=color:#75715e># Function to get current directory and Git branch</span>
+</span></span><span style=display:flex><span>prompt_info<span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  local cwd git_branch
+</span></span><span style=display:flex><span>  cwd<span style=color:#f92672>=</span><span style=color:#66d9ef>$(</span>pwd | sed <span style=color:#e6db74>&#34;s|</span>$HOME<span style=color:#e6db74>|~|&#34;</span><span style=color:#66d9ef>)</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>if</span> git rev-parse --is-inside-work-tree &amp;&gt; /dev/null; <span style=color:#66d9ef>then</span>
+</span></span><span style=display:flex><span>    git_branch<span style=color:#f92672>=</span><span style=color:#66d9ef>$(</span>git rev-parse --abbrev-ref HEAD<span style=color:#66d9ef>)</span>
+</span></span><span style=display:flex><span>    git_commit<span style=color:#f92672>=</span><span style=color:#66d9ef>$(</span>git rev-parse --short HEAD<span style=color:#66d9ef>)</span>
+</span></span><span style=display:flex><span>    echo <span style=color:#e6db74>&#34;</span><span style=color:#e6db74>${</span>GREEN<span style=color:#e6db74>}</span><span style=color:#e6db74>in </span><span style=color:#e6db74>${</span>BLUE<span style=color:#e6db74>}</span>$cwd<span style=color:#e6db74> </span><span style=color:#e6db74>${</span>YELLOW<span style=color:#e6db74>}</span>$git_branch<span style=color:#e6db74> </span><span style=color:#e6db74>${</span>MAGENTA<span style=color:#e6db74>}</span>$git_commit<span style=color:#e6db74>${</span>RESET<span style=color:#e6db74>}</span><span style=color:#e6db74>&#34;</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>else</span>
+</span></span><span style=display:flex><span>    echo <span style=color:#e6db74>&#34;</span><span style=color:#e6db74>${</span>GREEN<span style=color:#e6db74>}</span><span style=color:#e6db74>in </span><span style=color:#e6db74>${</span>BLUE<span style=color:#e6db74>}</span>$cwd<span style=color:#e6db74>${</span>RESET<span style=color:#e6db74>}</span><span style=color:#e6db74>&#34;</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>fi</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>This is simple: when working within a Git project, it gets the branch and commit
+information and outputs it via <code>echo</code>. Then, wrap this in an <code>update_prompt</code>
+function and call it in <code>.zshrc</code> file, finally appending it to <code>precmd_functions</code>.
+Everything is done.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span><span style=color:#75715e># Function to update the prompt</span>
+</span></span><span style=display:flex><span>update_prompt<span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  PROMPT<span style=color:#f92672>=</span><span style=color:#e6db74>&#34;</span><span style=color:#66d9ef>$(</span>prompt_info<span style=color:#66d9ef>)</span><span style=color:#e6db74>
+</span></span></span><span style=display:flex><span><span style=color:#e6db74></span><span style=color:#e6db74>${</span>CYAN<span style=color:#e6db74>}</span><span style=color:#e6db74>λ </span><span style=color:#e6db74>${</span>RESET<span style=color:#e6db74>}</span><span style=color:#e6db74>&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>I like to have the input on the second line, so I use a newline in the <code>PROMPT</code>
+format string.</p><p><img src=../../../asset/zsh_sync.png alt=image></p><h1 id=asynchronous-implementation>Asynchronous Implementation</h1><p>When working on a PR in Vim, I wanted to see some commit information, so I tried
+adding commit info to the <code>prompt_info</code> function. Then, when I opened a new shell,
+it was as slow as a turtle. This is why asynchronous P10k is the best among all
+Zsh themes. So I tried to get Git information asynchronously and update the
+<code>PROMPT</code> using Zsh&rsquo;s asynchronous jobs.</p><p><img src=../../../asset/zsh_async.gif alt=image></p><h2 id=function-to-get-git-status>Function to Get Git Status</h2><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span><span style=color:#75715e># Function to get Git status</span>
+</span></span><span style=display:flex><span>prompt_git_status<span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  git rev-parse --git-dir &gt;&amp;- 2&gt;&amp;- <span style=color:#f92672>||</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    echo -n <span style=color:#e6db74>$&#39;\0&#39;</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  local -a parts
+</span></span><span style=display:flex><span>  local fd line head ahead behind conflicts staged changed untracked commithash
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  exec <span style=color:#f92672>{</span>fd<span style=color:#f92672>}</span>&lt; &lt;<span style=color:#f92672>(</span>git status --porcelain<span style=color:#f92672>=</span>v2 --branch<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>while</span> read -A -u $fd line; <span style=color:#66d9ef>do</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>case</span> <span style=color:#e6db74>&#34;</span>$line<span style=color:#e6db74>&#34;</span> in
+</span></span><span style=display:flex><span>      <span style=color:#e6db74>&#39;# branch.oid&#39;</span>*<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> <span style=color:#f92672>[[</span> <span style=color:#e6db74>&#34;</span><span style=color:#e6db74>${</span>line[3]<span style=color:#e6db74>}</span><span style=color:#e6db74>&#34;</span> !<span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;(initial)&#34;</span> <span style=color:#f92672>]]</span>; <span style=color:#66d9ef>then</span>
+</span></span><span style=display:flex><span>          commit_hash<span style=color:#f92672>=</span><span style=color:#e6db74>&#34;</span><span style=color:#e6db74>${</span>line[3]:0:7<span style=color:#e6db74>}</span><span style=color:#e6db74>&#34;</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>fi</span>
+</span></span><span style=display:flex><span>        ;;
+</span></span><span style=display:flex><span>      <span style=color:#e6db74>&#39;# branch.head&#39;</span>*<span style=color:#f92672>)</span> <span style=color:#75715e># Current branch</span>
+</span></span><span style=display:flex><span>        head<span style=color:#f92672>=</span><span style=color:#e6db74>&#34;</span>$line<span style=color:#e6db74>[3]&#34;</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>[[</span> $head <span style=color:#f92672>==</span> <span style=color:#e6db74>&#34;(detached)&#34;</span> <span style=color:#f92672>]]</span> <span style=color:#f92672>&amp;&amp;</span> head<span style=color:#f92672>=</span><span style=color:#e6db74>&#34;</span><span style=color:#66d9ef>$(</span>echo <span style=color:#e6db74>&#34;:</span><span style=color:#66d9ef>$(</span>git rev-parse --short HEAD<span style=color:#66d9ef>)</span><span style=color:#e6db74>&#34;</span><span style=color:#66d9ef>)</span><span style=color:#e6db74>&#34;</span>
+</span></span><span style=display:flex><span>        ;;
+</span></span><span style=display:flex><span>      <span style=color:#e6db74>&#39;# branch.ab&#39;</span>*<span style=color:#f92672>)</span> <span style=color:#75715e># Divergence from upstream</span>
+</span></span><span style=display:flex><span>        ahead<span style=color:#f92672>=</span><span style=color:#e6db74>&#34;</span><span style=color:#e6db74>${</span>line[3]/#+<span style=color:#e6db74>}</span><span style=color:#e6db74>&#34;</span>
+</span></span><span style=display:flex><span>        behind<span style=color:#f92672>=</span><span style=color:#e6db74>&#34;</span><span style=color:#e6db74>${</span>line[4]/#-<span style=color:#e6db74>}</span><span style=color:#e6db74>&#34;</span>
+</span></span><span style=display:flex><span>        ;;
+</span></span><span style=display:flex><span>      <span style=color:#f92672>(</span>1|2<span style=color:#f92672>)</span>*<span style=color:#f92672>)</span> <span style=color:#75715e># Modified or renamed/copied</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>[[</span> <span style=color:#e6db74>&#34;</span><span style=color:#e6db74>${${</span>line[2]<span style=color:#e6db74>}</span>[1]<span style=color:#e6db74>}</span><span style=color:#e6db74>&#34;</span> !<span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;.&#34;</span> <span style=color:#f92672>]]</span> <span style=color:#f92672>&amp;&amp;</span> <span style=color:#f92672>((</span>staged++<span style=color:#f92672>))</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>[[</span> <span style=color:#e6db74>&#34;</span><span style=color:#e6db74>${${</span>line[2]<span style=color:#e6db74>}</span>[2]<span style=color:#e6db74>}</span><span style=color:#e6db74>&#34;</span> !<span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;.&#34;</span> <span style=color:#f92672>]]</span> <span style=color:#f92672>&amp;&amp;</span> <span style=color:#f92672>((</span>changed++<span style=color:#f92672>))</span>
+</span></span><span style=display:flex><span>        ;;
+</span></span><span style=display:flex><span>      <span style=color:#e6db74>&#39;u&#39;</span>*<span style=color:#f92672>)</span> <span style=color:#75715e># Unmerged</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>((</span>conflicts++<span style=color:#f92672>))</span>
+</span></span><span style=display:flex><span>        ;;
+</span></span><span style=display:flex><span>      <span style=color:#e6db74>&#39;?&#39;</span>*<span style=color:#f92672>)</span> <span style=color:#75715e># Untracked</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>((</span>untracked++<span style=color:#f92672>))</span>
+</span></span><span style=display:flex><span>        ;;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>esac</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>done</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  exec <span style=color:#f92672>{</span>fd<span style=color:#f92672>}</span>&lt;&amp;-
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  parts<span style=color:#f92672>+=</span><span style=color:#e6db74>&#34;%F{8}</span>$head<span style=color:#e6db74>%f&#34;</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>if</span> <span style=color:#f92672>[[</span> -n <span style=color:#e6db74>&#34;</span>$commit_hash<span style=color:#e6db74>&#34;</span> <span style=color:#f92672>]]</span>; <span style=color:#66d9ef>then</span>
+</span></span><span style=display:flex><span>    parts<span style=color:#f92672>+=</span><span style=color:#e6db74>&#34;%F{magenta}</span>$commit_hash<span style=color:#e6db74>%f&#34;</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>fi</span>
+</span></span><span style=display:flex><span>  local -a upstream_divergence
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>[[</span> $ahead &gt; <span style=color:#ae81ff>0</span> <span style=color:#f92672>]]</span> <span style=color:#f92672>&amp;&amp;</span> upstream_divergence<span style=color:#f92672>+=</span><span style=color:#e6db74>&#34;%F{blue}↑</span>$ahead<span style=color:#e6db74>%f&#34;</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>[[</span> $behind &gt; <span style=color:#ae81ff>0</span> <span style=color:#f92672>]]</span> <span style=color:#f92672>&amp;&amp;</span> upstream_divergence<span style=color:#f92672>+=</span><span style=color:#e6db74>&#34;%F{blue}↓</span>$behind<span style=color:#e6db74>%f&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>if</span> <span style=color:#f92672>[[</span> $#upstream_divergence &gt; <span style=color:#ae81ff>0</span> <span style=color:#f92672>]]</span>; <span style=color:#66d9ef>then</span>
+</span></span><span style=display:flex><span>    parts<span style=color:#f92672>+=</span><span style=color:#e6db74>&#34;</span><span style=color:#e6db74>${</span>(j::)upstream_divergence<span style=color:#e6db74>}</span><span style=color:#e6db74>&#34;</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>fi</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  local -a working_info
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>[[</span> $conflicts &gt; <span style=color:#ae81ff>0</span> <span style=color:#f92672>]]</span> <span style=color:#f92672>&amp;&amp;</span> working_info<span style=color:#f92672>+=</span><span style=color:#e6db74>&#34;%F{red}×</span>$conflicts<span style=color:#e6db74>%f&#34;</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>[[</span> $staged &gt; <span style=color:#ae81ff>0</span> <span style=color:#f92672>]]</span> <span style=color:#f92672>&amp;&amp;</span> working_info<span style=color:#f92672>+=</span><span style=color:#e6db74>&#34;%F{green}●</span>$staged<span style=color:#e6db74>%f&#34;</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>[[</span> $changed &gt; <span style=color:#ae81ff>0</span> <span style=color:#f92672>]]</span> <span style=color:#f92672>&amp;&amp;</span> working_info<span style=color:#f92672>+=</span><span style=color:#e6db74>&#34;%F{208}✻</span>$changed<span style=color:#e6db74>%f&#34;</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>[[</span> $untracked &gt; <span style=color:#ae81ff>0</span> <span style=color:#f92672>]]</span> <span style=color:#f92672>&amp;&amp;</span> working_info<span style=color:#f92672>+=</span><span style=color:#e6db74>&#34;%F{red}+</span>$untracked<span style=color:#e6db74>%f&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>if</span> <span style=color:#f92672>[[</span> $#working_info &gt; <span style=color:#ae81ff>0</span> <span style=color:#f92672>]]</span>; <span style=color:#66d9ef>then</span>
+</span></span><span style=display:flex><span>    parts<span style=color:#f92672>+=</span><span style=color:#e6db74>&#34;</span><span style=color:#e6db74>${</span>(j::)working_info<span style=color:#e6db74>}</span><span style=color:#e6db74>&#34;</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>else</span>
+</span></span><span style=display:flex><span>    parts<span style=color:#f92672>+=</span><span style=color:#e6db74>&#34;%F{green}✔%f&#34;</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>fi</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  echo -n <span style=color:#e6db74>&#34;</span><span style=color:#e6db74>${</span>(j: :)parts<span style=color:#e6db74>}</span><span style=color:#e6db74>&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>The prompt_git_status function asynchronously fetches the Git status and details
+for the current repository. It uses the <code>git status --porcelain=v2 --branch</code>
+command to retrieve information about the repository. Here&rsquo;s what each part of
+the function does:</p><ol><li><p>Initial Check: Verifies if the current directory is a Git repository.
+If not, it returns early with a null character.</p></li><li><p>Variables and File Descriptors: Initializes necessary variables and opens a
+file descriptor to read the Git status output.</p></li><li><p>Parsing Git Status: Iterates over each line of the Git status output, parsing
+various details such as the branch name, commit hash, upstream divergence,
+and file changes (staged, modified, untracked, and conflicts).</p></li><li><p>Output Construction: Constructs the prompt output based on the parsed Git status.</p></li></ol><h2 id=function-to-define-the-prompt>Function to Define the Prompt</h2><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span><span style=color:#75715e># Function to define the prompt</span>
+</span></span><span style=display:flex><span>prompt_git_define_prompt<span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  setopt localoptions extendedglob
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  local -a parts<span style=color:#f92672>=()</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># Abbreviated current working directory</span>
+</span></span><span style=display:flex><span>  parts<span style=color:#f92672>+=</span><span style=color:#e6db74>&#34;%F{green}in %F{blue}</span><span style=color:#e6db74>${${</span>PWD/#$HOME/~<span style=color:#e6db74>}}</span><span style=color:#e6db74>%f&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># Git info (loaded async)</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>if</span> <span style=color:#f92672>[[</span> <span style=color:#e6db74>&#34;</span>$1<span style=color:#e6db74>&#34;</span> !<span style=color:#f92672>=</span> <span style=color:#e6db74>$&#39;\0&#39;</span> <span style=color:#f92672>]]</span>; <span style=color:#66d9ef>then</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> <span style=color:#f92672>[[</span> -n <span style=color:#e6db74>&#34;</span>$1<span style=color:#e6db74>&#34;</span> <span style=color:#f92672>]]</span>; <span style=color:#66d9ef>then</span>
+</span></span><span style=display:flex><span>      parts<span style=color:#f92672>+=</span><span style=color:#e6db74>&#34;</span>$1<span style=color:#e6db74>&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>else</span>
+</span></span><span style=display:flex><span>      parts<span style=color:#f92672>+=</span><span style=color:#e6db74>&#34;...&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>fi</span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>fi</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#75715e># Prompt arrow (red for non-zero status)</span>
+</span></span><span style=display:flex><span>  parts<span style=color:#f92672>+=</span><span style=color:#e6db74>&#34;%(?.%F{8}.%F{red})
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>%F{cyan}λ%f&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  PROMPT<span style=color:#f92672>=</span><span style=color:#e6db74>&#34;</span><span style=color:#e6db74>${</span>(j: :)parts<span style=color:#e6db74>}</span><span style=color:#e6db74> &#34;</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><ol><li><p>Abbreviated Current Directory: Shortens the current working
+directory path, replacing the home directory with ~.</p></li><li><p>Git Information: If available, appends Git status information to the prompt.</p></li><li><p>Prompt Arrow: Adds the prompt arrow, which changes color based on
+the previous command&rsquo;s exit status.</p></li><li><p>Setting PROMPT: Combines all parts and sets the <code>PROMPT</code> variable.</p></li></ol><h2 id=function-to-handle-async-response>Function to Handle Async Response</h2><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span><span style=color:#75715e># Function to handle async response</span>
+</span></span><span style=display:flex><span>prompt_git_response<span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  typeset -g _prompt_git_fd
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  prompt_git_define_prompt <span style=color:#e6db74>&#34;</span><span style=color:#66d9ef>$(</span>&lt;&amp;$1<span style=color:#66d9ef>)</span><span style=color:#e6db74>&#34;</span>
+</span></span><span style=display:flex><span>  zle reset-prompt
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  zle -F $1
+</span></span><span style=display:flex><span>  exec <span style=color:#f92672>{</span>1<span style=color:#f92672>}</span>&lt;&amp;-
+</span></span><span style=display:flex><span>  unset _prompt_git_fd
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>This function handles the asynchronous response from the Git status
+command:</p><ol><li><p>Reads Response: Reads the Git status from the file descriptor.</p></li><li><p>Defines Prompt: Calls prompt_git_define_prompt with the Git
+status information.</p></li><li><p>Resets Prompt: Uses zle reset-prompt to update the prompt.</p></li></ol><h2 id=function-to-run-before-each-prompt>Function to Run Before Each Prompt</h2><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span><span style=color:#75715e># Function to run before each prompt</span>
+</span></span><span style=display:flex><span>prompt_git_precmd<span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  typeset -g _prompt_git_fd
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  prompt_git_define_prompt
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>[[</span> -n $_prompt_git_fd <span style=color:#f92672>]]</span> <span style=color:#f92672>&amp;&amp;</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    zle -F $_prompt_git_fd
+</span></span><span style=display:flex><span>    exec <span style=color:#f92672>{</span>_prompt_git_fd<span style=color:#f92672>}</span>&lt;&amp;-
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  exec <span style=color:#f92672>{</span>_prompt_git_fd<span style=color:#f92672>}</span>&lt; &lt;<span style=color:#f92672>(</span>prompt_git_status<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>  zle -F $_prompt_git_fd prompt_git_response
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>in the end need add into zsh hook</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span><span style=color:#75715e># Add hook to run before each prompt</span>
+</span></span><span style=display:flex><span>add-zsh-hook precmd prompt_git_precmd
+</span></span></code></pre></div><p>The <code>add-zsh-hook precmd prompt_git_precmd</code> command adds the
+<code>prompt_git_precmd</code> function to the list of functions that are run
+before each prompt. This ensures that the prompt is updated with the
+latest Git status information every time a new prompt is displayed.</p></div></article></main></div><footer><hr><p id=social>Find me around the web:<br><a href=https://github.com/glepnir>GitHub</a>
+|
+<a href=https://www.reddit.com/user/glephunter>Reddit</a></p><p class=copyright>Copyright © 2024
+<a href=https://glepnir.github.io/><strong>glepnir</strong></a>.
+This work is licensed under the
+<a href=http://creativecommons.org/licenses/by-sa/4.0/>CC BY-SA 4.0</a> license.</p></footer></div></body></html>
