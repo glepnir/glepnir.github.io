@@ -32,7 +32,7 @@ menu:
 params:
   abbrDateFmt: "Jan 2"
   author: "glepnir"
-  brandIconFile: "images/brandIcon.svg"
+  brandIconFile: "images/avatar.png"
   dateFmt: "2006-01-02"
   ##
   ## Options for overriding theme or page defaults
