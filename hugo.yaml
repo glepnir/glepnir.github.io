@@ -1,0 +1,68 @@
+# baseURL: "https://hugo-dead-simple.netlify.com/"
+languageCode: en-us
+title: "Hugo dead simple example"
+enableGitInfo: false
+menu:
+  main:
+    - name: "<u>H</u>ome"
+      url: /
+      weight: 1
+    - name: "<u>T</u>ags"
+      url: /tags
+      weight: 3
+
+params:
+  description: "Hugo dead simple example"
+  noSearch: true
+  toc : true
+  sponsor:
+    enabled: true
+    github: "glepnir"
+    text: "Sponsor"
+  giscus:
+    enabled: true
+    repo: "glepnir/glepnir.github.io"
+    repo-id: "MDEwOlJlcG9zaXRvcnkyNzM0NzYzMzY="
+    category: "General"
+    category-id: "DIC_kwDOEEzq8M4C0OlN"
+    mapping: "pathname"
+    strict: "0"
+    reactions-enabled: "1"
+    emit-metadata: "0"
+    input-position: "bottom"
+    theme: "preferred_color_scheme"
+    lang: "en"
+
+markup:
+  highlight:
+    codeFences: true
+    style: monokai
+    lineNumbersInTable: false
+    noClasses: true
+  goldmark:
+    extensions:
+      passthrough:
+        delimiters:
+          block:
+          - - \[
+            - \]
+          - - $$
+            - $$
+          inline:
+          - - \(
+            - \)
+        enable: true
+    renderer:
+      unsafe: true
+
+outputs:
+  home:
+    - html
+    - rss
+    - json
+  page:
+    - html
+
+module:
+  imports:
+    - path: dead-simple
