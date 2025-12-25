@@ -1,0 +1,74 @@
+{{ partial "header.html" . }}
+
+
+{{ if not .Params.notitle }}
+<div id="single-header">
+  <h1>
+    {{ .Title | markdownify }}
+  </h1>
+  <div id="single-meta">
+    {{ if .Params.subtitle }}
+        <p id="subtitle">{{ .Params.subtitle }}</p>
+    {{ end }}
+    {{ if .Params.date }}
+        <span class="datesub">{{ .Date.Format "Jan 2, 2006" }}{{ if .GitInfo }} &nbsp;&nbsp; m. {{
+            .Lastmod.Format "Jan 2, 2006" }}{{ end }}</span>
+    {{ end }} {{ partial "tags.html" .}}
+  </div>
+</div>
+{{ else }}
+<div style="padding-bottom: 1px;"></div>
+{{ end }}
+
+{{ if .Params.toc }}
+<aside class="hidden lg:block toc " id="tableOfContentContainer">
+  {{ .TableOfContents }}
+</aside>
+{{ end }}
+
+
+<main>{{ .Content }}</main>
+
+{{ $s := .Site.Params.sponsor }}
+{{ if and $s.enabled (eq .Section "posts") }}
+<div class="sponsor">
+  <a href="https://github.com/sponsors/{{ $s.github }}"
+     target="_blank"
+     rel="noopener noreferrer"
+     class="sponsor-btn">
+    ❤️ {{ $s.text | default "Sponsor" }}
+  </a>
+</div>
+{{ end }}
+
+{{ $g := .Site.Params.giscus }}
+
+{{ if and $g.enabled (.Params.comments | default true) }}
+<section class="comments">
+  <script src="https://giscus.app/client.js"
+    data-repo="{{ $g.repo }}"
+    data-repo-id="{{ $g.repoId }}"
+    data-category="{{ $g.category }}"
+    data-category-id="{{ $g.categoryId }}"
+    data-mapping="{{ $g.mapping }}"
+    data-strict="{{ $g.strict }}"
+    data-reactions-enabled="{{ $g.reactionsEnabled }}"
+    data-emit-metadata="{{ $g.emitMetadata }}"
+    data-input-position="{{ $g.inputPosition }}"
+    data-theme="{{ $g.theme }}"
+    data-lang="{{ $g.lang }}"
+    crossorigin="anonymous"
+    async>
+  </script>
+</section>
+{{ end }}
+
+{{ if .Params.Next }}
+    <br>
+    <hr>
+    {{ with .PrevInSection }}
+      Next: <a href="{{ .Permalink }}">{{ .Title }}</a>
+    {{ end }}
+{{ end }}
+
+{{ partial "footer.html" . }}

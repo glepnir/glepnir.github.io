@@ -1,0 +1,242 @@
+:root {
+  --complimentary: #815205;
+  --text: black;
+  --code: black;
+  --text-dim: #444;
+  --link: #3366cc;
+  --link-visited: #795cb2;
+  --code-background: #f3f5f7;
+  --code-border: #eaecf0;
+  --code-border: transparent;
+  --code-hl: #e6e6e6;
+  --border-general: #cccfd4;
+  --table-th: #e1e5ea;
+  --table-tr: #edeff2;
+  --toc-background: #f9f9f9;
+  --toc-border: #aaa;
+  --output-background: #d5dbe3;
+  --output-foreground: #805105;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --complimentary: #815205;
+    --text: #d8d8d8;
+    --code: #cbcbcb;
+    --text-dim: #a7a7a7;
+    /* --link: #8cb4ff; */
+    --link: #88a9e9;
+    --link-visited: #a390ca;
+    --code-background: #272727;
+    --code-border: transparent;
+    --code-hl: #5a5a5a;
+    --border-general: #495057;
+    --table-th: #414141;
+    --table-tr: #343434;
+    --toc-background: #343434;
+    --toc-border: #495057;
+    --output-background: #020202;
+  --output-foreground: #815205;
+  }
+}
+
+#gitinfo-date {
+  color: var(--text-dim);
+  filter: opacity(40%);
+  font-style: italic;
+  font-size: 0.9em;
+  white-space: nowrap;
+}
+
+@media screen and (min-width: 760px) {
+  #gitinfo-date {
+    margin-left: 30px;
+  }
+}
+
+/* TODO: add iframe margins */
+
+/* HTML & BODY */
+html {
+  color: var(--text);
+  /* set in header*/
+  /* background-color: var(--background); */
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: auto;
+  padding: 0em 1em 2em 1em;
+  font-family:
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Roboto",
+    Helvetica,
+    sans-serif;
+  line-height: 1.54;
+  text-align: justify;
+}
+
+@media screen and (min-width: 760px) {
+  body {
+    margin: auto;
+    max-width: 68vw;
+  }
+}
+
+@media screen and (min-width: 1150px) {
+  body {
+    margin: auto;
+    max-width: 62vw;
+  }
+}
+
+main {
+  hyphens: none;
+}
+
+/* BASIC HTML ELEMENTS */
+p {
+  margin: 0.7em 0;
+}
+
+h1 {
+  font-weight: normal;
+  margin-bottom: 0px;
+  font-size: 2em;
+  margin-top: 0;
+}
+
+h2 {
+  border-bottom: 1px solid;
+  border-color: var(--text-dim);
+  margin-bottom: 0.5em;
+  margin-top: 1.2em;
+  font-weight: normal;
+  font-size: 1.65em;
+}
+
+h3 {
+  font-size: 1.3em;
+  font-weight: 700;
+  margin-bottom: 0.5em;
+  margin-top: 1.2em;
+  padding-bottom: 0;
+}
+
+h4 {
+  font-size: 1.1em;
+  margin-bottom: 0;
+  padding-bottom: 0;
+  font-style: oblique;
+  font-weight: normal;
+}
+
+a {
+  text-decoration: none;
+  color: var(--link);
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+a:visited {
+  color: var(--link-visited);
+}
+
+hr {
+  border-style: dashed;
+  color: var(--text-dim);
+}
+
+blockquote {
+  border-left: 0.3rem solid var(--complimentary);
+  font-style: oblique;
+  margin: 1.6rem 0;
+  padding: 0 1.4rem 0 1rem;
+  line-height: 1.6;
+}
+
+blockquote p {
+  margin: 0;
+}
+
+details {
+  padding: 0 0 0 14px;
+  border-left: 2px dashed var(--border-general);
+}
+
+mark {
+  padding: 0 2px 0 2px;
+}
+
+ul {
+  padding-left: 2rem;
+}
+
+/* NOTE: fix for Inter font. */
+strong {
+  font-weight: 600;
+}
+
+/* NOTE: fix for Inter font. */
+th {
+  font-weight: 500;
+}
+
+/* MISC */
+.section-title {
+  border: 0;
+}
+
+.post-list {
+  color: var(--complimentary);
+  padding-left: 1em;
+}
+
+@media screen and (min-width: 760px) {
+  .post-list {
+    max-width: 60vw;
+  }
+}
+
+.bold-post-in-list {
+  font-weight: 600;
+}
+
+@media screen and (max-width: 760px) {
+  .katex {
+    font-size: 1.05em !important;
+  }
+}
+
+.footnotes {
+  margin-top: 60px;
+}
+
+.terms {
+  padding-left: 16px;
+}
+
+.sponsor {
+  margin: 3rem 0;
+  text-align: center;
+}
+
+.sponsor-btn {
+  display: inline-block;
+  padding: 0.5rem 1.25rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  opacity: 0.7;
+  transition: all 0.2s ease;
+}
+
+.sponsor-btn:hover {
+  opacity: 1;
+  background: rgba(255, 0, 0, 0.05);
+  text-decoration: none;
+}

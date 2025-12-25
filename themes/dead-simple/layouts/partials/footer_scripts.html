@@ -1,0 +1,137 @@
+<!-- Shortcuts. -->
+<script defer>
+  document.addEventListener("keydown", function (e) {
+    if (document.activeElement.isContentEditable) {
+      return false;
+    }
+    if (document.activeElement.tagName == "INPUT") {
+      return false;
+    }
+    if (e.altKey || e.ctrlKey || e.shiftKey) {
+      return false;
+    }
+    var key = e.key;
+    if (key === "h") {
+      e.preventDefault();
+      e.stopPropagation();
+      window.location.href = "/";
+    } else if (key === "t") {
+      e.preventDefault();
+      e.stopPropagation();
+      window.location.href = `https://${location.hostname}/tags`;
+    } else if (key === "i") {
+      e.preventDefault();
+      e.stopPropagation();
+      const inputs = document.querySelectorAll("input");
+      for (let i = 0; i < inputs.length; i++) {
+        if (inputs[i].offsetParent !== null) {
+          inputs[i].selectionStart = inputs[i].selectionEnd =
+            inputs[i].value.length;
+          inputs[i].focus();
+          break;
+        }
+      }
+    }
+    return false;
+  });
+</script>
+
+<!-- Dynamic toc. -->
+<script defer>
+  function throttle(fn, wait) {
+    var time = Date.now();
+    return function () {
+      var now = Date.now();
+      if (time + wait - now < 0) {
+        fn();
+        time = now;
+      }
+    };
+  }
+
+  function scrollHandler() {
+    const anchors = Array.from(document.querySelectorAll("body h2, body h3"));
+
+    function scrollCallback() {
+      var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+      // Highlight the last scrolled-to: set everything inactive first
+      for (var i = 0; i < anchors.length; i++) {
+        var anchorId = anchors[i].getAttribute("id");
+        var link = document.querySelector(
+          'nav ul li a[href="#' + anchorId + '"]',
+        );
+        if (link) {
+          link.classList.remove("active-toc");
+        }
+      }
+
+      // Then iterate backwards, on the first match highlight it and break
+      for (var i = anchors.length - 1; i >= 0; i--) {
+        var offsetTop = anchors[i].offsetTop;
+        if (scrollTop > offsetTop - 75) {
+          var anchorId = anchors[i].getAttribute("id");
+          var link = document.querySelector(
+            'nav ul li a[href="#' + anchorId + '"]',
+          );
+          if (link) {
+            link.classList.add("active-toc");
+            break;
+          }
+        }
+      }
+    }
+
+    window.addEventListener("scroll", throttle(scrollCallback, 200));
+  }
+  setTimeout(scrollHandler, 100);
+</script>
+
+<script defer>
+  function getTextContentRecursively(element) {
+    let text = '';
+
+    if (element.nodeType === Node.TEXT_NODE) {
+      return element.textContent || '';
+    }
+
+    for (const child of element.childNodes) {
+      text += getTextContentRecursively(child);
+    }
+
+    return text;
+  }
+
+  function addCopyButtonToCodeBlocks() {
+    // Get all code blocks with a class of "language-*"
+    // const codeBlocks = document.querySelectorAll('code[class^="language-"]');
+    const codeBlocks = document.querySelectorAll(
+      'code[class^="language-"]:not(.output):not([class*="language-console"])',
+    );
+
+    codeBlocks.forEach((codeBlock) => {
+      const copyButton = document.createElement("button");
+      copyButton.classList.add("copy-code-button");
+      copyButton.innerHTML = "copy";
+
+      // Add a click event listener to the copy button
+      copyButton.addEventListener("click", () => {
+        // Copy the code inside the code block to the clipboard
+        const codeToCopy = getTextContentRecursively(codeBlock);
+        navigator.clipboard.writeText(codeToCopy);
+
+        // Update the copy button text to indicate that the code has been copied
+        copyButton.innerHTML = "copied!";
+        setTimeout(() => {
+          copyButton.innerHTML = "copy";
+        }, 1500);
+      });
+
+      // Add the copy button to the code block
+      codeBlock.parentNode.before(copyButton);
+    });
+  }
+  setTimeout(function () {
+    addCopyButtonToCodeBlocks();
+  }, 100);
+</script>

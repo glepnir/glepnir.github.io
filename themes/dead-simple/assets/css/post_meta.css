@@ -1,0 +1,50 @@
+/* POST META */
+#single-header {
+  /* border-bottom: 2px solid var(--complimentary); */
+  padding: 0px 8px 4px 0;
+  margin-bottom: 20px;
+  margin-top: 10px;
+}
+
+.date {
+  color: var(--text-dim);
+  padding-top: 0.1em;
+  font-size: 90%;
+}
+
+#single-meta {
+  margin-top: 0;
+  margin-bottom: 0px;
+  padding-top: 0px;
+  font-size: 0.9em;
+}
+
+#single-meta a:visited {
+  color: var(--link);
+}
+
+#subtitle {
+  font-family: "Linux Libertine", "Georgia", "Times", serif;
+  margin-top: -8px;
+  margin-bottom: 0.3em;
+  font-size: 1.4em;
+  color: var(--text-dim);
+}
+
+.datesub {
+  font-weight: normal;
+  color: var(--text-dim);
+}
+
+#tags {
+  font-weight: normal;
+  color: var(--text-dim);
+}
+
+#tags a {
+  filter: brightness(80%);
+}
+
+#tags a:visited {
+  filter: brightness(80%);
+}

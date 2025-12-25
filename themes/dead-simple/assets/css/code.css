@@ -1,0 +1,140 @@
+@keyframes code-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.highlight div,
+pre {
+  background-color: var(--code-background);
+  padding: 0.7em;
+  overflow-x: auto;
+  margin: 0px;
+  border: 1px solid var(--code-border);
+  border-radius: 3px 0 3px 3px;
+  line-height: 1.3;
+}
+
+.highlight {
+  margin: 0.8em 0;
+}
+
+.highlight div pre {
+  border: 0px;
+  padding: 0px 5px;
+  margin: 0px;
+  box-shadow: 0px 0px 0px;
+}
+
+code {
+  font-family: "Source Code Pro", monospace;
+  color: var(--code);
+
+  /* For Iosevka */
+  /* font-stretch: expanded; */
+  font-stretch: normal;
+
+  background: var(--code-background);
+  border-radius: 5%;
+  padding: 1px 4px;
+  border: 1px solid var(--code-border);
+  font-size: 0.92em;
+}
+
+pre code {
+  font-size: 0.9em;
+  font-stretch: normal;
+
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0px;
+  tab-size: 4;
+}
+
+@media screen and (max-width: 760px) {
+  pre code {
+    font-size: 80%;
+  }
+}
+
+.fs95 {
+  font-size: 90%;
+}
+
+.fs90 {
+  font-size: 90%;
+}
+
+.fs85 {
+  font-size: 85%;
+}
+
+.fs80 {
+  font-size: 80%;
+}
+
+.fs75 {
+  font-size: 75%;
+}
+
+.fs70 {
+  font-size: 75%;
+}
+
+.fs50 {
+  font-size: 50%;
+}
+
+.output {
+  margin-top: -0.8em;
+}
+
+.output pre {
+  /* border-top: 0.1em solid var(--complimentary); */
+  border-radius: 0;
+  background-color: var(--output-background);
+}
+
+.output code {
+  color: var(--output-foreground);
+  line-height: 1;
+}
+
+/* Line numbers in code blocks. */
+.ln {
+  user-select: none;
+  margin-right: 14px;
+  color: rgb(150, 150, 150);
+}
+
+.hl {
+  background-color: var(--code-hl);
+  outline-style: solid;
+  outline-color: var(--code-hl);
+  outline-width: 0.5px;
+}
+
+/* Copy code button */
+.copy-code-button {
+  display: none;
+}
+
+@media screen and (min-width: 760px) {
+  .copy-code-button {
+    animation-duration: 1s;
+    animation-name: code-fade-in;
+    margin-top: -22px;
+    float: right;
+    display: block;
+    background-color: var(--code-background);
+    border-color: var(--code-border);
+    border-style: solid;
+    border-width: 1px 1px 0 1px;
+    border-radius: 2px 2px 0 0;
+    color: var(--text-dim);
+  }
+}

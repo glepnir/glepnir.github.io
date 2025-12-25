@@ -1,0 +1,13 @@
+{{ partial "header.html" . }}
+
+<h1>{{ .Title }}</h1>
+<ul class="post-list">
+    {{ range .Pages }}
+
+    {{ partial "post_row.html" . }}
+
+    {{ end }}
+  </ul>
+
+
+{{ partial "footer.html" . }}

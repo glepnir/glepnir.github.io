@@ -1,0 +1,25 @@
+.menu {
+  padding: 0px 4px 0px 0px;
+  z-index: 9999;
+  text-align: left;
+  margin-bottom: 10px;
+}
+
+.menu li {
+  display: inline-block;
+}
+
+.menu a {
+  margin-right: 1.1em;
+  text-decoration: none;
+  border-radius: 5px;
+}
+
+.menu a:visited {
+  color: var(--link);
+}
+
+.menu a:hover {
+  text-decoration: underline;
+}
+

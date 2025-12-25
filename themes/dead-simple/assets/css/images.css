@@ -1,0 +1,85 @@
+@keyframes images {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+img {
+  max-height: 70vh;
+  margin: 0.8em 0;
+  animation-duration: 1s;
+  animation-name: images;
+}
+
+.imgp {
+  margin: auto;
+  text-align: center;
+}
+
+figure {
+  margin: auto;
+  text-align: center;
+}
+
+.imgp img,
+figure img
+{
+  border-radius: 4px;
+}
+
+figcaption {
+  color: var(--text-dim);
+  font-size: 0.96rem;
+  text-align: center;
+}
+
+figcaption h4 {
+  margin-top: 0px;
+  font-weight: normal;
+}
+
+img,
+iframe,
+video {
+  max-width: 100%;
+}
+
+/* Image gallery. */
+.image-gallery, .image-gallery-img {
+  list-style-type: none;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  padding-left: 0;
+}
+
+.image-gallery {
+  margin: 0 0 1.2rem 0;
+}
+
+.image-gallery-img {
+  margin: 0 0 2.6rem 0;
+}
+
+.image-gallery > li, .image-gallery-img > li {
+  flex-basis: 440px;
+}
+
+.image-gallery li img,
+.image-gallery-img li img
+{
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+
+  border-radius: 4px;
+  vertical-align: middle;
+}
+
+.three-image-gallery > li {
+  flex-basis: 290px;
+}
