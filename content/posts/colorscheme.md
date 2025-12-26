@@ -538,19 +538,28 @@ I hope this approach helps others escape the arbitrary theme-tweaking trap. The 
 
 ## References
 
-[1] Ottosson, B. (2020). A perceptual color space for image processing. https://bottosson.github.io/posts/oklab/
+[1] Ottosson, B. (2020). A perceptual color space for image processing.
+    https://bottosson.github.io/posts/oklab/
 
-[2] Barten, P. G. J. (1999). *Contrast sensitivity of the human eye and its effects on image quality*. SPIE Press.
+[2] Barten, P. G. J. (1999). Contrast sensitivity of the human eye and its
+    effects on image quality. SPIE Press.
 
-[3] Fairchild, M. D. (2013). *Color appearance models* (3rd ed.). John Wiley & Sons.
+[3] Fairchild, M. D. (2013). Color appearance models (3rd ed.).
+    John Wiley & Sons.
 
-[4] Cao, T., Zhang, M., Jiang, Y., Lu, C., & Xu, Y. (2024). Effects of exposure to different light wavelengths on human eye fatigue. *PMC*, 11175232. https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11175232/
+[4] Fan, Q., Xie, J., Dong, Z., & Wang, Y. (2024). The effect of ambient
+    illumination and text color on visual fatigue under negative polarity.
+    Sensors, 24(11), 3516. https://doi.org/10.3390/s24113516
 
-[5] Schloss, K. B., & Palmer, S. E. (2024). Color semantics for visual communication. *Annual Review of Vision Science*, *10*, 1-25.
+[5] Schloss, K. B. (2024). Color semantics in human cognition.
+    Current Directions in Psychological Science, 33(1), 58-67.
 
-[6] Owsley, C. (2016). Vision and aging. *Annual Review of Vision Science*, *2*, 255-271.
+[6] Owsley, C. (2016). Vision and aging. Annual Review of Vision Science,
+    2, 255-271.
 
-[7] Hannebauer, C., Hesenius, M., & Gruhn, V. (2018). Does syntax highlighting help programming novices? *Empirical Software Engineering*, *23*(5), 2795-2828.
+[7] Hannebauer, C., Hesenius, M., & Gruhn, V. (2018). Does syntax
+    highlighting help programming novices? Empirical Software Engineering,
+    23(5), 2795-2828.
 
 Additional references:
 
