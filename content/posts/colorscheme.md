@@ -532,17 +532,6 @@ What started as frustration with arbitrary theme tweaking led to a systematic, s
 5. **Align with semantic expectations** (Color Semantics) for intuitive understanding
 6. **Highlight structure, not noise** (Hannebauer, Tonsky) for clarity
 
-The resulting theme scores 98/100 on scientific metrics:
-
-- Luminance hierarchy: 98/100
-- Hue distribution: 98/100
-- Saturation control: 99/100
-- CIECAM02 compliance: 97/100
-- Color semantics: 98/100
-- Syntax highlighting strategy: 95/100
-
-More importantly, it *feels* right and *stays* right. No more fatigue cycles.
-
 I hope this approach helps others escape the arbitrary theme-tweaking trap. The science exists—we might as well use it.
 
 ---
