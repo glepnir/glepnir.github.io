@@ -24,7 +24,7 @@ The breakthrough came when I realized: vision scientists have spent decades stud
 
 Instead of adjusting colors arbitrarily in HSL space, I could *derive* them from scientific principles.
 
-## Foundation 1: Perceptual Color Spaces
+## Part 1: Perceptual Color Spaces
 
 ### The Problem with RGB and HSL
 
@@ -72,15 +72,15 @@ local function oklab_to_linear_rgb(L, a, b)
   local l = L + 0.3963377774 * a + 0.2158037573 * b
   local m = L - 0.1055613458 * a - 0.0638541728 * b
   local s = L - 0.0894841775 * a - 1.2914855480 * b
-  
+
   -- Step 2: Inverse cube root
   local l3, m3, s3 = l * l * l, m * m * m, s * s * s
-  
+
   -- Step 3: LMS to linear RGB
   local r = 4.0767416621 * l3 - 3.3077115913 * m3 + 0.2309699292 * s3
   local g = -1.2684380046 * l3 + 2.6097574011 * m3 - 0.3413193965 * s3
   local b_out = -0.0041960863 * l3 - 0.7034186147 * m3 + 1.7076147010 * s3
-  
+
   return r, g, b_out
 end
 
@@ -95,16 +95,16 @@ end
 
 local function oklab_to_srgb(L, a, b)
   local r, g, b_comp = oklab_to_linear_rgb(L, a, b)
-  
+
   r = linear_to_srgb_component(r)
   g = linear_to_srgb_component(g)
   b_comp = linear_to_srgb_component(b_comp)
-  
+
   -- Clamp and convert to 8-bit
   r = math.floor(math.max(0, math.min(1, r)) * 255 + 0.5)
   g = math.floor(math.max(0, math.min(1, g)) * 255 + 0.5)
   b_comp = math.floor(math.max(0, math.min(1, b_comp)) * 255 + 0.5)
-  
+
   return string.format('#%02x%02x%02x', r, g, b_comp)
 end
 ```
@@ -119,7 +119,7 @@ local orange = oklab_to_srgb(0.68, 0.055, 0.065)
 
 The formula *is* the color. No more arbitrary hex values.
 
-## Foundation 2: What to Highlight - Empirical Research
+## Part 2: What to Highlight - Empirical Research
 
 Before deciding *how* to color code elements, I needed to understand *which* elements should be highlighted at all.
 
@@ -161,7 +161,7 @@ These findings led to my core highlighting strategy:
 
 This creates a visual hierarchy where code structure "pops" while the majority of text remains calm.
 
-## Foundation 3: Contrast Sensitivity Function (CSF)
+## Part 3: Contrast Sensitivity Function (CSF)
 
 The human visual system doesn't respond uniformly to all contrasts. Barten's CSF model [2] reveals that we are 5-10× more sensitive to *luminance* contrast than *chromatic* contrast.
 
@@ -250,7 +250,7 @@ Key properties:
 - All layers meet WCAG AA (contrast \(\geq 4.5:1\))
 - Total range: 0.64-0.68 (focused, not excessive)
 
-## Foundation 4: CIECAM02 Color Appearance Model
+## Part 4: CIECAM02 Color Appearance Model
 
 CIECAM02 [3] helps us understand how colors appear under different viewing conditions. The simplified chroma calculation is:
 
@@ -293,7 +293,7 @@ Cyan (190°) → Blue (252°): Δh = 62° ✓
 Blue (252°) → Violet (321°): Δh = 69° ✓
 ```
 
-## Foundation 5: Color Fatigue Research
+## Part 5: Color Fatigue Research
 
 A chromatic pupillometry study [4] found that different wavelengths cause different levels of visual fatigue:
 
@@ -334,7 +334,7 @@ colors.yellow = oklab_to_srgb(0.68, 0.02, 0.08)
 
 All saturations are in the low-fatigue zone.
 
-## Foundation 6: Color Semantics
+## Part 6: Color Semantics
 
 Karen Schloss's research [5] on color semantics reveals universal color-concept associations:
 
