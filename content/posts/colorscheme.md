@@ -554,9 +554,9 @@ I hope this approach helps others escape the arbitrary theme-tweaking trap. The 
 
 Additional references:
 
-- IEC 61966-2-1:1999. "Multimedia systems and equipment - Colour measurement and management - Part 2-1: Default RGB colour space - sRGB."
+- IEC 61966-2-1:1999. Multimedia systems and equipment - Colour measurement and management - Part 2-1: Default RGB colour space - sRGB.
 
-- Tonsky, I. (2025). "Syntax highlighting is a waste of time." https://tonsky.me/blog/syntax-highlighting/
+- Tonsky, I. (2025). Syntax highlighting is a waste of time. https://tonsky.me/blog/syntax-highlighting/
 
 ---
 
