@@ -476,11 +476,12 @@ vim.api.nvim_set_hl(0, 'Operator', { fg = colors.fg })
 Every value is derived from formulas, not arbitrary hex codes. Every mapping decision is backed by research.
 
 ## Results
+I named it **retina**; [source code](https://github.com/glepnir/nvim/blob/main/colors/retina.lua)
 
 ![Screenshot of the theme in action - Neovim editing C code](/images/colorscheme.png)
 *C code showing the luminance hierarchy in action. Keywords (orange, \(L=0.68\)) pop more than strings (green, \(L=0.64\)). Errors (red, \(L=0.66\)) are immediately visible.*
 
-After using this theme for [X months], the difference is remarkable:
+After using this theme for 2 months, the difference is remarkable:
 
 - **No more fatigue cycles:** I can code for 10+ hours without eye strain
 - **Errors are immediately obvious:** The \(L=0.66\) layer works perfectly
