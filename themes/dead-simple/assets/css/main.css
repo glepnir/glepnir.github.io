@@ -240,3 +240,19 @@ th {
   background: rgba(255, 0, 0, 0.05);
   text-decoration: none;
 }
+
+.site-footer {
+  margin-top: 4rem;
+  padding: 1.5rem 0;
+  text-align: center;
+  opacity: 0.6;
+  font-size: 0.85em;
+}
+
+.site-footer a {
+  text-decoration: none;
+}
+
+.site-footer a:hover {
+  text-decoration: underline;
+}

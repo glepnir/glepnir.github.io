@@ -1,6 +1,6 @@
 baseURL: "https://www.functor.me"
 languageCode: en-us
-title: "Hugo dead simple example"
+title: "glepnir's blog"
 enableGitInfo: false
 menu:
   main:

@@ -1,8 +1,15 @@
 <br>
 
-<footer>
-{{ partial "footer_scripts.html" . }}
-{{ partial "search-index.html" . }}
+<footer class="site-footer">
+  <p class="footer-meta">
+    © {{ now.Year }} glepnir ·
+    <a href="https://github.com/glepnir">GitHub</a> ·
+    <a href="https://reddit.com/u/glephunter">Reddit</a> ·
+    <a href="{{ .Site.BaseURL }}index.xml">RSS</a>
+  </p>
+
+  {{ partial "footer_scripts.html" . }}
+  {{ partial "search-index.html" . }}
 </footer>
 
 </body>
