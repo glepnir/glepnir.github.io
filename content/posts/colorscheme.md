@@ -490,14 +490,8 @@ After using this theme for 2 months, the difference is remarkable:
 
 ## Individual Differences: A Note of Caution
 
-It's crucial to understand that vision is deeply personal. This theme was optimized for:
-
-- My personal contrast sensitivity
-- My typical viewing distance (~60cm)
-- My display (MacBook Pro, ~400 nits)
-- My ambient lighting (soft overhead lighting, ~300 lux)
-
-Your mileage may vary. Factors that affect color perception:
+It's crucial to understand that vision is deeply personal. This theme was optimized for
+my personal contrast sensitivity, display monitor etc. Your mileage may vary. Factors that affect color perception:
 
 1. **Age:** Older adults need higher contrast [6]
 2. **Display technology:** OLED vs LCD affects color appearance
