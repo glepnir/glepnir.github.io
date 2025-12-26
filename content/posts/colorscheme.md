@@ -284,7 +284,7 @@ vim.api.nvim_set_hl(0, 'Operator', { fg = colors.fg })    -- =, +, -, etc.
 
 ![Retina](/images/colorscheme.png)
 
-I've been using this theme (I call it **Retina**) for two months now. Here's what I've noticed:
+Don't doubt it, this is still neovim 😏. I've been using this theme (I call it **Retina**) for two months now. Here's what I've noticed:
 
 - **My eyes don't get tired anymore.** I can code for hours without that strained feeling.
 - **Errors actually stand out.** That slight brightness bump makes all the difference.
