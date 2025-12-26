@@ -538,26 +538,26 @@ I hope this approach helps others escape the arbitrary theme-tweaking trap. The 
 
 ## References
 
-[1] Ottosson, B. (2020). "A perceptual color space for image processing." Available at: https://bottosson.github.io/posts/oklab/
+[1] Ottosson, B. (2020). A perceptual color space for image processing. https://bottosson.github.io/posts/oklab/
 
-[2] Barten, P. G. J. (1999). *Contrast Sensitivity of the Human Eye and Its Effects on Image Quality*. SPIE Press.
+[2] Barten, P. G. J. (1999). *Contrast sensitivity of the human eye and its effects on image quality*. SPIE Press.
 
-[3] Fairchild, M. D. (2013). *Color Appearance Models* (3rd ed.). John Wiley & Sons.
+[3] Fairchild, M. D. (2013). *Color appearance models* (3rd ed.). John Wiley & Sons.
 
-[4] Cao, T., et al. (2024). "Effects of Exposure to Different Light Wavelengths on Human Eye Fatigue." *PMC* 11175232. Available at: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11175232/
+[4] Cao, T., Zhang, M., Jiang, Y., Lu, C., & Xu, Y. (2024). Effects of exposure to different light wavelengths on human eye fatigue. *PMC*, 11175232. https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11175232/
 
-[5] Schloss, K. B., & Palmer, S. E. (2024). "Color semantics for visual communication." *Annual Review of Vision Science*, 10, 1-25.
+[5] Schloss, K. B., & Palmer, S. E. (2024). Color semantics for visual communication. *Annual Review of Vision Science*, *10*, 1-25.
 
-[6] Owsley, C. (2016). "Vision and Aging." *Annual Review of Vision Science*, 2, 255-271.
+[6] Owsley, C. (2016). Vision and aging. *Annual Review of Vision Science*, *2*, 255-271.
 
-[7] Hannebauer, C., Hesenius, M., Gruhn, V. (2018). "Does Syntax Highlighting Help Programming Novices?" *Empirical Software Engineering*, 23(5), 2795-2828.
+[7] Hannebauer, C., Hesenius, M., & Gruhn, V. (2018). Does syntax highlighting help programming novices? *Empirical Software Engineering*, *23*(5), 2795-2828.
 
 Additional references:
 
 - IEC 61966-2-1:1999. "Multimedia systems and equipment - Colour measurement and management - Part 2-1: Default RGB colour space - sRGB."
 
-- Tonsky, I. (2025). "Syntax highlighting is a waste of time." Available at: https://tonsky.me/blog/syntax-highlighting/
+- Tonsky, I. (2025). "Syntax highlighting is a waste of time." https://tonsky.me/blog/syntax-highlighting/
 
 ---
 
-*The complete theme is available at [link]. Contributions and adaptations welcome.*
+*The complete theme is available at [here](https://github.com/glepnir/nvim/blob/main/colors/retina.lua). Contributions and adaptations welcome.*
