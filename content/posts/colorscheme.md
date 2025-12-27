@@ -205,8 +205,8 @@ colors.orange = oklab_to_srgb(0.68, 0.055, 0.065)
 -- Red for errors: √(0.08² + 0.04²) ≈ 0.089 (just under 0.09)
 colors.red = oklab_to_srgb(0.66, 0.08, 0.04)
 
--- Yellow for types: √(0.02² + 0.08²) ≈ 0.082
-colors.yellow = oklab_to_srgb(0.68, 0.02, 0.08)
+-- Yellow for types: √(0.0² + 0.08²) ≈ 0.08
+colors.yellow = oklab_to_srgb(0.68, 0.0, 0.08)
 ```
 
 No more wondering why my eyes hurt after a marathon coding session.
@@ -249,7 +249,7 @@ colors.fg = oklab_to_srgb(0.74, 0.0, 0.008)
 -- Layer 1: Structure (brightest)
 colors.orange = oklab_to_srgb(0.68, 0.055, 0.065)  -- Keywords
 colors.blue   = oklab_to_srgb(0.68, -0.02, -0.06)  -- Functions
-colors.yellow = oklab_to_srgb(0.68, 0.02,  0.08)   -- Types
+colors.yellow = oklab_to_srgb(0.68, 0.0,  0.08)   -- Types
 
 -- Layer 2: Diagnostics
 colors.red    = oklab_to_srgb(0.66, 0.08,  0.04)   -- Errors
