@@ -5,7 +5,8 @@ title = 'When Loops Become Math: How Functional Thinking Changed My C++'
 toc = true
 +++
 
-Last week, I was staring at two pieces of code a friend had sent me, asking which one I preferred. They looked like this:
+Last week, I was staring at two pieces of code a friend had sent me, asking
+which one I preferred. They looked like this:
 
 ```cpp
 // Version A
@@ -28,7 +29,9 @@ double calculate_stddev(const vector<double>& data) {
 }
 ```
 
-I looked at them for a solid five seconds before it hit me: these two loops were fundamentally the same mathematical pattern! But in the code, that pattern was buried under `for` loops and accumulation variables.
+I looked at them for a solid five seconds before it hit me: these two loops were
+fundamentally the same mathematical pattern! But in the code, that pattern was
+buried under `for` loops and accumulation variables.
 
 ## Seeing with Math Eyes
 
@@ -73,7 +76,8 @@ double variance = fold(data, 0.0, [mean](double acc, double x) {
 
 ## The Real Breakthrough: Seeing Deeper Patterns
 
-I started noticing this pattern everywhere. Take this convex hull algorithm I'd written:
+I started noticing this pattern everywhere. Take this convex hull algorithm I'd
+written:
 
 ```cpp
 vector<Point> find_convex_hull(const vector<Point>& points) {
@@ -101,7 +105,8 @@ vector<Point> find_convex_hull(const vector<Point>& points) {
 
 Three nested loops! But with functional thinking, I saw **predicate logic**:
 
-> A point pair (i,j) belongs to the convex hull boundary if and only if all other points are on the same side of the line segment (i,j).
+> A point pair (i,j) belongs to the convex hull boundary if and only if all
+> other points are on the same side of the line segment (i,j).
 
 Mathematically:
 $$
@@ -181,7 +186,8 @@ optional<Config> parse_config(const string& timeout_str,
 }
 ```
 
-The functional way uses a pattern (some people call it a monad, but I just call it useful):
+The functional way uses a pattern (some people call it a monad, but I just call
+it useful):
 
 ```cpp
 template<typename T, typename Func>
@@ -229,7 +235,8 @@ double sum_squares_fp(const vector<double>& data) {
 }
 ```
 
-With `-O3`, GCC generates identical assembly for both. The functional version is actually safer—no loop variables, no bounds checking worries.
+With `-O3`, GCC generates identical assembly for both. The functional version is
+actually safer—no loop variables, no bounds checking worries.
 
 ## My New Toolkit
 
@@ -253,7 +260,8 @@ auto server = create_local_server(config);
 
 ## The Mindset Shift
 
-Functional programming taught me something important: **code is math, and the compiler is my proof assistant**.
+Functional programming taught me something important: **code is math, and the
+compiler is my proof assistant**.
 
 Before: I wrote loops thinking "do this repeatedly".
 Now: I write `fold` thinking "apply this associative operation".
@@ -261,7 +269,8 @@ Now: I write `fold` thinking "apply this associative operation".
 Before: I wrote conditionals thinking "if this, then that".
 Now: I write `filter` thinking "select elements satisfying this predicate".
 
-This mindset lets me write code that's easier to prove correct. Last week I found a bug and mentally traced it:
+This mindset lets me write code that's easier to prove correct. Last week I
+found a bug and mentally traced it:
 
 ```
 Given: filter(is_even, [1,2,3,4]) = [2,4]
@@ -295,10 +304,14 @@ auto valid_orders = requests
     | ranges::to<vector>();
 ```
 
-This isn't "functional C++"—it's just C++. But it's C++ written with functional thinking.
+This isn't "functional C++"—it's just C++. But it's C++ written with functional
+thinking.
 
 ## Finally
 
-When I started seeing loops through mathematical eyes, they stopped being loops and became instances of algebraic structures. That perspective lets me write code that's cleaner, more correct, and honestly more fun to write.
+When I started seeing loops through mathematical eyes, they stopped being loops
+and became instances of algebraic structures. That perspective lets me write
+code that's cleaner, more correct, and honestly more fun to write.
 
-Maybe that's the end goal of programming: code stops being instructions and becomes executable mathematics.
+Maybe that's the end goal of programming: code stops being instructions and
+becomes executable mathematics.

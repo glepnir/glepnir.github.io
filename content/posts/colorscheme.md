@@ -6,23 +6,40 @@ tags = ["neovim", "color-science", "vision-research", "oklab"]
 toc = true
 +++
 
-For years, I was stuck in this cycle: find something that looks decent, tweak HSL values until it "feels right," use it for a few weeks, then get that creeping eye strain. Suddenly colors that looked fine before would start to irritate me. Back to the drawing board.
+For years, I was stuck in this cycle: find something that looks decent, tweak
+HSL values until it "feels right," use it for a few weeks, then get that
+creeping eye strain. Suddenly colors that looked fine before would start to
+irritate me. Back to the drawing board.
 
-I must have done this dozens of times. Each round felt more arbitrary than the last—just moving sliders around hoping something would click. Honestly, it was getting ridiculous. Why couldn't I just find something that worked and stick with it?
+I must have done this dozens of times. Each round felt more arbitrary than the
+last—just moving sliders around hoping something would click. Honestly, it was
+getting ridiculous. Why couldn't I just find something that worked and stick
+with it?
 
-Then one night, while adjusting my umpteenth orange hue, it hit me: people have been studying vision for decades. There's actual science about how we see color, what causes eye strain, how to make things readable. Maybe instead of guessing, I could actually, you know, use that science.
+Then one night, while adjusting my umpteenth orange hue, it hit me: people have
+been studying vision for decades. There's actual science about how we see color,
+what causes eye strain, how to make things readable. Maybe instead of guessing,
+I could actually, you know, use that science.
 
-So I did. And it turns out, building a theme from first principles works way better than tweaking hex codes.
+So I did. And it turns out, building a theme from first principles works way
+better than tweaking hex codes.
 
 ## Part 1: Your Color Picker is Probably Lying to You
 
-Here's the thing no one tells you: RGB and HSL are kind of broken for designing themes. They make sense to computers but not to human eyes. In RGB, the "distance" between colors has nothing to do with how different they actually look. HSL is slightly better, but still weird—changing saturation can make some colors get much brighter while others barely change.
+Here's the thing no one tells you: RGB and HSL are kind of broken for designing
+themes. They make sense to computers but not to human eyes. In RGB, the
+"distance" between colors has nothing to do with how different they actually
+look. HSL is slightly better, but still weird—changing saturation can make some
+colors get much brighter while others barely change.
 
-It's like trying to measure temperature with a ruler. You're using the wrong tool for the job.
+It's like trying to measure temperature with a ruler. You're using the wrong
+tool for the job.
 
 ### Enter Oklab: A Color Space That Actually Makes Sense
 
-After digging around, I found something called Oklab. It's a "perceptually uniform" color space, which is a fancy way of saying: if you move a color 10 units in Oklab, it looks about 10 units different to your eyes. No surprises.
+After digging around, I found something called Oklab. It's a "perceptually
+uniform" color space, which is a fancy way of saying: if you move a color 10
+units in Oklab, it looks about 10 units different to your eyes. No surprises.
 
 The math goes something like this:
 
@@ -105,19 +122,29 @@ I can do this:
 local orange = oklab_to_srgb(0.68, 0.055, 0.065)
 ```
 
-That first number is brightness (0-1). The next two control hue and saturation. Want it brighter? Increase the first number. Want it more orange? Adjust the ratio. It's predictable in a way hex codes never were.
+That first number is brightness (0-1). The next two control hue and saturation.
+Want it brighter? Increase the first number. Want it more orange? Adjust the
+ratio. It's predictable in a way hex codes never were.
 
 ## Part 2: What Actually Needs to be Colorful?
 
-Here's where I made my first big mistake. I used to color everything—variables, operators, you name it. Turns out, that's probably wrong.
+Here's where I made my first big mistake. I used to color everything—variables,
+operators, you name it. Turns out, that's probably wrong.
 
-I found this 2018 study with 390 programming beginners. The surprising finding? Syntax highlighting doesn't really help with understanding code. But wait—it *does* help when it emphasizes **structural elements** rather than coloring everything equally.
+I found this 2018 study with 390 programming beginners. The surprising finding?
+Syntax highlighting doesn't really help with understanding code. But wait—it
+*does* help when it emphasizes **structural elements** rather than coloring
+everything equally.
 
 The takeaway: **Highlight structure, not noise.**
 
-Then I read Ivan Tonsky's article where he points out that most of your code is variables and function calls. If you highlight all of those, you're coloring like 75% of the screen. No wonder everything looks busy!
+Then I read Ivan Tonsky's article where he points out that most of your code is
+variables and function calls. If you highlight all of those, you're coloring
+like 75% of the screen. No wonder everything looks busy!
 
-His suggestion made so much sense: keep variables and operators neutral (same color as regular text). Only use bright colors for the stuff that actually matters.
+His suggestion made so much sense: keep variables and operators neutral (same
+color as regular text). Only use bright colors for the stuff that actually
+matters.
 
 ### My New Three-Tier System
 
@@ -137,15 +164,20 @@ This research led me to a much simpler approach:
    - Comments
    - Delimiters
 
-The result is subtle but effective. The code's structure jumps out at you, but most of the screen stays calm and readable.
+The result is subtle but effective. The code's structure jumps out at you, but
+most of the screen stays calm and readable.
 
 ## Part 3: Brightness is Everything (Seriously)
 
-This was my biggest "aha" moment. I used to spend hours debating whether keywords should be orange or yellow. Turns out, I was asking the wrong question.
+This was my biggest "aha" moment. I used to spend hours debating whether
+keywords should be orange or yellow. Turns out, I was asking the wrong question.
 
-Human eyes are way more sensitive to **brightness differences** than to **color differences**. Like, 5-10 times more sensitive. There's actual science behind this called the "Contrast Sensitivity Function."
+Human eyes are way more sensitive to **brightness differences** than to
+**color differences**. Like, 5-10 times more sensitive. There's actual science
+behind this called the "Contrast Sensitivity Function."
 
-So the real question isn't "what color should this be?" It's "how bright should this be compared to that?"
+So the real question isn't "what color should this be?" It's "how bright should
+this be compared to that?"
 
 ### Building a Brightness Hierarchy That Actually Works
 
@@ -153,7 +185,8 @@ I started with some basic constraints:
 - **Background:** L=0.24 (dark enough to be comfortable at night)
 - **Regular text:** L=0.74 (great contrast, meets accessibility standards)
 
-From the research, I knew structure was most important, errors needed attention, and data was secondary. So I made three brightness levels:
+From the research, I knew structure was most important, errors needed attention,
+and data was secondary. So I made three brightness levels:
 
 1. **Brightest (L=0.68):** Structure elements (keywords, functions, types)
 2. **Middle (L=0.66):** Errors and warnings
@@ -168,9 +201,12 @@ The math checks out for contrast ratios:
 \end{aligned}
 \]
 
-All three meet WCAG AA standards, and the brightness differences (ΔL=0.02) are noticeable without being jarring.
+All three meet WCAG AA standards, and the brightness differences (ΔL=0.02) are
+noticeable without being jarring.
 
-Here's what's cool: in my old themes, errors were the same brightness as strings. No wonder I'd miss them! Now errors stand out just enough to catch my attention without looking like an alarm went off.
+Here's what's cool: in my old themes, errors were the same brightness as
+strings. No wonder I'd miss them! Now errors stand out just enough to catch my
+attention without looking like an alarm went off.
 
 ### The Complete Brightness System
 
@@ -184,9 +220,12 @@ Here's what's cool: in my old themes, errors were the same brightness as strings
 
 ## Part 4: The Fatigue Factor
 
-Here's something I never considered: different colors actually cause different amounts of eye strain. Red wavelengths are the worst—they make your pupils constrict more, which gets tiring. Yellow is the easiest on your eyes.
+Here's something I never considered: different colors actually cause different
+amounts of eye strain. Red wavelengths are the worst—they make your pupils
+constrict more, which gets tiring. Yellow is the easiest on your eyes.
 
-There's research (they measure pupil response and everything) that shows for comfortable long sessions, you want to keep colors muted:
+There's research (they measure pupil response and everything) that shows for
+comfortable long sessions, you want to keep colors muted:
 - Average saturation around 0.08
 - Red saturation under 0.09
 - Yellow/green under 0.10
@@ -213,7 +252,8 @@ No more wondering why my eyes hurt after a marathon coding session.
 
 ## Part 5: What Colors "Mean"
 
-Colors aren't just pretty—they carry associations. Research shows we tend to agree on what colors mean:
+Colors aren't just pretty—they carry associations. Research shows we tend to
+agree on what colors mean:
 
 - **Red** → Error, Danger, Stop
 - **Orange** → Action, Warning, Warm
@@ -280,11 +320,54 @@ vim.api.nvim_set_hl(0, 'Identifier', { fg = colors.fg })  -- Variables
 vim.api.nvim_set_hl(0, 'Operator', { fg = colors.fg })    -- =, +, -, etc.
 ```
 
+## Blending New Colors
+
+Now I've built a solid color system, but sometimes certain highlight groups
+still need a bit of tuning on top of what's already there. For example, when
+using `vim.diagnostic.Opts.VirtualText`, I want to use different background
+colors to distinguish between diagnostic types. But I also don’t want them to
+stand out too much and break the current brightness hierarchy.
+
+My solution is to blend an existing color with the background color—controlling
+the mix ratio to get a new shade. Here’s the Lua code for blending:
+
+```lua
+local function hex_to_rgb(hex)
+  hex = hex:gsub('#', '')
+  return {
+    tonumber(hex:sub(1, 2), 16),
+    tonumber(hex:sub(3, 4), 16),
+    tonumber(hex:sub(5, 6), 16),
+  }
+end
+
+local function rgb_to_hex(c)
+  return string.format('#%02x%02x%02x', c[1], c[2], c[3])
+end
+
+local function blend(fg, t)
+  local a, b = hex_to_rgb(fg), hex_to_rgb(colors.bg)
+  local c = {
+    math.floor(a[1] * (1 - t) + b[1] * t + 0.5),
+    math.floor(a[2] * (1 - t) + b[2] * t + 0.5),
+    math.floor(a[3] * (1 - t) + b[3] * t + 0.5),
+  }
+  return rgb_to_hex(c)
+end
+```
+
+Using it is pretty straightforward. eg:
+
+```lua
+h('DiagnosticVirtualTextError', { bg = blend(colors.red, 0.65) })
+```
+
 ## Does It Actually Work?
 
 ![Retina](/images/colorscheme.png)
 
-Don't doubt it, this is still neovim 😏. I've been using this theme (I call it **Retina**) for two months now. Here's what I've noticed:
+Don't doubt it, this is still neovim 😏. I've been using this theme (I call it
+**Retina**) for two months now. Here's what I've noticed:
 
 - **My eyes don't get tired anymore.** I can code for hours without that strained feeling.
 - **Errors actually stand out.** That slight brightness bump makes all the difference.
@@ -293,14 +376,16 @@ Don't doubt it, this is still neovim 😏. I've been using this theme (I call it
 
 ## A Quick Reality Check
 
-Look, vision is personal. This works for me, but your eyes might be different. Things that matter:
+Look, vision is personal. This works for me, but your eyes might be different.
+Things that matter:
 
 - **Your age** (older eyes often need more contrast)
 - **Your monitor** (OLED vs LCD, different calibrations)
 - **Your environment** (dark room vs bright office)
 - **Your color vision** (about 8% of men see colors differently)
 
-The beauty of this approach is you can adjust the *parameters* instead of guessing:
+The beauty of this approach is you can adjust the *parameters* instead of
+guessing:
 
 ```lua
 -- Need more contrast? Bump up the brightness:
@@ -315,7 +400,8 @@ colors.orange = oklab_to_srgb(0.68, 0.050, 0.070)  -- More yellow
 
 You're tuning a system, not just picking random colors.
 
-The best theme really is the one you forget you're using. It just gets out of your way and lets you focus on the code.
+The best theme really is the one you forget you're using. It just gets out of
+your way and lets you focus on the code.
 
 ---
 
