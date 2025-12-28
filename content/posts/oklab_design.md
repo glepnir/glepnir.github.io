@@ -6,7 +6,7 @@ tags = ["neovim", "oklab", "color-theory"]
 toc = true
 +++
 
-I've probably made some different Neovim themes over the years. Each time I
+I've probably made like 20 different Neovim themes over the years. Each time I
 thought "this is the one" and each time, a month later, I'd be tweaking colors
 again because something just felt... off.
 
@@ -58,7 +58,7 @@ oklab_to_srgb(0.72, 0.055, 0.065)  -- Same hue, 4% brighter
 
 That's it. No guessing.
 
-## The Math
+## Implementation
 
 The conversion from Oklab to RGB goes through a few steps:
 
@@ -149,17 +149,15 @@ colors.fg = oklab_to_srgb(0.74, 0.0, 0.008)
 
 There are two common approaches:
 
-**Style 1: Data-First** ([Tonsky's philosophy](https://tonsky.me/blog/syntax-highlighting/))
-- Dim keywords (low brightness + low saturation) - they're just syntactic noise
-- Brighten function definitions, strings, numbers - that's your actual code
-- Example: keywords at L=0.60, data at L=0.68-0.70
-
-**Style 2: Structure-First**
+**Style 1: Structure-First**
 - Brighten keywords, functions, types - emphasize code structure
 - Dim data (strings, numbers) - they're secondary
 - Example: structure at L=0.68, data at L=0.64
 
-See the "Putting It Together" section below for concrete examples of both styles.
+**Style 2: Data-First** ([Tonsky's philosophy](https://tonsky.me/blog/syntax-highlighting/))
+- Dim keywords (low brightness + low saturation) - they're just syntactic noise
+- Brighten function definitions, strings, numbers - that's your actual code
+- Example: keywords at L=0.60, data at L=0.68-0.70
 
 ## How to Pick a/b Values (Hue)
 
@@ -271,13 +269,11 @@ local blue   = oklab_to_srgb(0.68, -0.02, -0.06)
 local green  = oklab_to_srgb(0.64, -0.05, 0.06)
 local red    = oklab_to_srgb(0.66, 0.08, 0.04)
 
--- Use them
 vim.api.nvim_set_hl(0, 'Keyword', { fg = orange })
 vim.api.nvim_set_hl(0, 'Function', { fg = blue })
 vim.api.nvim_set_hl(0, 'String', { fg = green })
 vim.api.nvim_set_hl(0, 'DiagnosticError', { fg = red })
 
--- Blend for subtle backgrounds
 vim.api.nvim_set_hl(0, 'DiagnosticVirtualTextError', {
   bg = blend(red, 0.65)
 })
