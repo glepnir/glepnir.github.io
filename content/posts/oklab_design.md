@@ -6,7 +6,7 @@ tags = ["neovim", "oklab", "color-theory"]
 toc = true
 +++
 
-I've probably made like 20 different Neovim themes over the years. Each time I
+I've probably made some different Neovim themes over the years. Each time I
 thought "this is the one" and each time, a month later, I'd be tweaking colors
 again because something just felt... off.
 
