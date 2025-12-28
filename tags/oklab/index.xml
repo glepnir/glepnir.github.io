@@ -1,8 +1,12 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Oklab on glepnir's blog</title><link>https://www.functor.me/tags/oklab/</link><description>Recent content in Oklab on glepnir's blog</description><generator>Hugo</generator><language>en-us</language><lastBuildDate>Wed, 24 Dec 2025 18:48:14 +0800</lastBuildDate><atom:link href="https://www.functor.me/tags/oklab/index.xml" rel="self" type="application/rss+xml"/><item><title>The Best Theme Isn't the Prettiest—It's the One You Forget Exists</title><link>https://www.functor.me/posts/colorscheme/</link><pubDate>Wed, 24 Dec 2025 18:48:14 +0800</pubDate><guid>https://www.functor.me/posts/colorscheme/</guid><description>&lt;p&gt;For years, I was stuck in this cycle: find something that looks decent, tweak
-HSL values until it &amp;ldquo;feels right,&amp;rdquo; use it for a few weeks, then get that
-creeping eye strain. Suddenly colors that looked fine before would start to
-irritate me. Back to the drawing board.&lt;/p&gt;
-&lt;p&gt;I must have done this dozens of times. Each round felt more arbitrary than the
-last—just moving sliders around hoping something would click. Honestly, it was
-getting ridiculous. Why couldn&amp;rsquo;t I just find something that worked and stick
-with it?&lt;/p&gt;</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Oklab on glepnir's blog</title><link>https://www.functor.me/tags/oklab/</link><description>Recent content in Oklab on glepnir's blog</description><generator>Hugo</generator><language>en-us</language><lastBuildDate>Wed, 24 Dec 2025 18:48:14 +0800</lastBuildDate><atom:link href="https://www.functor.me/tags/oklab/index.xml" rel="self" type="application/rss+xml"/><item><title>Stop Guessing Hex Codes: A Better Way to Pick Theme Colors</title><link>https://www.functor.me/posts/oklab_design/</link><pubDate>Wed, 24 Dec 2025 18:48:14 +0800</pubDate><guid>https://www.functor.me/posts/oklab_design/</guid><description>&lt;p&gt;I&amp;rsquo;ve probably made some different Neovim themes over the years. Each time I
+thought &amp;ldquo;this is the one&amp;rdquo; and each time, a month later, I&amp;rsquo;d be tweaking colors
+again because something just felt&amp;hellip; off.&lt;/p&gt;
+&lt;p&gt;The problem? I was doing what everyone does—picking colors by eye, converting
+between RGB and HSL, hoping the math would somehow make sense. Spoiler: it
+doesn&amp;rsquo;t.&lt;/p&gt;
+&lt;p&gt;Then I found Oklab and everything got way easier.&lt;/p&gt;
+&lt;h2 id="rgbhsl-are-kinda-broken-for-this"&gt;RGB/HSL Are Kinda Broken for This&lt;/h2&gt;
+&lt;p&gt;Here&amp;rsquo;s the thing: in RGB, changing red from 200 to 210 might look like a tiny
+shift, but changing blue from 200 to 210 could be a massive difference. HSL is
+better but still weird—adjusting saturation can make some colors way brighter
+and others barely change.&lt;/p&gt;</description></item></channel></rss>
