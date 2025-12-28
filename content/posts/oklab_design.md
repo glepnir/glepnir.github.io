@@ -231,8 +231,8 @@ local function rgb_to_hex(c)
   return string.format('#%02x%02x%02x', c[1], c[2], c[3])
 end
 
-local function blend(fg, t)
-  local a, b = hex_to_rgb(fg), hex_to_rgb(colors.bg)
+local function blend(fg, bg, t)
+  local a, b = hex_to_rgb(fg), hex_to_rgb(bg)
   local c = {
     math.floor(a[1] * (1 - t) + b[1] * t + 0.5),
     math.floor(a[2] * (1 - t) + b[2] * t + 0.5),
@@ -245,10 +245,13 @@ end
 Use it like this:
 
 ```lua
+local red = oklab_to_srgb(0.66, 0.08, 0.04)
+local bg  = oklab_to_srgb(0.24, 0.001, 0.006)
+
 -- Red error text on a very subtle reddish background
-h('DiagnosticVirtualTextError', {
-  fg = colors.red,
-  bg = blend(colors.red, 0.65)  -- 65% background, 35% red
+vim.api.nvim_set_hl(0, 'DiagnosticVirtualTextError', {
+  fg = red,
+  bg = blend(red, bg, 0.65)  -- 65% background, 35% red
 })
 ```
 
@@ -263,19 +266,26 @@ even match.
 Just some quick examples of how to use this:
 
 ```lua
+-- Background and foreground
+local bg = oklab_to_srgb(0.24, 0.001, 0.006)
+local fg = oklab_to_srgb(0.74, 0.0, 0.008)
+
 -- Make a few colors
 local orange = oklab_to_srgb(0.68, 0.055, 0.065)
 local blue   = oklab_to_srgb(0.68, -0.02, -0.06)
 local green  = oklab_to_srgb(0.64, -0.05, 0.06)
 local red    = oklab_to_srgb(0.66, 0.08, 0.04)
 
+-- Use them
+vim.api.nvim_set_hl(0, 'Normal', { fg = fg, bg = bg })
 vim.api.nvim_set_hl(0, 'Keyword', { fg = orange })
 vim.api.nvim_set_hl(0, 'Function', { fg = blue })
 vim.api.nvim_set_hl(0, 'String', { fg = green })
 vim.api.nvim_set_hl(0, 'DiagnosticError', { fg = red })
 
+-- Blend for subtle backgrounds
 vim.api.nvim_set_hl(0, 'DiagnosticVirtualTextError', {
-  bg = blend(red, 0.65)
+  bg = blend(red, bg, 0.65)
 })
 ```
 
