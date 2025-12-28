@@ -20,10 +20,15 @@ which one I preferred. They looked like this:&lt;/p&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;I looked at them for a solid five seconds before it hit me: these two loops were
 fundamentally the same mathematical pattern! But in the code, that pattern was
-buried under &lt;code&gt;for&lt;/code&gt; loops and accumulation variables.&lt;/p&gt;</description></item><item><title>Stop Guessing Hex Codes: A Better Way to Pick Theme Colors</title><link>https://www.functor.me/posts/oklab_design/</link><pubDate>Wed, 24 Dec 2025 18:48:14 +0800</pubDate><guid>https://www.functor.me/posts/oklab_design/</guid><description>&lt;p&gt;I&amp;rsquo;ve probably made like 20 different Neovim themes over the years. Each time I
+buried under &lt;code&gt;for&lt;/code&gt; loops and accumulation variables.&lt;/p&gt;</description></item><item><title>Stop Guessing Hex Codes: A Better Way to Pick Theme Colors</title><link>https://www.functor.me/posts/oklab_design/</link><pubDate>Wed, 24 Dec 2025 18:48:14 +0800</pubDate><guid>https://www.functor.me/posts/oklab_design/</guid><description>&lt;p&gt;I&amp;rsquo;ve probably made some different Neovim themes over the years. Each time I
 thought &amp;ldquo;this is the one&amp;rdquo; and each time, a month later, I&amp;rsquo;d be tweaking colors
 again because something just felt&amp;hellip; off.&lt;/p&gt;
 &lt;p&gt;The problem? I was doing what everyone does—picking colors by eye, converting
 between RGB and HSL, hoping the math would somehow make sense. Spoiler: it
 doesn&amp;rsquo;t.&lt;/p&gt;
-&lt;p&gt;Then I found Oklab and everything got way easier.&lt;/p&gt;</description></item></channel></rss>
+&lt;p&gt;Then I found Oklab and everything got way easier.&lt;/p&gt;
+&lt;h2 id="rgbhsl-are-kinda-broken-for-this"&gt;RGB/HSL Are Kinda Broken for This&lt;/h2&gt;
+&lt;p&gt;Here&amp;rsquo;s the thing: in RGB, changing red from 200 to 210 might look like a tiny
+shift, but changing blue from 200 to 210 could be a massive difference. HSL is
+better but still weird—adjusting saturation can make some colors way brighter
+and others barely change.&lt;/p&gt;</description></item></channel></rss>

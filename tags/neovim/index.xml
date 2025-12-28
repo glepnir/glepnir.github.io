@@ -1,7 +1,12 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Neovim on glepnir's blog</title><link>https://www.functor.me/tags/neovim/</link><description>Recent content in Neovim on glepnir's blog</description><generator>Hugo</generator><language>en-us</language><lastBuildDate>Wed, 24 Dec 2025 18:48:14 +0800</lastBuildDate><atom:link href="https://www.functor.me/tags/neovim/index.xml" rel="self" type="application/rss+xml"/><item><title>Stop Guessing Hex Codes: A Better Way to Pick Theme Colors</title><link>https://www.functor.me/posts/oklab_design/</link><pubDate>Wed, 24 Dec 2025 18:48:14 +0800</pubDate><guid>https://www.functor.me/posts/oklab_design/</guid><description>&lt;p&gt;I&amp;rsquo;ve probably made like 20 different Neovim themes over the years. Each time I
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Neovim on glepnir's blog</title><link>https://www.functor.me/tags/neovim/</link><description>Recent content in Neovim on glepnir's blog</description><generator>Hugo</generator><language>en-us</language><lastBuildDate>Wed, 24 Dec 2025 18:48:14 +0800</lastBuildDate><atom:link href="https://www.functor.me/tags/neovim/index.xml" rel="self" type="application/rss+xml"/><item><title>Stop Guessing Hex Codes: A Better Way to Pick Theme Colors</title><link>https://www.functor.me/posts/oklab_design/</link><pubDate>Wed, 24 Dec 2025 18:48:14 +0800</pubDate><guid>https://www.functor.me/posts/oklab_design/</guid><description>&lt;p&gt;I&amp;rsquo;ve probably made some different Neovim themes over the years. Each time I
 thought &amp;ldquo;this is the one&amp;rdquo; and each time, a month later, I&amp;rsquo;d be tweaking colors
 again because something just felt&amp;hellip; off.&lt;/p&gt;
 &lt;p&gt;The problem? I was doing what everyone does—picking colors by eye, converting
 between RGB and HSL, hoping the math would somehow make sense. Spoiler: it
 doesn&amp;rsquo;t.&lt;/p&gt;
-&lt;p&gt;Then I found Oklab and everything got way easier.&lt;/p&gt;</description></item></channel></rss>
+&lt;p&gt;Then I found Oklab and everything got way easier.&lt;/p&gt;
+&lt;h2 id="rgbhsl-are-kinda-broken-for-this"&gt;RGB/HSL Are Kinda Broken for This&lt;/h2&gt;
+&lt;p&gt;Here&amp;rsquo;s the thing: in RGB, changing red from 200 to 210 might look like a tiny
+shift, but changing blue from 200 to 210 could be a massive difference. HSL is
+better but still weird—adjusting saturation can make some colors way brighter
+and others barely change.&lt;/p&gt;</description></item></channel></rss>
