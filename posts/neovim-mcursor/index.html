@@ -1,0 +1,912 @@
+<!doctype html><html lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta http-equiv=cache-control content="max-age=0"><meta http-equiv=cache-control content="no-cache"><meta http-equiv=expires content="0"><meta http-equiv=expires content="Tue, 01 Jan 1980 1:00:00 GMT"><meta http-equiv=pragma content="no-cache"><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png }><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=manifest href=/site.webmanifest><meta name=theme-color media="(prefers-color-scheme: light)" content="#ffffff"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#1b1b1b"><meta name=description content="Neovim's New Multicursor Support"><title>Neovim's New Multicursor Support | glepnir's blog</title><style>:root{--background:#ffffff}@media(prefers-color-scheme:dark){:root{--background:#1b1b1b}}html{background-color:var(--background)}body{background-color:var(--background)}</style><link rel=stylesheet type=text/css href=/style.min.0e9c0bb0a7de7a330263937778a4d7c0d0c6be7f327c69a0223c9f2fd31e00d5.css media=all></head><body><nav><ul class=menu><li><a tabindex=-1 class=menu-link href=/><u>H</u>ome</a></li><li><a tabindex=-1 class=menu-link href=/tags><u>T</u>ags</a></li></ul></nav><div id=single-header><h1>Neovim&rsquo;s New Multicursor Support</h1><div id=single-meta><span class=datesub>Sep 4, 2026</span></div></div><aside class="hidden lg:block toc" id=tableOfContentContainer><nav id=TableOfContents><ul><li><a href=#how-it-works>How it works</a></li><li><a href=#keys>Keys</a></li></ul><ul><li><a href=#q>Q</a></li><li><a href=#countq>[count]Q</a></li><li><a href=#visualq>{Visual}Q</a></li><li><a href=#mouse>Mouse</a></li><li><a href=#g-and-cdo>:g and :cdo</a></li><li><a href=#lua>Lua</a></li></ul><ul><li><a href=#operators>Operators</a></li><li><a href=#chaining>Chaining</a></li><li><a href=#dot-repeat>Dot-repeat</a></li></ul><ul><li><a href=#occurrence-operator>Occurrence operator</a></li><li><a href=#follow-mode-for-exactly-one-motion>Follow mode for exactly one motion</a></li><li><a href=#telling-the-primary-apart-in-an-autocommand>Telling the primary apart in an autocommand</a></li><li><a href=#cursors-from-a-treesitter-query>Cursors from a treesitter query</a></li><li><a href=#pruning>Pruning</a></li><li><a href=#aligning-columns>Aligning columns</a></li><li><a href=#cursors-from-quickfix-across-files>Cursors from quickfix, across files</a></li><li><a href=#cmdatom>CmdAtom</a></li></ul></nav></aside><main><p>Multiple cursors landed in Neovim core on September 1. PR <a href=https://github.com/neovim/neovim/pull/41587 target=_blank rel="noreferrer nofollow">#41587</a>, branch name <code>mchammer</code>. It ships in 0.13, so today you need nightly.</p><p><code>Q</code> drops a cursor. <code>1Q</code> drops one on every search match. <code>&lt;C-l></code> clears them. Everything you already know about Vim keeps working. That&rsquo;s most of it.</p><h2 id=how-it-works>How it works</h2><p>This isn&rsquo;t keystroke replay. Each action you take gets captured as an <strong>atom</strong>: the resolved, post-mapping key sequence for one semantic thing, the same material dot-repeat runs on. <code>x</code> is captured as <code>dl</code>. <code>viweex</code> is captured as <code>viweed</code>. Then every extra cursor replays that atom in its own context, which is why a visual sequence gets per-cursor extents instead of a fixed-size reselect.</p><p>A few things follow from that:</p><ul><li>Cursors are extmarks in the <code>nvim.multicursor</code> namespace. That&rsquo;s the whole state. The primary cursor isn&rsquo;t one of them.</li><li>Cursor sets are per-buffer, and a cascade only runs in the current buffer.</li><li>Atoms replay at the completion of a toplevel normal command. A mapping still feeding keys pushes that back, so a mapping cascades as one unit.</li><li>Insert mode previews at each cursor while you type instead of replaying at the end.</li><li>Registers go per-cursor for the session, then join when it ends.</li><li>One cascade is one undo state. Undo and redo never cascade.</li><li>Cascade replays emit no <code>CmdAtom</code>. One action, one event, cursors or not.</li></ul><h2 id=keys>Keys</h2><table><thead><tr><th>Key</th><th>Effect</th></tr></thead><tbody><tr><td><code>Q</code></td><td>Toggle a cursor here. Ends follow-mode.</td></tr><tr><td><code>[count]Q</code></td><td>Cursor at every match of the last search pattern</td></tr><tr><td><code>{Visual}Q</code></td><td>Cursor on every selected line, by screen column. Starts follow-mode.</td></tr><tr><td><code>&lt;C-LeftMouse></code></td><td>Toggle a cursor at the click. Keeps follow-mode.</td></tr><tr><td><code>q=</code></td><td>Toggle follow-mode. <code>1q=</code> on, <code>2q=</code> off.</td></tr><tr><td><code>]C</code> / <code>[C</code></td><td>Next / previous cursor, wraps, takes a count</td></tr><tr><td><code>g&lt;C-a></code></td><td>Ascending counter at each cursor</td></tr><tr><td><code>&lt;C-l></code></td><td>Clear cursors in the buffer</td></tr><tr><td><code>gQ</code></td><td>Restore the last cleared set</td></tr><tr><td><code>&lt;C-c></code></td><td>Interrupt a cascade</td></tr></tbody></table><p>Turn on <code>showcmd</code> and the count shows up there as <code>2×</code>, or <code>=2×</code> in follow-mode.</p><h1 id=placing-cursors>Placing cursors</h1><h2 id=q>Q</h2><p>The cursor starts at line 1 column 1 unless the keys say otherwise.</p><pre tabindex=0><code>QjQjx
+
+aaa   │   aa
+bbb   │   bb
+ccc   │   cc
+</code></pre><p>It&rsquo;s a toggle. Press it on a cursor and that cursor goes away; take out the last one and the session ends.</p><pre tabindex=0><code>QjQk      2 cursors, primary back on line 1
+Q         removes the cursor under the primary, 1 left
+x
+
+aaa   │   aa
+bbb   │   bb
+</code></pre><p>If a cursor is sitting on the primary, the edit happens once and the pair merges.</p><pre tabindex=0><code>Qx
+
+ab   │   b        one deletion, 0 cursors left
+</code></pre><p>In operator-pending mode <code>Q</code> throws the operator away and places nothing.</p><pre tabindex=0><code>dQ        the d is gone, no cursor
+wx
+
+one two   │   one wo
+</code></pre><p>You can&rsquo;t use it inside a macro, recording or executing. It just beeps.</p><pre tabindex=0><code>qq Q q    no cursor (the Q gets recorded)
+@q        no cursor either
+Q         works
+</code></pre><p>And watch out for <code>qQ</code>, which is <code>q</code> starting a recording into register <code>Q</code>.</p><h2 id=countq>[count]Q</h2><p>A cursor at every match of the last search pattern, including the one under the primary. The primary doesn&rsquo;t move.</p><pre tabindex=0><code>gg0*1Q cwXXX&lt;Esc&gt;
+
+foo bar foo   │   XXX bar XXX
+baz foo qux   │   baz XXX qux
+foobar foo    │   foobar XXX
+</code></pre><p><code>*</code> is whole-word, so <code>foobar</code> misses. Four cursors before the edit, three after: the one on top of the primary merges away in the first cascade.</p><p>Any search works.</p><pre tabindex=0><code>gg0/ab&lt;CR&gt;1Q x
+
+ab ab ab   │   b b b
+xx ab      │   xx b
+</code></pre><p>Placement runs through the real search engine, so your case options behave exactly like they do for <code>n</code>.</p><pre tabindex=0><code>:set smartcase                       :set ignorecase
+gg0/Foo&lt;CR&gt;1Q x                      gg0/foo&lt;CR&gt;1Q gUiw
+
+Foo foo Foo   │   oo foo oo          Foo foo FOO   │   FOO FOO FOO
+</code></pre><p>No previous search, no cursors (E35).</p><p>The two placement styles mix.</p><pre tabindex=0><code>gg0*1Q    2 cursors on the two &#34;foo&#34;
+0fbQ      3 cursors, adding &#34;bar&#34;
+$x        the primary edits a fourth position
+
+foo bar foo   │   oo ar o
+</code></pre><h2 id=visualq>{Visual}Q</h2><p>Visual mode ends, the primary lands on the first selected line, and every selected line gets a cursor at the primary&rsquo;s screen column. Follow-mode comes on.</p><pre tabindex=0><code>gg0ll V2j Q iX&lt;Esc&gt;
+
+aaaa   │   aaXaa
+bbbb   │   bbXbb
+cc     │   ccX          short line: the cursor sits past EOL
+dddd   │   dddd
+</code></pre><p>Follow-mode is on, so the next motion takes everything with it.</p><pre tabindex=0><code>jx
+
+aaXaa   │   aaXaa
+bbXbb   │   bbbb
+ccX     │   cc
+dddd    │   ddd
+</code></pre><p>Screen column, not byte column. A multibyte character earlier on one line won&rsquo;t throw off the cursors on the others.</p><pre tabindex=0><code>gg0ll vjQ x
+
+é123     │   é13
+abcdef   │   abdef
+</code></pre><h2 id=mouse>Mouse</h2><p><code>&lt;C-LeftMouse></code> toggles a cursor where you click, without moving the primary or pulling you into another window. Ctrl-click an existing cursor to remove it. Unlike <code>Q</code> it leaves follow-mode alone, and it&rsquo;s a no-op in insert mode. Middle-click paste is still one paste at the click point.</p><h2 id=g-and-cdo>:g and :cdo</h2><p><code>Q</code> is a normal-mode command, so anything that runs normal-mode commands can place cursors.</p><pre tabindex=0><code>:g/foo/normal! Q
+A!&lt;Esc&gt;
+
+foo a   │   foo a!
+bar b   │   bar b
+foo c   │   foo c!
+baz d   │   baz d
+foo e   │   foo e!
+</code></pre><p>Put motions in front of the <code>Q</code> to pick the column.</p><pre tabindex=0><code>:g/checkPassword/normal! 0fcQ
+cwverifyPassword&lt;Esc&gt;
+</code></pre><p>Quickfix works the same, except a range there addresses items, not lines.</p><pre tabindex=0><code>qflist on lines 1, 2, 4
+:cdo normal! Q      3 cursors
+3G0                 move the primary off the last item
+x
+
+aaa   │   aa
+bbb   │   bb
+ccc   │   cc          the primary&#39;s own edit
+ddd   │   dd
+
+:2,3cdo normal! Q   2 cursors, items 2 and 3
+</code></pre><h2 id=lua>Lua</h2><p><code>nvim_mcursor(buf, {row, col})</code> takes a (1,0)-indexed position and hands back the number of extra cursors. Calling it on an existing cursor is a no-op, not a toggle. Hidden buffers are fine.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-lua data-lang=lua><span class=line><span class=cl><span class=kr>for</span> <span class=n>_</span><span class=p>,</span> <span class=n>m</span> <span class=kr>in</span> <span class=n>ipairs</span><span class=p>(</span><span class=n>vim.fn</span><span class=p>.</span><span class=n>matchbufline</span><span class=p>(</span><span class=s1>&#39;%&#39;</span><span class=p>,</span> <span class=s>[[\&lt;TODO\&gt;]]</span><span class=p>,</span> <span class=mi>1</span><span class=p>,</span> <span class=s1>&#39;$&#39;</span><span class=p>))</span> <span class=kr>do</span>
+</span></span><span class=line><span class=cl>  <span class=n>vim.api</span><span class=p>.</span><span class=n>nvim_mcursor</span><span class=p>(</span><span class=mi>0</span><span class=p>,</span> <span class=p>{</span> <span class=n>m.lnum</span><span class=p>,</span> <span class=n>m.byteidx</span> <span class=p>})</span>
+</span></span><span class=line><span class=cl><span class=kr>end</span>
+</span></span></code></pre></div><p>Bad input gets you <code>Invalid cursor line: out of range</code>, <code>Invalid 'pos': expected [row, col] array</code>, or <code>Invalid buffer</code>.</p><h1 id=clearing-them>Clearing them</h1><p><code>&lt;C-l></code> clears the buffer&rsquo;s cursors on top of its usual <code>nohlsearch</code> and <code>diffupdate</code>. It&rsquo;s a default mapping, so if you wrap it you need to remap, not feed it noremap.</p><p>Clearing takes a snapshot, and <code>gQ</code> brings it back, same idea as <code>gv</code>.</p><pre tabindex=0><code>QjQ      cursors on lines 1 and 2
+&lt;C-l&gt;    0 cursors
+gQ       2 cursors
+Gx
+
+aaa   │   aa
+bbb   │   bb
+ccc   │   ccc
+ddd   │   dd
+</code></pre><p>The snapshot rides on extmarks, so edits in between shift it.</p><pre tabindex=0><code>&lt;C-l&gt; ggO&lt;Esc&gt; gQ     the restored cursors moved down a line
+</code></pre><p><code>:edit!</code> takes out the cursors and the snapshot together. Clearing part of the namespace removes those cursors without ending the session, so the rest keep follow-mode and the registers don&rsquo;t join yet.</p><p>From Lua, clearing the namespace is the same operation, snapshot and all.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-lua data-lang=lua><span class=line><span class=cl><span class=n>vim.api</span><span class=p>.</span><span class=n>nvim_buf_clear_namespace</span><span class=p>(</span><span class=mi>0</span><span class=p>,</span> <span class=n>vim.api</span><span class=p>.</span><span class=n>nvim_create_namespace</span><span class=p>(</span><span class=s1>&#39;nvim.multicursor&#39;</span><span class=p>),</span> <span class=mi>0</span><span class=p>,</span> <span class=o>-</span><span class=mi>1</span><span class=p>)</span>
+</span></span></code></pre></div><p><code>&lt;C-c></code> interrupts a cascade in flight. What got done is still one undo block and no line ends up half-edited. It doesn&rsquo;t clear anything.</p><h1 id=normal-mode>Normal mode</h1><h2 id=operators>Operators</h2><pre tabindex=0><code>QjQjdw
+
+hello world   │   world
+foo bar       │   bar
+one two       │   two
+</code></pre><pre tabindex=0><code>QjQj2x
+
+aaaa   │   aa
+bbbb   │   bb
+cccc   │   cc
+</code></pre><pre tabindex=0><code>Q2jQ2jdd
+
+a1   │   a2
+a2   │   b2
+b1   │   c2
+b2   │
+c1   │
+c2   │
+</code></pre><pre tabindex=0><code>gg0ll QjD              gg0ll QjCX&lt;Esc&gt;
+
+one two      │   on    one two      │   onX
+three four   │   th    three four   │   thX
+</code></pre><pre tabindex=0><code>Qj2clXY&lt;Esc&gt;           Qj~~
+
+abcd   │   XYcd        abc   │   ABc
+efgh   │   XYgh        def   │   DEf
+</code></pre><p>Backwards:</p><pre tabindex=0><code>gg$ Qj$cT_M&lt;Esc&gt;       gg$ Qj$d4h
+
+x_abcY    │   x_MY     abcdef   │   af
+w_defgZ   │   w_MZ     ghijkl   │   gl
+</code></pre><p>Counted objects, and objects that seek forward:</p><pre tabindex=0><code>Qjc2awX&lt;Esc&gt;                     gg0l Qjci(X&lt;Esc&gt;
+
+one two three   │   Xthree       a()b   │   a(X)b
+foo bar baz     │   Xbaz         c()d   │   c(X)d
+</code></pre><pre tabindex=0><code>Qjci&#34;NEW&lt;Esc&gt;
+
+x &#34;aa&#34; y    │   x &#34;NEW&#34; y
+z &#34;bbb&#34; w   │   z &#34;NEW&#34; w
+</code></pre><p>Operators that eat a payload character:</p><pre tabindex=0><code>Qjdf,                  Qj2rZ                  QjgrZ
+
+ab,cd   │   cd         abc   │   ZZc          abc   │   Zbc
+wxy,z   │   z          def   │   ZZf          def   │   Zef
+</code></pre><p><code>r&lt;CR></code> terminates itself, no <code>&lt;Esc></code>:</p><pre tabindex=0><code>gg0l Qjr&lt;CR&gt;
+
+abcd   │   a
+efgh   │   cd
+       │   e
+       │   gh
+</code></pre><p>A search as the operator&rsquo;s motion travels with the atom, and each cursor finds its own match:</p><pre tabindex=0><code>Qjd/find&lt;CR&gt;
+
+aaa find end   │   find end
+bbb find end   │   find end
+</code></pre><p>Multibyte:</p><pre tabindex=0><code>Qjx
+
+éàü      │   àü
+日本語   │   本語
+</code></pre><p>Cursors end up wherever the operator left them, so the next key acts per region:</p><pre tabindex=0><code>gg0l QjQjdiw           then x
+
+foo bar   │    bar     │   bar
+baz qux   │    qux     │   qux
+aaa bbb   │    bbb     │   bbb
+</code></pre><pre tabindex=0><code>gg0l QjguiW            then x
+
+FOO BAR   │   foo BAR  │   oo BAR
+BAZ QUX   │   baz QUX  │   az QUX
+</code></pre><p>Options apply per cursor:</p><pre tabindex=0><code>:set autoindent                  :set shiftwidth=2
+QjccX&lt;Esc&gt;                       Qj&gt;&gt;
+
+␣␣aaa       │   ␣␣X             foo   │   ␣␣foo
+␣␣␣␣␣␣bbb   │   ␣␣␣␣␣␣X         bar   │   ␣␣bar
+</code></pre><p><code>&lt;C-a></code> and <code>&lt;C-x></code> cascade like anything else:</p><pre tabindex=0><code>Qj&lt;C-x&gt;            then &lt;C-a&gt;
+
+x = 5   │   x = 4      │   x = 5
+y = 5   │   y = 4      │   y = 5
+</code></pre><h2 id=chaining>Chaining</h2><p>Positions update after each cascade:</p><pre tabindex=0><code>QjQ jx             then x
+
+AAAA   │   AAA        │   AA
+BBBB   │   BBB        │   BB
+CCCC   │   CCC        │   CC
+</code></pre><p>Anything that inserts lines shifts the cursors below it, primary included:</p><pre tabindex=0><code>QjQj oX&lt;Esc&gt;
+
+aaa   │   aaa
+bbb   │   X
+ccc   │   bbb
+      │   X
+      │   ccc
+      │   X
+</code></pre><p>Typeahead behind the cascading key survives:</p><pre tabindex=0><code>Qj xyy      then p
+
+abc   │   bc          │   bc
+def   │   ef          │   bc
+                      │   ef
+                      │   ef
+</code></pre><h2 id=dot-repeat>Dot-repeat</h2><pre tabindex=0><code>QjQj x  .
+
+aaa   │   aa   │   a
+bbb   │   bb   │   b
+ccc   │   cc   │   c
+</code></pre><p>An edit you made <em>before</em> placing cursors is still what <code>.</code> repeats:</p><pre tabindex=0><code>gg0x        aaa/bbb/ccc  -&gt;  aa/bbb/ccc
+QjQj
+.
+
+aa    │   a
+bbb   │   bb
+ccc   │   cc
+</code></pre><p>Inserts and changes repeat too, including across a follow-mode move:</p><pre tabindex=0><code>Qj iZ&lt;Esc&gt; .           Qj cwX&lt;Esc&gt; q= w q= .
+
+aaa   │   ZZaaa        one two   │   X X
+bbb   │   ZZbbb        one two   │   X X
+</code></pre><h1 id=follow-mode>Follow mode</h1><p>Off by default: only the primary moves.</p><pre tabindex=0><code>Q j          no cascade, the cursor stays on line 1
+q= ll x      now both move
+
+abcd   │   abd
+efgh   │   efh
+</code></pre><p><code>q=</code> toggles. A count forces instead, so <code>1q=</code> always turns it on and <code>2q=</code> always turns it off.</p><pre tabindex=0><code>q= h x          off again: only the primary moves
+1q= 1q= h x     forced on, both move
+2q= 2q= h x     forced off
+</code></pre><p><code>$</code> sends each cursor to its own end of line:</p><pre tabindex=0><code>Qj q= $ x
+
+abc     │   ab
+defgh   │   defg
+</code></pre><p>Vertical, display and arrow motions all follow:</p><pre tabindex=0><code>Q3j q= j x        then k x        then gj x        then gk x
+
+a1   │   a1   │   1    │   1    │
+a2   │   2    │   2    │        │
+a3   │   a3   │   a3   │   a3   │   a3
+b1   │   b1   │   1    │   1    │
+b2   │   2    │   2    │        │
+b3   │   b3   │   b3   │   b3   │   b3
+</code></pre><p>Each cursor keeps its own curswant over short lines:</p><pre tabindex=0><code>gg04l Q 3jhh      primary at (4,2), cursor at (1,4)
+q= jj q= x
+
+ABCDEF   │   ABCDEF
+xy       │   xy
+GHIJKL   │   GHIJL
+MNOPQR   │   MNOPQR
+zw       │   zw
+STUVWX   │   STVWX
+</code></pre><p>Mapped and <code>&lt;expr></code>-mapped motions follow:</p><pre tabindex=0><code>:nnoremap j gj
+Q2j q= j x
+
+a1   │   a1
+a2   │   2
+b1   │   b1
+b2   │   2
+</code></pre><p>Jumps don&rsquo;t follow. <code>&lt;C-o></code> and <code>`</code> move the primary alone. Scrolling never follows either way, so <code>&lt;C-d></code> is primary-only, and a later edit still cascades to the off-screen cursors while the viewport stays where it was.</p><p>Cursors that converge merge, and if they all merge the session ends and follow-mode resets:</p><pre tabindex=0><code>QjQ q= G q= x
+
+aaa   │   aaa
+bbb   │   bbb
+ccc   │   cc          one deletion, not three
+</code></pre><p><code>Q</code> ends follow-mode. <code>&lt;C-LeftMouse></code> doesn&rsquo;t. <code>]C</code> and <code>[C</code> don&rsquo;t drag the others.</p><p><code>q=</code> while you&rsquo;re recording a macro won&rsquo;t toggle, because the <code>q</code> stops the recording first.</p><p>A mapping that edits cascades its motions too, even with follow-mode off:</p><pre tabindex=0><code>:nnoremap gj i&lt;C-j&gt;&lt;Esc&gt;k$
+gg04l QjQj gj
+
+aaa bbb   │   aaa␣
+ccc ddd   │   bbb
+eee fff   │   ccc␣
+          │   ddd
+          │   eee␣
+          │   fff
+</code></pre><h1 id=insert-mode>Insert mode</h1><p>Text shows up at the other cursors as you type it, not at <code>&lt;Esc></code>.</p><pre tabindex=0><code>QjQj I# &lt;Esc&gt;
+
+puts &#34;one&#34;     │   # puts &#34;one&#34;
+puts &#34;two&#34;     │   # puts &#34;two&#34;
+puts &#34;three&#34;   │   # puts &#34;three&#34;
+</code></pre><p>Cursor moves inside the session cascade live and resolve per cursor:</p><pre tabindex=0><code>QjQj Aab&lt;Left&gt;&lt;Left&gt;X       (still in insert mode)
+
+alpha one     │   alpha oneXab
+beta two      │   beta twoXab
+gamma three   │   gamma threeXab
+
+&lt;Esc&gt; AZ&lt;Home&gt;Y&lt;Esc&gt;        &lt;Home&gt; is each line&#39;s own start
+
+              │   Yalpha oneXabZ
+              │   Ybeta twoXabZ
+              │   Ygamma threeXabZ
+
+A&lt;S-Left&gt;W&lt;Esc&gt;             word-wise, per cursor
+
+              │   Yalpha WoneXabZ
+              │   Ybeta WtwoXabZ
+              │   Ygamma WthreeXabZ
+</code></pre><p><code>&lt;C-g>U</code> cascades and doesn&rsquo;t split undo:</p><pre tabindex=0><code>Qj i12&lt;C-g&gt;U&lt;Left&gt;3&lt;Esc&gt;      then u
+
+aa   │   132aa      │   aa
+bb   │   132bb      │   bb
+</code></pre><p>An absolute jump splits the session and re-anchors:</p><pre tabindex=0><code>j0Q j0Q gg$ ix&lt;C-Home&gt;y&lt;Esc&gt;
+
+alpha   │   yalphxa
+beta    │   xybeta
+gamma   │   xygamma
+</code></pre><p><code>&lt;C-c></code> ends the session like <code>&lt;Esc></code> does. The text and the cursors both survive.</p><p>Deleting:</p><pre tabindex=0><code>Qj iXY&lt;BS&gt;Z&lt;Esc&gt;           gg0l Qji&lt;BS&gt;Z&lt;Esc&gt;
+
+aaa   │   XZaaa            abc   │   Zbc
+bbb   │   XZbbb            def   │   Zef
+</code></pre><p><code>&lt;BS></code> at column 0 joins with the line above:</p><pre tabindex=0><code>ggj0 Q2ji&lt;BS&gt;&lt;Esc&gt;
+
+aa   │   aabb
+bb   │   ccdd
+cc   │
+dd   │
+</code></pre><p><code>&lt;CR></code> splits:</p><pre tabindex=0><code>gg02l QjiAB&lt;CR&gt;CD&lt;Esc&gt;
+
+aaXbb   │   aaAB
+ccXdd   │   CDXbb
+        │   ccAB
+        │   CDXdd
+</code></pre><p>Entry commands:</p><pre tabindex=0><code>Q2jOX&lt;Esc&gt;          QjaZ&lt;Esc&gt;          gg$ Qj$IX&lt;Esc&gt;
+
+aaa   │   X         abc   │   aZbc     ␣␣aa     │   ␣␣Xaa
+bbb   │   aaa       def   │   dZef     ␣␣␣␣bb   │   ␣␣␣␣Xbb
+ccc   │   bbb
+      │   X
+      │   ccc
+</code></pre><p>Insert-mode commands:</p><pre tabindex=0><code>Qjifoo bar&lt;C-w&gt;X&lt;Esc&gt;       Qji&lt;C-v&gt;u00e9&lt;Esc&gt;      Qj3iZ&lt;Esc&gt;
+
+zz   │   foo Xzz            aaa   │   éaaa          aaa   │   ZZZaaa
+yy   │   foo Xyy            bbb   │   ébbb          bbb   │   ZZZbbb
+</code></pre><p>Replace mode, including <code>&lt;BS></code> putting back what it overwrote:</p><pre tabindex=0><code>QjRXY&lt;Esc&gt;                  QjRXY&lt;BS&gt;&lt;BS&gt;&lt;Esc&gt;
+
+abcdef   │   XYcdef         abcdef   │   abcdef
+ghijkl   │   XYijkl         ghijkl   │   ghijkl
+</code></pre><p>Abbreviations and <code>autoindent</code>:</p><pre tabindex=0><code>:iabbrev teh the            :set autoindent
+Qjiteh &lt;Esc&gt;                QjoX&lt;Esc&gt;
+
+aaa   │   the aaa           ␣␣aa       │   ␣␣aa
+bbb   │   the bbb           ␣␣␣␣␣␣bb   │   ␣␣X
+                                       │   ␣␣␣␣␣␣bb
+                                       │   ␣␣␣␣␣␣X
+</code></pre><p>A replayed <code>&lt;C-u></code> on a less-indented line has nothing to eat, and won&rsquo;t backspace through the line boundary:</p><pre tabindex=0><code>:set autoindent
+QjQj o&lt;C-u&gt;&lt;Tab&gt;yay&lt;Esc&gt;
+
+␣␣␣␣indented aa   │   ␣␣␣␣indented aa
+flat bb           │   →yay
+␣␣␣␣indented cc   │   flat bb
+                  │   →yay
+                  │   ␣␣␣␣indented cc
+                  │   →yay
+</code></pre><p><code>ea</code> under follow-mode:</p><pre tabindex=0><code>Qj q= ea!&lt;Esc&gt; q=
+
+one two      │   one! two
+three four   │   three! four
+</code></pre><p>Completion works. The cascade pauses while a popup is up and the other cursors catch up when it closes, so accepting a candidate lands everywhere:</p><pre tabindex=0><code>2gg Q j A&lt;C-n&gt;&lt;Esc&gt;
+
+wombat   │   wombat
+wo       │   wombat
+wo       │   wombat
+</code></pre><p>Same for <code>autocomplete</code> and for a plugin driving <code>complete()</code> from an <code>InsertCharPre</code> handler.</p><p>Autocommand counts match what you&rsquo;d get with one cursor. <code>InsertEnter</code> and <code>InsertLeave</code> fire once. <code>TextChangedI</code> fires once per typed character, not once per cursor. <code>TextChanged</code> fires once for the session. <code>InsertCharPre</code> fires once per character, and whatever it does to <code>v:char</code> lands at every cursor. <code>textwidth</code> wraps per cursor.</p><p>Insertion points past EOL get drawn as virtual cells, so <code>A</code> at three cursors shows you three carets.</p><h1 id=visual-mode>Visual mode</h1><p>Each cursor shows its own selection, previewed live, with the display cursor at each selection end. <code>o</code> swaps it to the other end. Charwise, linewise and blockwise all render.</p><p>The whole keysequence replays, so the extents are per-cursor:</p><pre tabindex=0><code>Qj viweex
+
+one two three x   │   ␣x
+aa bb cc d        │   ␣d
+</code></pre><pre tabindex=0><code>Qjviwr X                   Q4jVjd
+
+one two   │   XXX two      a   │   c
+ab cd     │   XX cd        b   │   d
+                           c   │
+                           d   │
+                           e   │
+                           f   │
+</code></pre><p>Blockwise:</p><pre tabindex=0><code>Q2j&lt;C-v&gt;jcX&lt;Esc&gt;     Q2j&lt;C-v&gt;jIX&lt;Esc&gt;     Q2j&lt;C-v&gt;jA!&lt;Esc&gt;
+
+ab   │   Xb          ab   │   Xab         ab   │   a!b
+cd   │   Xd          cd   │   Xcd         cd   │   c!d
+ef   │   Xf          ef   │   Xef         ef   │   e!f
+gh   │   Xh          gh   │   Xgh         gh   │   g!h
+</code></pre><p>Payload motions inside the selection:</p><pre tabindex=0><code>Qjvf,d                     Qjv/two&lt;CR&gt;d
+
+abcd,ef   │   ef           one two   │   wo
+wxyz,gh   │   gh           one two   │   wo
+</code></pre><p><code>&lt;Esc></code> puts every cursor on its own selection end, which is a handy way to reposition without turning on follow-mode:</p><pre tabindex=0><code>gg04l QjQj viw&lt;Esc&gt;x       then 0viwe&lt;Esc&gt;x
+
+aaa bbb ccc   │   aaa bb ccc   │   aaa bb cc
+ddd eee fff   │   ddd ee fff   │   ddd ee ff
+ggg hhh iii   │   ggg hh iii   │   ggg h iii
+</code></pre><p>A selection changed by scrolling the viewport (<code>V&lt;C-e></code> at the window edge) isn&rsquo;t replayable, so it edits the primary only.</p><h1 id=registers>Registers</h1><p>Every cursor reads and writes its own.</p><pre tabindex=0><code>Qj yy p
+
+aaa   │   aaa
+bbb   │   aaa
+      │   bbb
+      │   bbb
+</code></pre><p>Swap two words everywhere:</p><pre tabindex=0><code>Qj q= dW E p q=
+
+one two      │   twoone␣
+three four   │   fourthree␣
+</code></pre><p>Paste each cursor&rsquo;s own yank over its own word:</p><pre tabindex=0><code>Qj yiw q= w q= viwp
+
+aaa X   │   aaa aaa
+bbb Y   │   bbb bbb
+</code></pre><p>Jagged line ends, each cursor on its own register:</p><pre tabindex=0><code>gg$Q j$ x        then p
+
+abc   │   ab     │   abc
+de    │   d      │   de
+</code></pre><p>Once the last cursor goes, the per-cursor values join in document order, linewise:</p><pre tabindex=0><code>Qj0Q j0 yiw       buffer unchanged; &#34; is &#34;baz&#34; during the session
+&lt;C-l&gt;             &#34; is now  foo\nbar\nbaz\n , type V
+
+foo x
+bar y
+baz z
+</code></pre><p>Named registers join the same way, and one nobody touched is left alone:</p><pre tabindex=0><code>:let @z = &#39;PRESET&#39;
+Qj0 &#34;ayiw &lt;C-l&gt;
+
+@a  -&gt;  foo\nbar\n
+@z  -&gt;  PRESET
+</code></pre><p>Last write wins:</p><pre tabindex=0><code>Qj0 yl x &lt;C-l&gt;
+
+aa    →   @&#34;  is  a\nb\n     the deletes, not the yanks
+bb
+</code></pre><p>A cursor whose replays never wrote a register contributes nothing, instead of folding in the stale pre-session value.</p><p><code>TextYankPost</code> fires per cursor with that cursor&rsquo;s contents. The primary fires first and isn&rsquo;t a replay, which <code>nvim__mcursor_cascading()</code> will tell you. The primary&rsquo;s registers are the ones that stick.</p><p>Under <code>clipboard=unnamedplus</code> the provider syncs once for the primary&rsquo;s own edit and once for the whole cascade, not once per cursor, and what reaches the clipboard is the primary&rsquo;s.</p><h1 id=undo>Undo</h1><p>One <code>u</code> reverts a whole cascade. <code>&lt;C-r></code> puts the cursors back where the edit left them, rather than wherever splice adjustment would have drifted them:</p><pre tabindex=0><code>QjQj$ IX &lt;Esc&gt;       cursors at column 1
+u                    cursors back at column 0
+&lt;C-r&gt;                cursors at column 1 again
+x
+
+aaa   │   X aaa   │   Xaaa
+bbb   │   X bbb   │   Xbbb
+ccc   │   X ccc   │   Xccc
+</code></pre><p>Each cascade is a step, and a count counts cascades:</p><pre tabindex=0><code>Q jx x          abc/def  -&gt;  bc/ef  -&gt;  c/f
+u               bc/ef
+u               abc/def
+&lt;C-r&gt;&lt;C-r&gt;      c/f
+2u              abc/def
+</code></pre><p><code>Q</code> is placement, not an edit, so the tree runs straight through the point where you placed cursors:</p><pre tabindex=0><code>gg0x   xxx/yyy  -&gt;  xx/yyy
+Q jx            -&gt;  x/yy
+u               -&gt;  xx/yyy
+u               -&gt;  xxx/yyy
+</code></pre><p>A cascaded macro is one block:</p><pre tabindex=0><code>:let @q = &#34;iX\&lt;Esc&gt;&#34;
+Qj @q        then u        then &lt;C-r&gt;
+
+aaa   │   Xaaa   │   aaa   │   Xaaa
+bbb   │   Xbbb   │   bbb   │   Xbbb
+</code></pre><p>A mapped undo or redo doesn&rsquo;t cascade. Undo is buffer-global, so cascading it would undo once per cursor and blow straight past the start of the session:</p><pre tabindex=0><code>:nnoremap &lt;silent&gt; u :&lt;C-u&gt;undo&lt;CR&gt;
+QjQj x       aaa/bbb/ccc  -&gt;  aa/bb/cc
+u            aaa/bbb/ccc      one undo, not three
+</code></pre><p>Undo restores text, never registers. The per-cursor values survive it, so exiting still joins them:</p><pre tabindex=0><code>Qj0 diw      &#34;foo x&#34;/&#34;bar y&#34;  -&gt;  &#34; x&#34;/&#34; y&#34;
+u                              -&gt;  &#34;foo x&#34;/&#34;bar y&#34;
+             @&#34;  is still  bar
+&lt;C-l&gt;        @&#34;  is  foo\nbar\n
+</code></pre><p><code>g-</code>, <code>g+</code> and <code>:earlier</code> drop every cursor and end the session:</p><pre tabindex=0><code>Q jx         aaa/bbb  -&gt;  aa/bb    1 cursor
+g-           aaa/bbb                0 cursors
+g+           aa/bb                  still 0
+Q            new session
+</code></pre><h1 id=macros>Macros</h1><p><code>@</code> cascades:</p><pre tabindex=0><code>gg0qqxq      record &#34;x&#34;; line 1 becomes &#34;aa&#34;
+jQ j0 @q     then @@
+
+aaa   │   aa   │   aa
+bbb   │   bb   │   b
+ccc   │   cc   │   c
+</code></pre><p>So does a macro with an insert session in it:</p><pre tabindex=0><code>gg0qwA!&lt;Esc&gt;q
+jQ j0 @w
+
+aaa   │   aaa!
+bbb   │   bbb!
+ccc   │   ccc!
+</code></pre><p>A count applies at each cursor:</p><pre tabindex=0><code>2@q      the &#34;x&#34; macro, twice per cursor
+
+aaaa   │   aaaa
+bbbb   │   bb
+cccc   │   cc
+</code></pre><p>A macro typed where there are no cursors cascades in whatever buffer it navigates into, same as a mapping.</p><h1 id=numbering>Numbering</h1><pre tabindex=0><code>Qj0Qj0 g&lt;C-a&gt;          Qj0 5g&lt;C-a&gt;
+
+a   │   1a             a   │   5a
+b   │   2b             b   │   6b
+c   │   3c
+</code></pre><p>The primary counts as a slot. If it&rsquo;s sitting on a cursor the pair shares one:</p><pre tabindex=0><code>QjQj gg0 g&lt;C-a&gt;        2 cursors survive
+
+x   │   1x
+y   │   2y
+z   │   z
+</code></pre><p>The number goes in at the cursor&rsquo;s column, before whatever is there:</p><pre tabindex=0><code>Qj g&lt;C-a&gt;
+
+x = 5   │   x = 15
+y = 5   │   y = 25
+</code></pre><p>Through a mapping it applies once, not once per cursor:</p><pre tabindex=0><code>:nnoremap ,n g&lt;C-a&gt;
+QjQj ,n
+
+a   │   1a
+b   │   2b
+c   │   3c
+</code></pre><p>With no cursors it isn&rsquo;t a command and beeps. Plain <code>&lt;C-a></code> still increments.</p><p>Start, step and format live on the function behind it. Private module, so pin your version or wrap it in <code>pcall</code>:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-lua data-lang=lua><span class=line><span class=cl><span class=n>require</span><span class=p>(</span><span class=s1>&#39;vim._core.mcursor&#39;</span><span class=p>).</span><span class=n>number</span><span class=p>(</span><span class=mi>10</span><span class=p>,</span> <span class=mi>2</span><span class=p>,</span> <span class=s1>&#39;%d) &#39;</span><span class=p>)</span>
+</span></span></code></pre></div><pre tabindex=0><code>Qj0Qj0 then the call above
+
+x   │   10) x
+x   │   12) x
+x   │   14) x
+</code></pre><h1 id=jumping-between-cursors>Jumping between cursors</h1><p><code>]C</code> and <code>[C</code> cycle in position order, wrapping, with a count. They&rsquo;ll scroll the viewport to reach an off-screen cursor, and they never drag the other cursors along, even in follow-mode. No cursors, no move, just a beep.</p><pre tabindex=0><code>Q2jllQ gg0j       cursors at (1,0) and (3,2), primary on line 2
+]C                (3,2)
+]C                (1,0)   wrapped
+2]C               (1,0)
+[C                (3,2)
+</code></pre><p>Pair that with the <code>Q</code> toggle and you get select-all-then-deselect:</p><pre tabindex=0><code>1Q        every match
+]C ]C     walk
+Q         drop this one
+ciw...    edit the rest
+</code></pre><h1 id=folds>Folds</h1><p>The primary keeps normal fold behavior. Replays don&rsquo;t: they act on the per-cursor line inside the fold, and the fold stays closed.</p><p>Primary outside the fold:</p><pre tabindex=0><code>3G0Q :2,4fold gg0 x       then dd
+
+aaa   │   aa    │   bbb        primary deletes line 1
+bbb   │   bbb   │   ddd        the cursor deletes only line 3, inside the fold
+ccc   │   cc    │
+ddd   │   ddd   │
+</code></pre><p>Primary inside the fold:</p><pre tabindex=0><code>4jQ gg :2,3fold 2G dd
+
+aaa   │   aaa        primary is in the closed fold: its dd takes the whole fold
+bbb   │   ddd
+ccc   │   fff        the cursor on line 5 deletes only its own line
+ddd   │
+eee   │
+fff   │
+</code></pre><p>Follow-mode motions ignore closed folds too, so a replayed <code>j</code> steps into one. A mapping that turns fold semantics back on mid-cascade (<code>zN</code> then <code>dd</code>) doesn&rsquo;t change that.</p><p>Fold operators cascade; fold toggles don&rsquo;t:</p><pre tabindex=0><code>4G0Q gg0 zfap      each cursor folds its own paragraph
+za                 only the primary&#39;s fold toggles
+</code></pre><h1 id=what-doesnt-cascade>What doesn&rsquo;t cascade</h1><p>Ex commands. The atom gets emitted with <code>type = "excmd"</code> and never replayed:</p><pre tabindex=0><code>Qj :s/o/O/&lt;CR&gt;
+
+foo   │   foo
+foo   │   fOo
+</code></pre><p><code>:normal!</code>, and anything else programmatic:</p><pre tabindex=0><code>Qj
+:normal! x        primary only
+x                 typed: cascades
+
+aaa   │   aaa   │   aa
+bbb   │   bb    │   b
+</code></pre><p>API edits shift the cursors but are primary-only themselves:</p><pre tabindex=0><code>QjQj
+:lua vim.api.nvim_buf_set_lines(0, 0, 0, true, { &#39;zzz&#39; })
+x
+
+aaa   │   zzz   │   zzz
+bbb   │   aaa   │   aa
+ccc   │   bbb   │   bb
+      │   ccc   │   cc
+</code></pre><p>Also undo and redo, fold toggles, an operator with no effect (an aborted <code>ysa[</code> won&rsquo;t drag every cursor onto the same bracket), and an atom captured in one buffer that resolves in another (a mapping ending in <code>:bnext</code> doesn&rsquo;t cascade into where it lands).</p><h1 id=buffers>Buffers</h1><p>Cursor sets are per-buffer. A cascade pauses while you&rsquo;re elsewhere and picks up when you come back:</p><pre tabindex=0><code>:set hidden
+Qj                aaa/bbb, 1 cursor
+:enew  gg0x       xxx  -&gt;  xx , no cascade into the other buffer
+:buffer #         1 cursor still there
+2G0x              aa/bb
+</code></pre><p>Edits cascade from any window showing the buffer, so <code>:split</code> and editing from the new window is fine. Cursors die with their buffer, and <code>nvim_mcursor()</code> will happily place them in a hidden one.</p><h1 id=advanced>Advanced</h1><h2 id=occurrence-operator>Occurrence operator</h2><p>This is the thing issue #21334 was asking for. An <code>operatorfunc</code> puts a cursor on every occurrence of the word under the cursor within a motion, then your next edit cascades to all of them. They survive because a <code>g@</code> with no effect doesn&rsquo;t cascade.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-lua data-lang=lua><span class=line><span class=cl><span class=n>_G.occur_opfunc</span> <span class=o>=</span> <span class=kr>function</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>  <span class=kd>local</span> <span class=n>ms</span> <span class=o>=</span> <span class=n>vim.fn</span><span class=p>.</span><span class=n>matchbufline</span><span class=p>(</span><span class=s1>&#39;%&#39;</span><span class=p>,</span> <span class=n>_G.occur_pat</span><span class=p>,</span> <span class=n>vim.fn</span><span class=p>.</span><span class=n>line</span><span class=p>(</span><span class=s2>&#34;&#39;[&#34;</span><span class=p>),</span> <span class=n>vim.fn</span><span class=p>.</span><span class=n>line</span><span class=p>(</span><span class=s2>&#34;&#39;]&#34;</span><span class=p>))</span>
+</span></span><span class=line><span class=cl>  <span class=n>vim.api</span><span class=p>.</span><span class=n>nvim_win_set_cursor</span><span class=p>(</span><span class=mi>0</span><span class=p>,</span> <span class=p>{</span> <span class=n>ms</span><span class=p>[</span><span class=mi>1</span><span class=p>].</span><span class=n>lnum</span><span class=p>,</span> <span class=n>ms</span><span class=p>[</span><span class=mi>1</span><span class=p>].</span><span class=n>byteidx</span> <span class=p>})</span>
+</span></span><span class=line><span class=cl>  <span class=kr>for</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>2</span><span class=p>,</span> <span class=o>#</span><span class=n>ms</span> <span class=kr>do</span>
+</span></span><span class=line><span class=cl>    <span class=n>vim.api</span><span class=p>.</span><span class=n>nvim_mcursor</span><span class=p>(</span><span class=mi>0</span><span class=p>,</span> <span class=p>{</span> <span class=n>ms</span><span class=p>[</span><span class=n>i</span><span class=p>].</span><span class=n>lnum</span><span class=p>,</span> <span class=n>ms</span><span class=p>[</span><span class=n>i</span><span class=p>].</span><span class=n>byteidx</span> <span class=p>})</span>
+</span></span><span class=line><span class=cl>  <span class=kr>end</span>
+</span></span><span class=line><span class=cl><span class=kr>end</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>vim.keymap</span><span class=p>.</span><span class=n>set</span><span class=p>(</span><span class=s1>&#39;n&#39;</span><span class=p>,</span> <span class=s1>&#39;co&#39;</span><span class=p>,</span> <span class=kr>function</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>  <span class=n>_G.occur_pat</span> <span class=o>=</span> <span class=p>(</span><span class=s>[[\&lt;%s\&gt;]]</span><span class=p>):</span><span class=n>format</span><span class=p>(</span><span class=n>vim.fn</span><span class=p>.</span><span class=n>expand</span><span class=p>(</span><span class=s1>&#39;&lt;cword&gt;&#39;</span><span class=p>))</span>
+</span></span><span class=line><span class=cl>  <span class=n>vim.o</span><span class=p>.</span><span class=n>operatorfunc</span> <span class=o>=</span> <span class=s1>&#39;v:lua.occur_opfunc&#39;</span>
+</span></span><span class=line><span class=cl>  <span class=kr>return</span> <span class=s1>&#39;g@&#39;</span>
+</span></span><span class=line><span class=cl><span class=kr>end</span><span class=p>,</span> <span class=p>{</span> <span class=n>expr</span> <span class=o>=</span> <span class=kc>true</span> <span class=p>})</span>
+</span></span></code></pre></div><pre tabindex=0><code>cursor on the first &#34;text&#34;
+coip ciwWORD&lt;Esc&gt;
+
+text a text   │   WORD a WORD
+b text c      │   b WORD c
+</code></pre><p><code>coi{</code>, <code>coap</code> and <code>co3j</code> all work the same way.</p><h2 id=follow-mode-for-exactly-one-motion>Follow mode for exactly one motion</h2><p><code>CmdAtom</code> plus a one-shot autocommand. Returning <code>true</code> deletes the autocommand.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-lua data-lang=lua><span class=line><span class=cl><span class=n>vim.keymap</span><span class=p>.</span><span class=n>set</span><span class=p>(</span><span class=s1>&#39;n&#39;</span><span class=p>,</span> <span class=s1>&#39;q-&#39;</span><span class=p>,</span> <span class=kr>function</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>  <span class=n>vim.cmd</span><span class=p>(</span><span class=s1>&#39;normal! 1q=&#39;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>  <span class=n>vim.api</span><span class=p>.</span><span class=n>nvim_create_autocmd</span><span class=p>(</span><span class=s1>&#39;CmdAtom&#39;</span><span class=p>,</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>callback</span> <span class=o>=</span> <span class=kr>function</span><span class=p>(</span><span class=n>ev</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>      <span class=kr>if</span> <span class=n>ev.data</span><span class=p>.</span><span class=n>lhs</span> <span class=o>==</span> <span class=s1>&#39;q-&#39;</span> <span class=kr>then</span>
+</span></span><span class=line><span class=cl>        <span class=kr>return</span>
+</span></span><span class=line><span class=cl>      <span class=kr>end</span>
+</span></span><span class=line><span class=cl>      <span class=n>vim.cmd</span><span class=p>(</span><span class=s1>&#39;normal! 2q=&#39;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>      <span class=kr>return</span> <span class=kc>true</span>
+</span></span><span class=line><span class=cl>    <span class=kr>end</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=p>})</span>
+</span></span><span class=line><span class=cl><span class=kr>end</span><span class=p>)</span>
+</span></span></code></pre></div><pre tabindex=0><code>QjQj q- ^      every cursor moves to its first non-blank
+l              follow mode already ended: primary only
+
+␣␣aaa
+␣␣bbb
+␣␣ccc
+</code></pre><h2 id=telling-the-primary-apart-in-an-autocommand>Telling the primary apart in an autocommand</h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-lua data-lang=lua><span class=line><span class=cl><span class=n>vim.api</span><span class=p>.</span><span class=n>nvim_create_autocmd</span><span class=p>(</span><span class=s1>&#39;TextYankPost&#39;</span><span class=p>,</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=n>callback</span> <span class=o>=</span> <span class=kr>function</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=kr>if</span> <span class=n>vim.api</span><span class=p>.</span><span class=n>nvim__mcursor_cascading</span><span class=p>()</span> <span class=kr>then</span>
+</span></span><span class=line><span class=cl>      <span class=kr>return</span>
+</span></span><span class=line><span class=cl>    <span class=kr>end</span>
+</span></span><span class=line><span class=cl>    <span class=c1>-- primary only</span>
+</span></span><span class=line><span class=cl>  <span class=kr>end</span><span class=p>,</span>
+</span></span><span class=line><span class=cl><span class=p>})</span>
+</span></span></code></pre></div><p>Double underscore, so it can change under you.</p><h2 id=cursors-from-a-treesitter-query>Cursors from a treesitter query</h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-lua data-lang=lua><span class=line><span class=cl><span class=kd>local</span> <span class=kr>function</span> <span class=nf>cursors_from_query</span><span class=p>(</span><span class=n>lang</span><span class=p>,</span> <span class=n>query_str</span><span class=p>,</span> <span class=n>capture</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>  <span class=kd>local</span> <span class=n>parser</span> <span class=o>=</span> <span class=n>vim.treesitter</span><span class=p>.</span><span class=n>get_parser</span><span class=p>(</span><span class=mi>0</span><span class=p>,</span> <span class=n>lang</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>  <span class=kd>local</span> <span class=n>root</span> <span class=o>=</span> <span class=n>parser</span><span class=p>:</span><span class=n>parse</span><span class=p>()[</span><span class=mi>1</span><span class=p>]:</span><span class=n>root</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>  <span class=kd>local</span> <span class=n>query</span> <span class=o>=</span> <span class=n>vim.treesitter</span><span class=p>.</span><span class=n>query.parse</span><span class=p>(</span><span class=n>lang</span><span class=p>,</span> <span class=n>query_str</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>  <span class=kr>for</span> <span class=n>id</span><span class=p>,</span> <span class=n>node</span> <span class=kr>in</span> <span class=n>query</span><span class=p>:</span><span class=n>iter_captures</span><span class=p>(</span><span class=n>root</span><span class=p>,</span> <span class=mi>0</span><span class=p>,</span> <span class=mi>0</span><span class=p>,</span> <span class=o>-</span><span class=mi>1</span><span class=p>)</span> <span class=kr>do</span>
+</span></span><span class=line><span class=cl>    <span class=kr>if</span> <span class=n>query.captures</span><span class=p>[</span><span class=n>id</span><span class=p>]</span> <span class=o>==</span> <span class=n>capture</span> <span class=kr>then</span>
+</span></span><span class=line><span class=cl>      <span class=kd>local</span> <span class=n>row</span><span class=p>,</span> <span class=n>col</span> <span class=o>=</span> <span class=n>node</span><span class=p>:</span><span class=n>range</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>      <span class=n>vim.api</span><span class=p>.</span><span class=n>nvim_mcursor</span><span class=p>(</span><span class=mi>0</span><span class=p>,</span> <span class=p>{</span> <span class=n>row</span> <span class=o>+</span> <span class=mi>1</span><span class=p>,</span> <span class=n>col</span> <span class=p>})</span>
+</span></span><span class=line><span class=cl>    <span class=kr>end</span>
+</span></span><span class=line><span class=cl>  <span class=kr>end</span>
+</span></span><span class=line><span class=cl><span class=kr>end</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>cursors_from_query</span><span class=p>(</span><span class=s1>&#39;lua&#39;</span><span class=p>,</span> <span class=s1>&#39;(function_declaration name: (identifier) @name)&#39;</span><span class=p>,</span> <span class=s1>&#39;name&#39;</span><span class=p>)</span>
+</span></span></code></pre></div><p>A cursor on every function name, then <code>cw</code> to rename the lot.</p><h2 id=pruning>Pruning</h2><p>Deleting an extmark deletes the cursor, so you can place broadly and filter after:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-lua data-lang=lua><span class=line><span class=cl><span class=kd>local</span> <span class=n>ns</span> <span class=o>=</span> <span class=n>vim.api</span><span class=p>.</span><span class=n>nvim_create_namespace</span><span class=p>(</span><span class=s1>&#39;nvim.multicursor&#39;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>local</span> <span class=kr>function</span> <span class=nf>keep_cursors</span><span class=p>(</span><span class=n>pred</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>  <span class=kr>for</span> <span class=n>_</span><span class=p>,</span> <span class=n>m</span> <span class=kr>in</span> <span class=n>ipairs</span><span class=p>(</span><span class=n>vim.api</span><span class=p>.</span><span class=n>nvim_buf_get_extmarks</span><span class=p>(</span><span class=mi>0</span><span class=p>,</span> <span class=n>ns</span><span class=p>,</span> <span class=mi>0</span><span class=p>,</span> <span class=o>-</span><span class=mi>1</span><span class=p>,</span> <span class=p>{}))</span> <span class=kr>do</span>
+</span></span><span class=line><span class=cl>    <span class=kd>local</span> <span class=n>id</span><span class=p>,</span> <span class=n>row</span><span class=p>,</span> <span class=n>col</span> <span class=o>=</span> <span class=n>m</span><span class=p>[</span><span class=mi>1</span><span class=p>],</span> <span class=n>m</span><span class=p>[</span><span class=mi>2</span><span class=p>],</span> <span class=n>m</span><span class=p>[</span><span class=mi>3</span><span class=p>]</span>
+</span></span><span class=line><span class=cl>    <span class=kd>local</span> <span class=n>line</span> <span class=o>=</span> <span class=n>vim.api</span><span class=p>.</span><span class=n>nvim_buf_get_lines</span><span class=p>(</span><span class=mi>0</span><span class=p>,</span> <span class=n>row</span><span class=p>,</span> <span class=n>row</span> <span class=o>+</span> <span class=mi>1</span><span class=p>,</span> <span class=kc>true</span><span class=p>)[</span><span class=mi>1</span><span class=p>]</span>
+</span></span><span class=line><span class=cl>    <span class=kr>if</span> <span class=ow>not</span> <span class=n>pred</span><span class=p>(</span><span class=n>line</span><span class=p>,</span> <span class=n>row</span> <span class=o>+</span> <span class=mi>1</span><span class=p>,</span> <span class=n>col</span><span class=p>)</span> <span class=kr>then</span>
+</span></span><span class=line><span class=cl>      <span class=n>vim.api</span><span class=p>.</span><span class=n>nvim_buf_del_extmark</span><span class=p>(</span><span class=mi>0</span><span class=p>,</span> <span class=n>ns</span><span class=p>,</span> <span class=n>id</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=kr>end</span>
+</span></span><span class=line><span class=cl>  <span class=kr>end</span>
+</span></span><span class=line><span class=cl><span class=kr>end</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>keep_cursors</span><span class=p>(</span><span class=kr>function</span><span class=p>(</span><span class=n>line</span><span class=p>)</span> <span class=kr>return</span> <span class=ow>not</span> <span class=n>line</span><span class=p>:</span><span class=n>match</span><span class=p>(</span><span class=s1>&#39;^%s*//&#39;</span><span class=p>)</span> <span class=kr>end</span><span class=p>)</span>
+</span></span></code></pre></div><h2 id=aligning-columns>Aligning columns</h2><p>Extmarks move with inserted text, so padding to a shared virtual column is short. Assumes one cursor per line, and skips the primary since it isn&rsquo;t an extmark.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-lua data-lang=lua><span class=line><span class=cl><span class=kd>local</span> <span class=kr>function</span> <span class=nf>align_cursors</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>  <span class=kd>local</span> <span class=n>marks</span> <span class=o>=</span> <span class=n>vim.api</span><span class=p>.</span><span class=n>nvim_buf_get_extmarks</span><span class=p>(</span><span class=mi>0</span><span class=p>,</span> <span class=n>ns</span><span class=p>,</span> <span class=mi>0</span><span class=p>,</span> <span class=o>-</span><span class=mi>1</span><span class=p>,</span> <span class=p>{})</span>
+</span></span><span class=line><span class=cl>  <span class=kd>local</span> <span class=n>target</span> <span class=o>=</span> <span class=mi>0</span>
+</span></span><span class=line><span class=cl>  <span class=kr>for</span> <span class=n>_</span><span class=p>,</span> <span class=n>m</span> <span class=kr>in</span> <span class=n>ipairs</span><span class=p>(</span><span class=n>marks</span><span class=p>)</span> <span class=kr>do</span>
+</span></span><span class=line><span class=cl>    <span class=n>target</span> <span class=o>=</span> <span class=n>math.max</span><span class=p>(</span><span class=n>target</span><span class=p>,</span> <span class=n>vim.fn</span><span class=p>.</span><span class=n>virtcol</span><span class=p>({</span> <span class=n>m</span><span class=p>[</span><span class=mi>2</span><span class=p>]</span> <span class=o>+</span> <span class=mi>1</span><span class=p>,</span> <span class=n>m</span><span class=p>[</span><span class=mi>3</span><span class=p>]</span> <span class=o>+</span> <span class=mi>1</span> <span class=p>}))</span>
+</span></span><span class=line><span class=cl>  <span class=kr>end</span>
+</span></span><span class=line><span class=cl>  <span class=kr>for</span> <span class=n>i</span> <span class=o>=</span> <span class=o>#</span><span class=n>marks</span><span class=p>,</span> <span class=mi>1</span><span class=p>,</span> <span class=o>-</span><span class=mi>1</span> <span class=kr>do</span>
+</span></span><span class=line><span class=cl>    <span class=kd>local</span> <span class=n>row</span><span class=p>,</span> <span class=n>col</span> <span class=o>=</span> <span class=n>marks</span><span class=p>[</span><span class=n>i</span><span class=p>][</span><span class=mi>2</span><span class=p>],</span> <span class=n>marks</span><span class=p>[</span><span class=n>i</span><span class=p>][</span><span class=mi>3</span><span class=p>]</span>
+</span></span><span class=line><span class=cl>    <span class=kd>local</span> <span class=n>pad</span> <span class=o>=</span> <span class=n>target</span> <span class=o>-</span> <span class=n>vim.fn</span><span class=p>.</span><span class=n>virtcol</span><span class=p>({</span> <span class=n>row</span> <span class=o>+</span> <span class=mi>1</span><span class=p>,</span> <span class=n>col</span> <span class=o>+</span> <span class=mi>1</span> <span class=p>})</span>
+</span></span><span class=line><span class=cl>    <span class=kr>if</span> <span class=n>pad</span> <span class=o>&gt;</span> <span class=mi>0</span> <span class=kr>then</span>
+</span></span><span class=line><span class=cl>      <span class=n>vim.api</span><span class=p>.</span><span class=n>nvim_buf_set_text</span><span class=p>(</span><span class=mi>0</span><span class=p>,</span> <span class=n>row</span><span class=p>,</span> <span class=n>col</span><span class=p>,</span> <span class=n>row</span><span class=p>,</span> <span class=n>col</span><span class=p>,</span> <span class=p>{</span> <span class=p>(</span><span class=s1>&#39; &#39;</span><span class=p>):</span><span class=n>rep</span><span class=p>(</span><span class=n>pad</span><span class=p>)</span> <span class=p>})</span>
+</span></span><span class=line><span class=cl>    <span class=kr>end</span>
+</span></span><span class=line><span class=cl>  <span class=kr>end</span>
+</span></span><span class=line><span class=cl><span class=kr>end</span>
+</span></span></code></pre></div><h2 id=cursors-from-quickfix-across-files>Cursors from quickfix, across files</h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-lua data-lang=lua><span class=line><span class=cl><span class=kr>for</span> <span class=n>_</span><span class=p>,</span> <span class=n>item</span> <span class=kr>in</span> <span class=n>ipairs</span><span class=p>(</span><span class=n>vim.fn</span><span class=p>.</span><span class=n>getqflist</span><span class=p>())</span> <span class=kr>do</span>
+</span></span><span class=line><span class=cl>  <span class=kr>if</span> <span class=n>item.valid</span> <span class=o>==</span> <span class=mi>1</span> <span class=ow>and</span> <span class=n>item.bufnr</span> <span class=o>~=</span> <span class=mi>0</span> <span class=kr>then</span>
+</span></span><span class=line><span class=cl>    <span class=n>vim.api</span><span class=p>.</span><span class=n>nvim_mcursor</span><span class=p>(</span><span class=n>item.bufnr</span><span class=p>,</span> <span class=p>{</span> <span class=n>item.lnum</span><span class=p>,</span> <span class=n>math.max</span><span class=p>(</span><span class=n>item.col</span> <span class=o>-</span> <span class=mi>1</span><span class=p>,</span> <span class=mi>0</span><span class=p>)</span> <span class=p>})</span>
+</span></span><span class=line><span class=cl>  <span class=kr>end</span>
+</span></span><span class=line><span class=cl><span class=kr>end</span>
+</span></span></code></pre></div><p>Quickfix items are 1-indexed on both axes, hence <code>col - 1</code>. Diagnostics are 0-indexed on both, so those want <code>lnum + 1</code> and a bare <code>col</code>.</p><h2 id=cmdatom>CmdAtom</h2><p>One event per action, and cascade replays emit nothing.</p><p><code>type</code> is <code>motion</code>, <code>operator</code>, <code>insert</code>, <code>visual</code>, <code>mapping</code> or <code>excmd</code>. <code>lhs</code> is what you typed before resolution. <code>keys</code> is the resolved sequence in raw bytes: empty means it can&rsquo;t be replayed, nil means the capture was lossy and you should replay <code>lhs</code> with <code>feedkeys</code> mode <code>m</code> instead of <code>n</code>. <code>text</code> carries the payload, whether that&rsquo;s inserted text, a cmdline or a search. <code>changed</code> and <code>moved</code> tell you whether the action edited or moved. <code>atoms</code> holds ordered subatoms, and it&rsquo;s only non-empty for a composite action.</p><p><code>nnoremap gj i&lt;C-j>&lt;Esc>k$</code> emits one <code>mapping</code> atom whose <code>atoms</code> are two inserts plus the motions <code>k</code> and <code>$</code>. <code>q=</code> gets recorded too, so a follow-mode stretch shows up as <code>q=</code>, <code>l</code>, <code>l</code>, <code>q=</code>.</p><p>The event is deferred, so schedule anything that reacts to it. A custom <code>.</code>:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-lua data-lang=lua><span class=line><span class=cl><span class=kd>local</span> <span class=n>last</span> <span class=c1>---@type vim.event.cmdatom.data?</span>
+</span></span><span class=line><span class=cl><span class=kd>local</span> <span class=n>mc</span> <span class=o>=</span> <span class=n>vim.api</span><span class=p>.</span><span class=n>nvim_create_namespace</span><span class=p>(</span><span class=s1>&#39;nvim.multicursor&#39;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>vim.api</span><span class=p>.</span><span class=n>nvim_create_autocmd</span><span class=p>(</span><span class=s1>&#39;CmdAtom&#39;</span><span class=p>,</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=n>callback</span> <span class=o>=</span> <span class=kr>function</span><span class=p>(</span><span class=n>ev</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=kr>if</span> <span class=n>ev.data</span><span class=p>.</span><span class=n>changed</span> <span class=ow>and</span> <span class=n>ev.data</span><span class=p>.</span><span class=n>lhs</span> <span class=o>~=</span> <span class=s1>&#39;.&#39;</span> <span class=kr>then</span>
+</span></span><span class=line><span class=cl>      <span class=n>last</span> <span class=o>=</span> <span class=n>ev.data</span>
+</span></span><span class=line><span class=cl>    <span class=kr>end</span>
+</span></span><span class=line><span class=cl>  <span class=kr>end</span><span class=p>,</span>
+</span></span><span class=line><span class=cl><span class=p>})</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>vim.keymap</span><span class=p>.</span><span class=n>set</span><span class=p>(</span><span class=s1>&#39;n&#39;</span><span class=p>,</span> <span class=s1>&#39;.&#39;</span><span class=p>,</span> <span class=kr>function</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>  <span class=kr>if</span> <span class=o>#</span><span class=n>vim.api</span><span class=p>.</span><span class=n>nvim_buf_get_extmarks</span><span class=p>(</span><span class=mi>0</span><span class=p>,</span> <span class=n>mc</span><span class=p>,</span> <span class=mi>0</span><span class=p>,</span> <span class=o>-</span><span class=mi>1</span><span class=p>,</span> <span class=p>{</span> <span class=n>limit</span> <span class=o>=</span> <span class=mi>1</span> <span class=p>})</span> <span class=o>&gt;</span> <span class=mi>0</span> <span class=kr>then</span>
+</span></span><span class=line><span class=cl>    <span class=n>vim.api</span><span class=p>.</span><span class=n>nvim_feedkeys</span><span class=p>(</span><span class=s1>&#39;.&#39;</span><span class=p>,</span> <span class=s1>&#39;n&#39;</span><span class=p>,</span> <span class=kc>false</span><span class=p>)</span> <span class=c1>-- hand it back so it cascades</span>
+</span></span><span class=line><span class=cl>    <span class=kr>return</span>
+</span></span><span class=line><span class=cl>  <span class=kr>end</span>
+</span></span><span class=line><span class=cl>  <span class=n>vim.schedule</span><span class=p>(</span><span class=kr>function</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=kr>if</span> <span class=n>last</span> <span class=kr>then</span>
+</span></span><span class=line><span class=cl>      <span class=n>vim.api</span><span class=p>.</span><span class=n>nvim_feedkeys</span><span class=p>(</span><span class=n>last.keys</span> <span class=ow>or</span> <span class=n>last.lhs</span><span class=p>,</span> <span class=n>last.keys</span> <span class=ow>and</span> <span class=s1>&#39;n&#39;</span> <span class=ow>or</span> <span class=s1>&#39;m&#39;</span><span class=p>,</span> <span class=kc>false</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=kr>end</span>
+</span></span><span class=line><span class=cl>  <span class=kr>end</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=kr>end</span><span class=p>)</span>
+</span></span></code></pre></div><p>That multicursor check is the important bit: a replay through <code>feedkeys</code> is programmatic and won&rsquo;t cascade. The version in <code>:h CmdAtom</code> also filters undo and redo out by comparing <code>undoseq</code> against a buffer-local high-water mark. <code>:h cmdatom-macro</code> keeps a ring of the last N atoms and turns them into an editable macro in the cmdwin.</p><h1 id=keymaps>Keymaps</h1><p><code>Q</code> used to replay the last recorded register, and <code>{Visual}Q</code> ran it per selected line. Both are gone. If you miss them:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-lua data-lang=lua><span class=line><span class=cl><span class=n>vim.keymap</span><span class=p>.</span><span class=n>set</span><span class=p>({</span> <span class=s1>&#39;n&#39;</span><span class=p>,</span> <span class=s1>&#39;x&#39;</span> <span class=p>},</span> <span class=s1>&#39;&lt;leader&gt;q&#39;</span><span class=p>,</span> <span class=s1>&#39;Q&#39;</span><span class=p>,</span> <span class=p>{</span> <span class=n>remap</span> <span class=o>=</span> <span class=kc>false</span> <span class=p>})</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>vim.keymap</span><span class=p>.</span><span class=n>set</span><span class=p>(</span><span class=s1>&#39;n&#39;</span><span class=p>,</span> <span class=s1>&#39;Q&#39;</span><span class=p>,</span> <span class=kr>function</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>  <span class=kd>local</span> <span class=n>reg</span> <span class=o>=</span> <span class=n>vim.fn</span><span class=p>.</span><span class=n>reg_recorded</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>  <span class=kr>if</span> <span class=n>reg</span> <span class=o>==</span> <span class=s1>&#39;&#39;</span> <span class=kr>then</span> <span class=kr>return</span> <span class=s1>&#39;&#39;</span> <span class=kr>end</span>
+</span></span><span class=line><span class=cl>  <span class=kr>return</span> <span class=s1>&#39;@&#39;</span> <span class=o>..</span> <span class=n>reg</span>
+</span></span><span class=line><span class=cl><span class=kr>end</span><span class=p>,</span> <span class=p>{</span> <span class=n>expr</span> <span class=o>=</span> <span class=kc>true</span> <span class=p>})</span>
+</span></span></code></pre></div><p><code>remap = false</code> is what gets you the builtin <code>Q</code> instead of the mapping below it.</p><p>Cursor at every occurrence of the word under the cursor:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-lua data-lang=lua><span class=line><span class=cl><span class=n>vim.keymap</span><span class=p>.</span><span class=n>set</span><span class=p>(</span><span class=s1>&#39;n&#39;</span><span class=p>,</span> <span class=s1>&#39;&lt;leader&gt;*&#39;</span><span class=p>,</span> <span class=kr>function</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>  <span class=kd>local</span> <span class=n>word</span> <span class=o>=</span> <span class=n>vim.fn</span><span class=p>.</span><span class=n>expand</span><span class=p>(</span><span class=s1>&#39;&lt;cword&gt;&#39;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>  <span class=kr>if</span> <span class=n>word</span> <span class=o>==</span> <span class=s1>&#39;&#39;</span> <span class=kr>then</span> <span class=kr>return</span> <span class=kr>end</span>
+</span></span><span class=line><span class=cl>  <span class=n>vim.fn</span><span class=p>.</span><span class=n>setreg</span><span class=p>(</span><span class=s1>&#39;/&#39;</span><span class=p>,</span> <span class=s>[[\&lt;]]</span> <span class=o>..</span> <span class=n>vim.fn</span><span class=p>.</span><span class=n>escape</span><span class=p>(</span><span class=n>word</span><span class=p>,</span> <span class=s>[[\/]]</span><span class=p>)</span> <span class=o>..</span> <span class=s>[[\&gt;]]</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>  <span class=n>vim.v</span><span class=p>.</span><span class=n>hlsearch</span> <span class=o>=</span> <span class=mi>1</span>
+</span></span><span class=line><span class=cl>  <span class=n>vim.cmd</span><span class=p>(</span><span class=s1>&#39;normal! 1Q&#39;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=kr>end</span><span class=p>)</span>
+</span></span></code></pre></div><p><code>:Cursors {pattern}</code>, range-aware:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-lua data-lang=lua><span class=line><span class=cl><span class=n>vim.api</span><span class=p>.</span><span class=n>nvim_create_user_command</span><span class=p>(</span><span class=s1>&#39;Cursors&#39;</span><span class=p>,</span> <span class=kr>function</span><span class=p>(</span><span class=n>opts</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>  <span class=kd>local</span> <span class=n>first</span> <span class=o>=</span> <span class=n>opts.range</span> <span class=o>&gt;</span> <span class=mi>0</span> <span class=ow>and</span> <span class=n>opts.line1</span> <span class=ow>or</span> <span class=mi>1</span>
+</span></span><span class=line><span class=cl>  <span class=kd>local</span> <span class=n>last</span> <span class=o>=</span> <span class=n>opts.range</span> <span class=o>&gt;</span> <span class=mi>0</span> <span class=ow>and</span> <span class=n>opts.line2</span> <span class=ow>or</span> <span class=n>vim.fn</span><span class=p>.</span><span class=n>line</span><span class=p>(</span><span class=s1>&#39;$&#39;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>  <span class=kr>for</span> <span class=n>_</span><span class=p>,</span> <span class=n>m</span> <span class=kr>in</span> <span class=n>ipairs</span><span class=p>(</span><span class=n>vim.fn</span><span class=p>.</span><span class=n>matchbufline</span><span class=p>(</span><span class=s1>&#39;%&#39;</span><span class=p>,</span> <span class=n>opts.args</span><span class=p>,</span> <span class=n>first</span><span class=p>,</span> <span class=n>last</span><span class=p>))</span> <span class=kr>do</span>
+</span></span><span class=line><span class=cl>    <span class=n>vim.api</span><span class=p>.</span><span class=n>nvim_mcursor</span><span class=p>(</span><span class=mi>0</span><span class=p>,</span> <span class=p>{</span> <span class=n>m.lnum</span><span class=p>,</span> <span class=n>m.byteidx</span> <span class=p>})</span>
+</span></span><span class=line><span class=cl>  <span class=kr>end</span>
+</span></span><span class=line><span class=cl><span class=kr>end</span><span class=p>,</span> <span class=p>{</span> <span class=n>nargs</span> <span class=o>=</span> <span class=mi>1</span><span class=p>,</span> <span class=n>range</span> <span class=o>=</span> <span class=kc>true</span> <span class=p>})</span>
+</span></span></code></pre></div><p><code>:Cursors \d\+</code> hits every number, <code>:'&lt;,'>Cursors ,</code> every comma in the selection.</p><p>Cursor on every error:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-lua data-lang=lua><span class=line><span class=cl><span class=n>vim.keymap</span><span class=p>.</span><span class=n>set</span><span class=p>(</span><span class=s1>&#39;n&#39;</span><span class=p>,</span> <span class=s1>&#39;&lt;leader&gt;me&#39;</span><span class=p>,</span> <span class=kr>function</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>  <span class=kr>for</span> <span class=n>_</span><span class=p>,</span> <span class=n>d</span> <span class=kr>in</span> <span class=n>ipairs</span><span class=p>(</span><span class=n>vim.diagnostic</span><span class=p>.</span><span class=n>get</span><span class=p>(</span><span class=mi>0</span><span class=p>,</span> <span class=p>{</span> <span class=n>severity</span> <span class=o>=</span> <span class=n>vim.diagnostic</span><span class=p>.</span><span class=n>severity.ERROR</span> <span class=p>}))</span> <span class=kr>do</span>
+</span></span><span class=line><span class=cl>    <span class=n>vim.api</span><span class=p>.</span><span class=n>nvim_mcursor</span><span class=p>(</span><span class=mi>0</span><span class=p>,</span> <span class=p>{</span> <span class=n>d.lnum</span> <span class=o>+</span> <span class=mi>1</span><span class=p>,</span> <span class=n>d.col</span> <span class=p>})</span>
+</span></span><span class=line><span class=cl>  <span class=kr>end</span>
+</span></span><span class=line><span class=cl><span class=kr>end</span><span class=p>)</span>
+</span></span></code></pre></div><p>Escape clears cursors when there are any. Clear the namespace directly rather than feeding <code>&lt;C-l></code>, which is a mapping and would need <code>remap = true</code> to fire:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-lua data-lang=lua><span class=line><span class=cl><span class=n>vim.keymap</span><span class=p>.</span><span class=n>set</span><span class=p>(</span><span class=s1>&#39;n&#39;</span><span class=p>,</span> <span class=s1>&#39;&lt;Esc&gt;&#39;</span><span class=p>,</span> <span class=kr>function</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>  <span class=kd>local</span> <span class=n>n</span> <span class=o>=</span> <span class=o>#</span><span class=n>vim.api</span><span class=p>.</span><span class=n>nvim_buf_get_extmarks</span><span class=p>(</span><span class=mi>0</span><span class=p>,</span> <span class=n>ns</span><span class=p>,</span> <span class=mi>0</span><span class=p>,</span> <span class=o>-</span><span class=mi>1</span><span class=p>,</span> <span class=p>{</span> <span class=n>limit</span> <span class=o>=</span> <span class=mi>1</span> <span class=p>})</span>
+</span></span><span class=line><span class=cl>  <span class=kr>if</span> <span class=n>n</span> <span class=o>&gt;</span> <span class=mi>0</span> <span class=kr>then</span>
+</span></span><span class=line><span class=cl>    <span class=n>vim.api</span><span class=p>.</span><span class=n>nvim_buf_clear_namespace</span><span class=p>(</span><span class=mi>0</span><span class=p>,</span> <span class=n>ns</span><span class=p>,</span> <span class=mi>0</span><span class=p>,</span> <span class=o>-</span><span class=mi>1</span><span class=p>)</span> <span class=c1>-- snapshots for gQ, same as CTRL-L</span>
+</span></span><span class=line><span class=cl>  <span class=kr>else</span>
+</span></span><span class=line><span class=cl>    <span class=n>vim.cmd</span><span class=p>(</span><span class=s1>&#39;nohlsearch&#39;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>  <span class=kr>end</span>
+</span></span><span class=line><span class=cl><span class=kr>end</span><span class=p>)</span>
+</span></span></code></pre></div><p>Colors:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-lua data-lang=lua><span class=line><span class=cl><span class=n>vim.api</span><span class=p>.</span><span class=n>nvim_set_hl</span><span class=p>(</span><span class=mi>0</span><span class=p>,</span> <span class=s1>&#39;MCursor&#39;</span><span class=p>,</span> <span class=p>{</span> <span class=n>reverse</span> <span class=o>=</span> <span class=kc>true</span> <span class=p>})</span>
+</span></span><span class=line><span class=cl><span class=n>vim.api</span><span class=p>.</span><span class=n>nvim_set_hl</span><span class=p>(</span><span class=mi>0</span><span class=p>,</span> <span class=s1>&#39;MCursorVisual&#39;</span><span class=p>,</span> <span class=p>{</span> <span class=n>link</span> <span class=o>=</span> <span class=s1>&#39;Visual&#39;</span> <span class=p>})</span>
+</span></span></code></pre></div><p><code>reverse</code> is the safe pick. Linking to <code>Cursor</code> sounds right until you remember how many colorschemes leave <code>Cursor</code> invisible in the terminal.</p><p>If you share a config with a machine still on 0.12:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-lua data-lang=lua><span class=line><span class=cl><span class=kr>if</span> <span class=n>vim.api</span><span class=p>.</span><span class=n>nvim_mcursor</span> <span class=kr>then</span>
+</span></span><span class=line><span class=cl>  <span class=c1>-- ...</span>
+</span></span><span class=line><span class=cl><span class=kr>end</span>
+</span></span></code></pre></div><h1 id=things-that-will-bite-you>Things that will bite you</h1><p>Two cursors on one line do edit at their own columns, for column-local operators:</p><pre tabindex=0><code>Q4l x        then x
+
+abcdef   │   bcdf   │   cd
+</code></pre><p>But an edit that shifts columns shifts them relative to each other, and linewise operators aren&rsquo;t deduplicated for same-line cursors yet, so <code>dd</code> there runs once per cursor.</p><p>The rest of the list:</p><ul><li><code>g-</code>, <code>g+</code> and <code>:earlier</code> end the session, and <code>gQ</code> can&rsquo;t bring the cursors back.</li><li><code>:e!</code> and <code>autoread</code> reloads clear the cursors and the <code>gQ</code> snapshot.</li><li>Undo restores text, not registers.</li><li><code>g&lt;C-a></code> inserts before the character at the cursor&rsquo;s column, and <code>$</code> stops on the last character, so appending numbers to line ends needs <code>nvim_mcursor()</code> at an exact byte column.</li><li><code>Q</code> is quietly unavailable inside a macro, and <code>qQ</code> starts a recording.</li><li><code>iw</code> and <code>cw</code> are still word objects. They won&rsquo;t split <code>camelCase</code>. Use <code>:%s///g</code> for substrings.</li><li>Ex commands don&rsquo;t cascade.</li></ul><h1 id=terminals>Terminals</h1><p>Nvim asks for the <a href=https://github.com/kovidgoyal/kitty/blob/master/docs/multiple-cursors-protocol.rst target=_blank rel="noreferrer nofollow">Kitty multiple-cursors protocol</a> at startup and only uses it if the reply advertises cursor shape 29. When it does, you get real terminal cursors instead of <code>MCursor</code> cell highlights, including in unfocused splits. To force the fallback:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-lua data-lang=lua><span class=line><span class=cl><span class=n>require</span><span class=p>(</span><span class=s1>&#39;vim._core.mcursor&#39;</span><span class=p>).</span><span class=n>tty_cursors</span><span class=p>(</span><span class=kc>false</span><span class=p>)</span>
+</span></span></code></pre></div></main><div class=sponsor><a href=https://github.com/sponsors/glepnir target=_blank rel="noopener noreferrer" class=sponsor-btn>❤️ Sponsor</a></div><section class=comments><script src=https://giscus.app/client.js data-repo=glepnir/glepnir.github.io data-repo-id data-category=General data-category-id data-mapping=pathname data-strict=0 data-reactions-enabled data-emit-metadata data-input-position data-theme=preferred_color_scheme data-lang=en crossorigin=anonymous async></script></section><br><footer class=site-footer><p class=footer-meta>© 2026 glepnir ·
+<a href=https://github.com/glepnir>GitHub</a> ·
+<a href=https://reddit.com/u/glephunter>Reddit</a> ·
+<a href=https://www.functor.me/index.xml>RSS</a></p><script defer>document.addEventListener("keydown",function(e){if(document.activeElement.isContentEditable)return!1;if(document.activeElement.tagName=="INPUT")return!1;if(e.altKey||e.ctrlKey||e.shiftKey)return!1;var t=e.key;if(t==="h")e.preventDefault(),e.stopPropagation(),window.location.href="/";else if(t==="t")e.preventDefault(),e.stopPropagation(),window.location.href=`https://${location.hostname}/tags`;else if(t==="i"){e.preventDefault(),e.stopPropagation();const t=document.querySelectorAll("input");for(let e=0;e<t.length;e++)if(t[e].offsetParent!==null){t[e].selectionStart=t[e].selectionEnd=t[e].value.length,t[e].focus();break}}return!1})</script><script defer>function throttle(e,t){var n=Date.now();return function(){var s=Date.now();n+t-s<0&&(e(),n=s)}}function scrollHandler(){const e=Array.from(document.querySelectorAll("body h2, body h3"));function t(){for(var n,s,o,i=window.pageYOffset||document.documentElement.scrollTop,t=0;t<e.length;t++)s=e[t].getAttribute("id"),n=document.querySelector('nav ul li a[href="#'+s+'"]'),n&&n.classList.remove("active-toc");for(t=e.length-1;t>=0;t--)if(o=e[t].offsetTop,i>o-75&&(s=e[t].getAttribute("id"),n=document.querySelector('nav ul li a[href="#'+s+'"]'),n)){n.classList.add("active-toc");break}}window.addEventListener("scroll",throttle(t,200))}setTimeout(scrollHandler,100)</script><script defer>function getTextContentRecursively(e){let t="";if(e.nodeType===Node.TEXT_NODE)return e.textContent||"";for(const n of e.childNodes)t+=getTextContentRecursively(n);return t}function addCopyButtonToCodeBlocks(){const e=document.querySelectorAll('code[class^="language-"]:not(.output):not([class*="language-console"])');e.forEach(e=>{const t=document.createElement("button");t.classList.add("copy-code-button"),t.innerHTML="copy",t.addEventListener("click",()=>{const n=getTextContentRecursively(e);navigator.clipboard.writeText(n),t.innerHTML="copied!",setTimeout(()=>{t.innerHTML="copy"},1500)}),e.parentNode.before(t)})}setTimeout(function(){addCopyButtonToCodeBlocks()},100)</script><script>window.store={"https://www.functor.me/":{title:"glepnir's blog",tags:[],content:"",url:"https://www.functor.me/"},"https://www.functor.me/posts/neovim-mcursor/":{title:"Neovim's New Multicursor Support",tags:[],content:`Multiple cursors landed in Neovim core on September 1. PR #41587, branch name mchammer. It ships in 0.13, so today you need nightly.
+Q drops a cursor. 1Q drops one on every search match. &lt;C-l&gt; clears them. Everything you already know about Vim keeps working. That&rsquo;s most of it.
+How it works This isn&rsquo;t keystroke replay. Each action you take gets captured as an atom: the resolved, post-mapping key sequence for one semantic thing, the same material dot-repeat runs on. x is captured as dl. viweex is captured as viweed. Then every extra cursor replays that atom in its own context, which is why a visual sequence gets per-cursor extents instead of a fixed-size reselect.
+A few things follow from that:
+Cursors are extmarks in the nvim.multicursor namespace. That&rsquo;s the whole state. The primary cursor isn&rsquo;t one of them. Cursor sets are per-buffer, and a cascade only runs in the current buffer. Atoms replay at the completion of a toplevel normal command. A mapping still feeding keys pushes that back, so a mapping cascades as one unit. Insert mode previews at each cursor while you type instead of replaying at the end. Registers go per-cursor for the session, then join when it ends. One cascade is one undo state. Undo and redo never cascade. Cascade replays emit no CmdAtom. One action, one event, cursors or not. Keys Key Effect Q Toggle a cursor here. Ends follow-mode. [count]Q Cursor at every match of the last search pattern {Visual}Q Cursor on every selected line, by screen column. Starts follow-mode. &lt;C-LeftMouse&gt; Toggle a cursor at the click. Keeps follow-mode. q= Toggle follow-mode. 1q= on, 2q= off. ]C / [C Next / previous cursor, wraps, takes a count g&lt;C-a&gt; Ascending counter at each cursor &lt;C-l&gt; Clear cursors in the buffer gQ Restore the last cleared set &lt;C-c&gt; Interrupt a cascade Turn on showcmd and the count shows up there as 2×, or =2× in follow-mode.
+Placing cursors Q The cursor starts at line 1 column 1 unless the keys say otherwise.
+QjQjx aaa │ aa bbb │ bb ccc │ cc It&rsquo;s a toggle. Press it on a cursor and that cursor goes away; take out the last one and the session ends.
+QjQk 2 cursors, primary back on line 1 Q removes the cursor under the primary, 1 left x aaa │ aa bbb │ bb If a cursor is sitting on the primary, the edit happens once and the pair merges.
+Qx ab │ b one deletion, 0 cursors left In operator-pending mode Q throws the operator away and places nothing.
+dQ the d is gone, no cursor wx one two │ one wo You can&rsquo;t use it inside a macro, recording or executing. It just beeps.
+qq Q q no cursor (the Q gets recorded) @q no cursor either Q works And watch out for qQ, which is q starting a recording into register Q.
+[count]Q A cursor at every match of the last search pattern, including the one under the primary. The primary doesn&rsquo;t move.
+gg0*1Q cwXXX&lt;Esc&gt; foo bar foo │ XXX bar XXX baz foo qux │ baz XXX qux foobar foo │ foobar XXX * is whole-word, so foobar misses. Four cursors before the edit, three after: the one on top of the primary merges away in the first cascade.
+Any search works.
+gg0/ab&lt;CR&gt;1Q x ab ab ab │ b b b xx ab │ xx b Placement runs through the real search engine, so your case options behave exactly like they do for n.
+:set smartcase :set ignorecase gg0/Foo&lt;CR&gt;1Q x gg0/foo&lt;CR&gt;1Q gUiw Foo foo Foo │ oo foo oo Foo foo FOO │ FOO FOO FOO No previous search, no cursors (E35).
+The two placement styles mix.
+gg0*1Q 2 cursors on the two &#34;foo&#34; 0fbQ 3 cursors, adding &#34;bar&#34; $x the primary edits a fourth position foo bar foo │ oo ar o {Visual}Q Visual mode ends, the primary lands on the first selected line, and every selected line gets a cursor at the primary&rsquo;s screen column. Follow-mode comes on.
+gg0ll V2j Q iX&lt;Esc&gt; aaaa │ aaXaa bbbb │ bbXbb cc │ ccX short line: the cursor sits past EOL dddd │ dddd Follow-mode is on, so the next motion takes everything with it.
+jx aaXaa │ aaXaa bbXbb │ bbbb ccX │ cc dddd │ ddd Screen column, not byte column. A multibyte character earlier on one line won&rsquo;t throw off the cursors on the others.
+gg0ll vjQ x é123 │ é13 abcdef │ abdef Mouse &lt;C-LeftMouse&gt; toggles a cursor where you click, without moving the primary or pulling you into another window. Ctrl-click an existing cursor to remove it. Unlike Q it leaves follow-mode alone, and it&rsquo;s a no-op in insert mode. Middle-click paste is still one paste at the click point.
+:g and :cdo Q is a normal-mode command, so anything that runs normal-mode commands can place cursors.
+:g/foo/normal! Q A!&lt;Esc&gt; foo a │ foo a! bar b │ bar b foo c │ foo c! baz d │ baz d foo e │ foo e! Put motions in front of the Q to pick the column.
+:g/checkPassword/normal! 0fcQ cwverifyPassword&lt;Esc&gt; Quickfix works the same, except a range there addresses items, not lines.
+qflist on lines 1, 2, 4 :cdo normal! Q 3 cursors 3G0 move the primary off the last item x aaa │ aa bbb │ bb ccc │ cc the primary&#39;s own edit ddd │ dd :2,3cdo normal! Q 2 cursors, items 2 and 3 Lua nvim_mcursor(buf, {row, col}) takes a (1,0)-indexed position and hands back the number of extra cursors. Calling it on an existing cursor is a no-op, not a toggle. Hidden buffers are fine.
+for _, m in ipairs(vim.fn.matchbufline(&#39;%&#39;, [[\\&lt;TODO\\&gt;]], 1, &#39;$&#39;)) do vim.api.nvim_mcursor(0, { m.lnum, m.byteidx }) end Bad input gets you Invalid cursor line: out of range, Invalid 'pos': expected [row, col] array, or Invalid buffer.
+Clearing them &lt;C-l&gt; clears the buffer&rsquo;s cursors on top of its usual nohlsearch and diffupdate. It&rsquo;s a default mapping, so if you wrap it you need to remap, not feed it noremap.
+Clearing takes a snapshot, and gQ brings it back, same idea as gv.
+QjQ cursors on lines 1 and 2 &lt;C-l&gt; 0 cursors gQ 2 cursors Gx aaa │ aa bbb │ bb ccc │ ccc ddd │ dd The snapshot rides on extmarks, so edits in between shift it.
+&lt;C-l&gt; ggO&lt;Esc&gt; gQ the restored cursors moved down a line :edit! takes out the cursors and the snapshot together. Clearing part of the namespace removes those cursors without ending the session, so the rest keep follow-mode and the registers don&rsquo;t join yet.
+From Lua, clearing the namespace is the same operation, snapshot and all.
+vim.api.nvim_buf_clear_namespace(0, vim.api.nvim_create_namespace(&#39;nvim.multicursor&#39;), 0, -1) &lt;C-c&gt; interrupts a cascade in flight. What got done is still one undo block and no line ends up half-edited. It doesn&rsquo;t clear anything.
+Normal mode Operators QjQjdw hello world │ world foo bar │ bar one two │ two QjQj2x aaaa │ aa bbbb │ bb cccc │ cc Q2jQ2jdd a1 │ a2 a2 │ b2 b1 │ c2 b2 │ c1 │ c2 │ gg0ll QjD gg0ll QjCX&lt;Esc&gt; one two │ on one two │ onX three four │ th three four │ thX Qj2clXY&lt;Esc&gt; Qj~~ abcd │ XYcd abc │ ABc efgh │ XYgh def │ DEf Backwards:
+gg$ Qj$cT_M&lt;Esc&gt; gg$ Qj$d4h x_abcY │ x_MY abcdef │ af w_defgZ │ w_MZ ghijkl │ gl Counted objects, and objects that seek forward:
+Qjc2awX&lt;Esc&gt; gg0l Qjci(X&lt;Esc&gt; one two three │ Xthree a()b │ a(X)b foo bar baz │ Xbaz c()d │ c(X)d Qjci&#34;NEW&lt;Esc&gt; x &#34;aa&#34; y │ x &#34;NEW&#34; y z &#34;bbb&#34; w │ z &#34;NEW&#34; w Operators that eat a payload character:
+Qjdf, Qj2rZ QjgrZ ab,cd │ cd abc │ ZZc abc │ Zbc wxy,z │ z def │ ZZf def │ Zef r&lt;CR&gt; terminates itself, no &lt;Esc&gt;:
+gg0l Qjr&lt;CR&gt; abcd │ a efgh │ cd │ e │ gh A search as the operator&rsquo;s motion travels with the atom, and each cursor finds its own match:
+Qjd/find&lt;CR&gt; aaa find end │ find end bbb find end │ find end Multibyte:
+Qjx éàü │ àü 日本語 │ 本語 Cursors end up wherever the operator left them, so the next key acts per region:
+gg0l QjQjdiw then x foo bar │ bar │ bar baz qux │ qux │ qux aaa bbb │ bbb │ bbb gg0l QjguiW then x FOO BAR │ foo BAR │ oo BAR BAZ QUX │ baz QUX │ az QUX Options apply per cursor:
+:set autoindent :set shiftwidth=2 QjccX&lt;Esc&gt; Qj&gt;&gt; ␣␣aaa │ ␣␣X foo │ ␣␣foo ␣␣␣␣␣␣bbb │ ␣␣␣␣␣␣X bar │ ␣␣bar &lt;C-a&gt; and &lt;C-x&gt; cascade like anything else:
+Qj&lt;C-x&gt; then &lt;C-a&gt; x = 5 │ x = 4 │ x = 5 y = 5 │ y = 4 │ y = 5 Chaining Positions update after each cascade:
+QjQ jx then x AAAA │ AAA │ AA BBBB │ BBB │ BB CCCC │ CCC │ CC Anything that inserts lines shifts the cursors below it, primary included:
+QjQj oX&lt;Esc&gt; aaa │ aaa bbb │ X ccc │ bbb │ X │ ccc │ X Typeahead behind the cascading key survives:
+Qj xyy then p abc │ bc │ bc def │ ef │ bc │ ef │ ef Dot-repeat QjQj x . aaa │ aa │ a bbb │ bb │ b ccc │ cc │ c An edit you made before placing cursors is still what . repeats:
+gg0x aaa/bbb/ccc -&gt; aa/bbb/ccc QjQj . aa │ a bbb │ bb ccc │ cc Inserts and changes repeat too, including across a follow-mode move:
+Qj iZ&lt;Esc&gt; . Qj cwX&lt;Esc&gt; q= w q= . aaa │ ZZaaa one two │ X X bbb │ ZZbbb one two │ X X Follow mode Off by default: only the primary moves.
+Q j no cascade, the cursor stays on line 1 q= ll x now both move abcd │ abd efgh │ efh q= toggles. A count forces instead, so 1q= always turns it on and 2q= always turns it off.
+q= h x off again: only the primary moves 1q= 1q= h x forced on, both move 2q= 2q= h x forced off $ sends each cursor to its own end of line:
+Qj q= $ x abc │ ab defgh │ defg Vertical, display and arrow motions all follow:
+Q3j q= j x then k x then gj x then gk x a1 │ a1 │ 1 │ 1 │ a2 │ 2 │ 2 │ │ a3 │ a3 │ a3 │ a3 │ a3 b1 │ b1 │ 1 │ 1 │ b2 │ 2 │ 2 │ │ b3 │ b3 │ b3 │ b3 │ b3 Each cursor keeps its own curswant over short lines:
+gg04l Q 3jhh primary at (4,2), cursor at (1,4) q= jj q= x ABCDEF │ ABCDEF xy │ xy GHIJKL │ GHIJL MNOPQR │ MNOPQR zw │ zw STUVWX │ STVWX Mapped and &lt;expr&gt;-mapped motions follow:
+:nnoremap j gj Q2j q= j x a1 │ a1 a2 │ 2 b1 │ b1 b2 │ 2 Jumps don&rsquo;t follow. &lt;C-o&gt; and \` move the primary alone. Scrolling never follows either way, so &lt;C-d&gt; is primary-only, and a later edit still cascades to the off-screen cursors while the viewport stays where it was.
+Cursors that converge merge, and if they all merge the session ends and follow-mode resets:
+QjQ q= G q= x aaa │ aaa bbb │ bbb ccc │ cc one deletion, not three Q ends follow-mode. &lt;C-LeftMouse&gt; doesn&rsquo;t. ]C and [C don&rsquo;t drag the others.
+q= while you&rsquo;re recording a macro won&rsquo;t toggle, because the q stops the recording first.
+A mapping that edits cascades its motions too, even with follow-mode off:
+:nnoremap gj i&lt;C-j&gt;&lt;Esc&gt;k$ gg04l QjQj gj aaa bbb │ aaa␣ ccc ddd │ bbb eee fff │ ccc␣ │ ddd │ eee␣ │ fff Insert mode Text shows up at the other cursors as you type it, not at &lt;Esc&gt;.
+QjQj I# &lt;Esc&gt; puts &#34;one&#34; │ # puts &#34;one&#34; puts &#34;two&#34; │ # puts &#34;two&#34; puts &#34;three&#34; │ # puts &#34;three&#34; Cursor moves inside the session cascade live and resolve per cursor:
+QjQj Aab&lt;Left&gt;&lt;Left&gt;X (still in insert mode) alpha one │ alpha oneXab beta two │ beta twoXab gamma three │ gamma threeXab &lt;Esc&gt; AZ&lt;Home&gt;Y&lt;Esc&gt; &lt;Home&gt; is each line&#39;s own start │ Yalpha oneXabZ │ Ybeta twoXabZ │ Ygamma threeXabZ A&lt;S-Left&gt;W&lt;Esc&gt; word-wise, per cursor │ Yalpha WoneXabZ │ Ybeta WtwoXabZ │ Ygamma WthreeXabZ &lt;C-g&gt;U cascades and doesn&rsquo;t split undo:
+Qj i12&lt;C-g&gt;U&lt;Left&gt;3&lt;Esc&gt; then u aa │ 132aa │ aa bb │ 132bb │ bb An absolute jump splits the session and re-anchors:
+j0Q j0Q gg$ ix&lt;C-Home&gt;y&lt;Esc&gt; alpha │ yalphxa beta │ xybeta gamma │ xygamma &lt;C-c&gt; ends the session like &lt;Esc&gt; does. The text and the cursors both survive.
+Deleting:
+Qj iXY&lt;BS&gt;Z&lt;Esc&gt; gg0l Qji&lt;BS&gt;Z&lt;Esc&gt; aaa │ XZaaa abc │ Zbc bbb │ XZbbb def │ Zef &lt;BS&gt; at column 0 joins with the line above:
+ggj0 Q2ji&lt;BS&gt;&lt;Esc&gt; aa │ aabb bb │ ccdd cc │ dd │ &lt;CR&gt; splits:
+gg02l QjiAB&lt;CR&gt;CD&lt;Esc&gt; aaXbb │ aaAB ccXdd │ CDXbb │ ccAB │ CDXdd Entry commands:
+Q2jOX&lt;Esc&gt; QjaZ&lt;Esc&gt; gg$ Qj$IX&lt;Esc&gt; aaa │ X abc │ aZbc ␣␣aa │ ␣␣Xaa bbb │ aaa def │ dZef ␣␣␣␣bb │ ␣␣␣␣Xbb ccc │ bbb │ X │ ccc Insert-mode commands:
+Qjifoo bar&lt;C-w&gt;X&lt;Esc&gt; Qji&lt;C-v&gt;u00e9&lt;Esc&gt; Qj3iZ&lt;Esc&gt; zz │ foo Xzz aaa │ éaaa aaa │ ZZZaaa yy │ foo Xyy bbb │ ébbb bbb │ ZZZbbb Replace mode, including &lt;BS&gt; putting back what it overwrote:
+QjRXY&lt;Esc&gt; QjRXY&lt;BS&gt;&lt;BS&gt;&lt;Esc&gt; abcdef │ XYcdef abcdef │ abcdef ghijkl │ XYijkl ghijkl │ ghijkl Abbreviations and autoindent:
+:iabbrev teh the :set autoindent Qjiteh &lt;Esc&gt; QjoX&lt;Esc&gt; aaa │ the aaa ␣␣aa │ ␣␣aa bbb │ the bbb ␣␣␣␣␣␣bb │ ␣␣X │ ␣␣␣␣␣␣bb │ ␣␣␣␣␣␣X A replayed &lt;C-u&gt; on a less-indented line has nothing to eat, and won&rsquo;t backspace through the line boundary:
+:set autoindent QjQj o&lt;C-u&gt;&lt;Tab&gt;yay&lt;Esc&gt; ␣␣␣␣indented aa │ ␣␣␣␣indented aa flat bb │ →yay ␣␣␣␣indented cc │ flat bb │ →yay │ ␣␣␣␣indented cc │ →yay ea under follow-mode:
+Qj q= ea!&lt;Esc&gt; q= one two │ one! two three four │ three! four Completion works. The cascade pauses while a popup is up and the other cursors catch up when it closes, so accepting a candidate lands everywhere:
+2gg Q j A&lt;C-n&gt;&lt;Esc&gt; wombat │ wombat wo │ wombat wo │ wombat Same for autocomplete and for a plugin driving complete() from an InsertCharPre handler.
+Autocommand counts match what you&rsquo;d get with one cursor. InsertEnter and InsertLeave fire once. TextChangedI fires once per typed character, not once per cursor. TextChanged fires once for the session. InsertCharPre fires once per character, and whatever it does to v:char lands at every cursor. textwidth wraps per cursor.
+Insertion points past EOL get drawn as virtual cells, so A at three cursors shows you three carets.
+Visual mode Each cursor shows its own selection, previewed live, with the display cursor at each selection end. o swaps it to the other end. Charwise, linewise and blockwise all render.
+The whole keysequence replays, so the extents are per-cursor:
+Qj viweex one two three x │ ␣x aa bb cc d │ ␣d Qjviwr X Q4jVjd one two │ XXX two a │ c ab cd │ XX cd b │ d c │ d │ e │ f │ Blockwise:
+Q2j&lt;C-v&gt;jcX&lt;Esc&gt; Q2j&lt;C-v&gt;jIX&lt;Esc&gt; Q2j&lt;C-v&gt;jA!&lt;Esc&gt; ab │ Xb ab │ Xab ab │ a!b cd │ Xd cd │ Xcd cd │ c!d ef │ Xf ef │ Xef ef │ e!f gh │ Xh gh │ Xgh gh │ g!h Payload motions inside the selection:
+Qjvf,d Qjv/two&lt;CR&gt;d abcd,ef │ ef one two │ wo wxyz,gh │ gh one two │ wo &lt;Esc&gt; puts every cursor on its own selection end, which is a handy way to reposition without turning on follow-mode:
+gg04l QjQj viw&lt;Esc&gt;x then 0viwe&lt;Esc&gt;x aaa bbb ccc │ aaa bb ccc │ aaa bb cc ddd eee fff │ ddd ee fff │ ddd ee ff ggg hhh iii │ ggg hh iii │ ggg h iii A selection changed by scrolling the viewport (V&lt;C-e&gt; at the window edge) isn&rsquo;t replayable, so it edits the primary only.
+Registers Every cursor reads and writes its own.
+Qj yy p aaa │ aaa bbb │ aaa │ bbb │ bbb Swap two words everywhere:
+Qj q= dW E p q= one two │ twoone␣ three four │ fourthree␣ Paste each cursor&rsquo;s own yank over its own word:
+Qj yiw q= w q= viwp aaa X │ aaa aaa bbb Y │ bbb bbb Jagged line ends, each cursor on its own register:
+gg$Q j$ x then p abc │ ab │ abc de │ d │ de Once the last cursor goes, the per-cursor values join in document order, linewise:
+Qj0Q j0 yiw buffer unchanged; &#34; is &#34;baz&#34; during the session &lt;C-l&gt; &#34; is now foo\\nbar\\nbaz\\n , type V foo x bar y baz z Named registers join the same way, and one nobody touched is left alone:
+:let @z = &#39;PRESET&#39; Qj0 &#34;ayiw &lt;C-l&gt; @a -&gt; foo\\nbar\\n @z -&gt; PRESET Last write wins:
+Qj0 yl x &lt;C-l&gt; aa → @&#34; is a\\nb\\n the deletes, not the yanks bb A cursor whose replays never wrote a register contributes nothing, instead of folding in the stale pre-session value.
+TextYankPost fires per cursor with that cursor&rsquo;s contents. The primary fires first and isn&rsquo;t a replay, which nvim__mcursor_cascading() will tell you. The primary&rsquo;s registers are the ones that stick.
+Under clipboard=unnamedplus the provider syncs once for the primary&rsquo;s own edit and once for the whole cascade, not once per cursor, and what reaches the clipboard is the primary&rsquo;s.
+Undo One u reverts a whole cascade. &lt;C-r&gt; puts the cursors back where the edit left them, rather than wherever splice adjustment would have drifted them:
+QjQj$ IX &lt;Esc&gt; cursors at column 1 u cursors back at column 0 &lt;C-r&gt; cursors at column 1 again x aaa │ X aaa │ Xaaa bbb │ X bbb │ Xbbb ccc │ X ccc │ Xccc Each cascade is a step, and a count counts cascades:
+Q jx x abc/def -&gt; bc/ef -&gt; c/f u bc/ef u abc/def &lt;C-r&gt;&lt;C-r&gt; c/f 2u abc/def Q is placement, not an edit, so the tree runs straight through the point where you placed cursors:
+gg0x xxx/yyy -&gt; xx/yyy Q jx -&gt; x/yy u -&gt; xx/yyy u -&gt; xxx/yyy A cascaded macro is one block:
+:let @q = &#34;iX\\&lt;Esc&gt;&#34; Qj @q then u then &lt;C-r&gt; aaa │ Xaaa │ aaa │ Xaaa bbb │ Xbbb │ bbb │ Xbbb A mapped undo or redo doesn&rsquo;t cascade. Undo is buffer-global, so cascading it would undo once per cursor and blow straight past the start of the session:
+:nnoremap &lt;silent&gt; u :&lt;C-u&gt;undo&lt;CR&gt; QjQj x aaa/bbb/ccc -&gt; aa/bb/cc u aaa/bbb/ccc one undo, not three Undo restores text, never registers. The per-cursor values survive it, so exiting still joins them:
+Qj0 diw &#34;foo x&#34;/&#34;bar y&#34; -&gt; &#34; x&#34;/&#34; y&#34; u -&gt; &#34;foo x&#34;/&#34;bar y&#34; @&#34; is still bar &lt;C-l&gt; @&#34; is foo\\nbar\\n g-, g+ and :earlier drop every cursor and end the session:
+Q jx aaa/bbb -&gt; aa/bb 1 cursor g- aaa/bbb 0 cursors g+ aa/bb still 0 Q new session Macros @ cascades:
+gg0qqxq record &#34;x&#34;; line 1 becomes &#34;aa&#34; jQ j0 @q then @@ aaa │ aa │ aa bbb │ bb │ b ccc │ cc │ c So does a macro with an insert session in it:
+gg0qwA!&lt;Esc&gt;q jQ j0 @w aaa │ aaa! bbb │ bbb! ccc │ ccc! A count applies at each cursor:
+2@q the &#34;x&#34; macro, twice per cursor aaaa │ aaaa bbbb │ bb cccc │ cc A macro typed where there are no cursors cascades in whatever buffer it navigates into, same as a mapping.
+Numbering Qj0Qj0 g&lt;C-a&gt; Qj0 5g&lt;C-a&gt; a │ 1a a │ 5a b │ 2b b │ 6b c │ 3c The primary counts as a slot. If it&rsquo;s sitting on a cursor the pair shares one:
+QjQj gg0 g&lt;C-a&gt; 2 cursors survive x │ 1x y │ 2y z │ z The number goes in at the cursor&rsquo;s column, before whatever is there:
+Qj g&lt;C-a&gt; x = 5 │ x = 15 y = 5 │ y = 25 Through a mapping it applies once, not once per cursor:
+:nnoremap ,n g&lt;C-a&gt; QjQj ,n a │ 1a b │ 2b c │ 3c With no cursors it isn&rsquo;t a command and beeps. Plain &lt;C-a&gt; still increments.
+Start, step and format live on the function behind it. Private module, so pin your version or wrap it in pcall:
+require(&#39;vim._core.mcursor&#39;).number(10, 2, &#39;%d) &#39;) Qj0Qj0 then the call above x │ 10) x x │ 12) x x │ 14) x Jumping between cursors ]C and [C cycle in position order, wrapping, with a count. They&rsquo;ll scroll the viewport to reach an off-screen cursor, and they never drag the other cursors along, even in follow-mode. No cursors, no move, just a beep.
+Q2jllQ gg0j cursors at (1,0) and (3,2), primary on line 2 ]C (3,2) ]C (1,0) wrapped 2]C (1,0) [C (3,2) Pair that with the Q toggle and you get select-all-then-deselect:
+1Q every match ]C ]C walk Q drop this one ciw... edit the rest Folds The primary keeps normal fold behavior. Replays don&rsquo;t: they act on the per-cursor line inside the fold, and the fold stays closed.
+Primary outside the fold:
+3G0Q :2,4fold gg0 x then dd aaa │ aa │ bbb primary deletes line 1 bbb │ bbb │ ddd the cursor deletes only line 3, inside the fold ccc │ cc │ ddd │ ddd │ Primary inside the fold:
+4jQ gg :2,3fold 2G dd aaa │ aaa primary is in the closed fold: its dd takes the whole fold bbb │ ddd ccc │ fff the cursor on line 5 deletes only its own line ddd │ eee │ fff │ Follow-mode motions ignore closed folds too, so a replayed j steps into one. A mapping that turns fold semantics back on mid-cascade (zN then dd) doesn&rsquo;t change that.
+Fold operators cascade; fold toggles don&rsquo;t:
+4G0Q gg0 zfap each cursor folds its own paragraph za only the primary&#39;s fold toggles What doesn&rsquo;t cascade Ex commands. The atom gets emitted with type = &quot;excmd&quot; and never replayed:
+Qj :s/o/O/&lt;CR&gt; foo │ foo foo │ fOo :normal!, and anything else programmatic:
+Qj :normal! x primary only x typed: cascades aaa │ aaa │ aa bbb │ bb │ b API edits shift the cursors but are primary-only themselves:
+QjQj :lua vim.api.nvim_buf_set_lines(0, 0, 0, true, { &#39;zzz&#39; }) x aaa │ zzz │ zzz bbb │ aaa │ aa ccc │ bbb │ bb │ ccc │ cc Also undo and redo, fold toggles, an operator with no effect (an aborted ysa[ won&rsquo;t drag every cursor onto the same bracket), and an atom captured in one buffer that resolves in another (a mapping ending in :bnext doesn&rsquo;t cascade into where it lands).
+Buffers Cursor sets are per-buffer. A cascade pauses while you&rsquo;re elsewhere and picks up when you come back:
+:set hidden Qj aaa/bbb, 1 cursor :enew gg0x xxx -&gt; xx , no cascade into the other buffer :buffer # 1 cursor still there 2G0x aa/bb Edits cascade from any window showing the buffer, so :split and editing from the new window is fine. Cursors die with their buffer, and nvim_mcursor() will happily place them in a hidden one.
+Advanced Occurrence operator This is the thing issue #21334 was asking for. An operatorfunc puts a cursor on every occurrence of the word under the cursor within a motion, then your next edit cascades to all of them. They survive because a g@ with no effect doesn&rsquo;t cascade.
+_G.occur_opfunc = function() local ms = vim.fn.matchbufline(&#39;%&#39;, _G.occur_pat, vim.fn.line(&#34;&#39;[&#34;), vim.fn.line(&#34;&#39;]&#34;)) vim.api.nvim_win_set_cursor(0, { ms[1].lnum, ms[1].byteidx }) for i = 2, #ms do vim.api.nvim_mcursor(0, { ms[i].lnum, ms[i].byteidx }) end end vim.keymap.set(&#39;n&#39;, &#39;co&#39;, function() _G.occur_pat = ([[\\&lt;%s\\&gt;]]):format(vim.fn.expand(&#39;&lt;cword&gt;&#39;)) vim.o.operatorfunc = &#39;v:lua.occur_opfunc&#39; return &#39;g@&#39; end, { expr = true }) cursor on the first &#34;text&#34; coip ciwWORD&lt;Esc&gt; text a text │ WORD a WORD b text c │ b WORD c coi{, coap and co3j all work the same way.
+Follow mode for exactly one motion CmdAtom plus a one-shot autocommand. Returning true deletes the autocommand.
+vim.keymap.set(&#39;n&#39;, &#39;q-&#39;, function() vim.cmd(&#39;normal! 1q=&#39;) vim.api.nvim_create_autocmd(&#39;CmdAtom&#39;, { callback = function(ev) if ev.data.lhs == &#39;q-&#39; then return end vim.cmd(&#39;normal! 2q=&#39;) return true end, }) end) QjQj q- ^ every cursor moves to its first non-blank l follow mode already ended: primary only ␣␣aaa ␣␣bbb ␣␣ccc Telling the primary apart in an autocommand vim.api.nvim_create_autocmd(&#39;TextYankPost&#39;, { callback = function() if vim.api.nvim__mcursor_cascading() then return end -- primary only end, }) Double underscore, so it can change under you.
+Cursors from a treesitter query local function cursors_from_query(lang, query_str, capture) local parser = vim.treesitter.get_parser(0, lang) local root = parser:parse()[1]:root() local query = vim.treesitter.query.parse(lang, query_str) for id, node in query:iter_captures(root, 0, 0, -1) do if query.captures[id] == capture then local row, col = node:range() vim.api.nvim_mcursor(0, { row + 1, col }) end end end cursors_from_query(&#39;lua&#39;, &#39;(function_declaration name: (identifier) @name)&#39;, &#39;name&#39;) A cursor on every function name, then cw to rename the lot.
+Pruning Deleting an extmark deletes the cursor, so you can place broadly and filter after:
+local ns = vim.api.nvim_create_namespace(&#39;nvim.multicursor&#39;) local function keep_cursors(pred) for _, m in ipairs(vim.api.nvim_buf_get_extmarks(0, ns, 0, -1, {})) do local id, row, col = m[1], m[2], m[3] local line = vim.api.nvim_buf_get_lines(0, row, row + 1, true)[1] if not pred(line, row + 1, col) then vim.api.nvim_buf_del_extmark(0, ns, id) end end end keep_cursors(function(line) return not line:match(&#39;^%s*//&#39;) end) Aligning columns Extmarks move with inserted text, so padding to a shared virtual column is short. Assumes one cursor per line, and skips the primary since it isn&rsquo;t an extmark.
+local function align_cursors() local marks = vim.api.nvim_buf_get_extmarks(0, ns, 0, -1, {}) local target = 0 for _, m in ipairs(marks) do target = math.max(target, vim.fn.virtcol({ m[2] + 1, m[3] + 1 })) end for i = #marks, 1, -1 do local row, col = marks[i][2], marks[i][3] local pad = target - vim.fn.virtcol({ row + 1, col + 1 }) if pad &gt; 0 then vim.api.nvim_buf_set_text(0, row, col, row, col, { (&#39; &#39;):rep(pad) }) end end end Cursors from quickfix, across files for _, item in ipairs(vim.fn.getqflist()) do if item.valid == 1 and item.bufnr ~= 0 then vim.api.nvim_mcursor(item.bufnr, { item.lnum, math.max(item.col - 1, 0) }) end end Quickfix items are 1-indexed on both axes, hence col - 1. Diagnostics are 0-indexed on both, so those want lnum + 1 and a bare col.
+CmdAtom One event per action, and cascade replays emit nothing.
+type is motion, operator, insert, visual, mapping or excmd. lhs is what you typed before resolution. keys is the resolved sequence in raw bytes: empty means it can&rsquo;t be replayed, nil means the capture was lossy and you should replay lhs with feedkeys mode m instead of n. text carries the payload, whether that&rsquo;s inserted text, a cmdline or a search. changed and moved tell you whether the action edited or moved. atoms holds ordered subatoms, and it&rsquo;s only non-empty for a composite action.
+nnoremap gj i&lt;C-j&gt;&lt;Esc&gt;k$ emits one mapping atom whose atoms are two inserts plus the motions k and $. q= gets recorded too, so a follow-mode stretch shows up as q=, l, l, q=.
+The event is deferred, so schedule anything that reacts to it. A custom .:
+local last ---@type vim.event.cmdatom.data? local mc = vim.api.nvim_create_namespace(&#39;nvim.multicursor&#39;) vim.api.nvim_create_autocmd(&#39;CmdAtom&#39;, { callback = function(ev) if ev.data.changed and ev.data.lhs ~= &#39;.&#39; then last = ev.data end end, }) vim.keymap.set(&#39;n&#39;, &#39;.&#39;, function() if #vim.api.nvim_buf_get_extmarks(0, mc, 0, -1, { limit = 1 }) &gt; 0 then vim.api.nvim_feedkeys(&#39;.&#39;, &#39;n&#39;, false) -- hand it back so it cascades return end vim.schedule(function() if last then vim.api.nvim_feedkeys(last.keys or last.lhs, last.keys and &#39;n&#39; or &#39;m&#39;, false) end end) end) That multicursor check is the important bit: a replay through feedkeys is programmatic and won&rsquo;t cascade. The version in :h CmdAtom also filters undo and redo out by comparing undoseq against a buffer-local high-water mark. :h cmdatom-macro keeps a ring of the last N atoms and turns them into an editable macro in the cmdwin.
+Keymaps Q used to replay the last recorded register, and {Visual}Q ran it per selected line. Both are gone. If you miss them:
+vim.keymap.set({ &#39;n&#39;, &#39;x&#39; }, &#39;&lt;leader&gt;q&#39;, &#39;Q&#39;, { remap = false }) vim.keymap.set(&#39;n&#39;, &#39;Q&#39;, function() local reg = vim.fn.reg_recorded() if reg == &#39;&#39; then return &#39;&#39; end return &#39;@&#39; .. reg end, { expr = true }) remap = false is what gets you the builtin Q instead of the mapping below it.
+Cursor at every occurrence of the word under the cursor:
+vim.keymap.set(&#39;n&#39;, &#39;&lt;leader&gt;*&#39;, function() local word = vim.fn.expand(&#39;&lt;cword&gt;&#39;) if word == &#39;&#39; then return end vim.fn.setreg(&#39;/&#39;, [[\\&lt;]] .. vim.fn.escape(word, [[\\/]]) .. [[\\&gt;]]) vim.v.hlsearch = 1 vim.cmd(&#39;normal! 1Q&#39;) end) :Cursors {pattern}, range-aware:
+vim.api.nvim_create_user_command(&#39;Cursors&#39;, function(opts) local first = opts.range &gt; 0 and opts.line1 or 1 local last = opts.range &gt; 0 and opts.line2 or vim.fn.line(&#39;$&#39;) for _, m in ipairs(vim.fn.matchbufline(&#39;%&#39;, opts.args, first, last)) do vim.api.nvim_mcursor(0, { m.lnum, m.byteidx }) end end, { nargs = 1, range = true }) :Cursors \\d\\+ hits every number, :'&lt;,'&gt;Cursors , every comma in the selection.
+Cursor on every error:
+vim.keymap.set(&#39;n&#39;, &#39;&lt;leader&gt;me&#39;, function() for _, d in ipairs(vim.diagnostic.get(0, { severity = vim.diagnostic.severity.ERROR })) do vim.api.nvim_mcursor(0, { d.lnum + 1, d.col }) end end) Escape clears cursors when there are any. Clear the namespace directly rather than feeding &lt;C-l&gt;, which is a mapping and would need remap = true to fire:
+vim.keymap.set(&#39;n&#39;, &#39;&lt;Esc&gt;&#39;, function() local n = #vim.api.nvim_buf_get_extmarks(0, ns, 0, -1, { limit = 1 }) if n &gt; 0 then vim.api.nvim_buf_clear_namespace(0, ns, 0, -1) -- snapshots for gQ, same as CTRL-L else vim.cmd(&#39;nohlsearch&#39;) end end) Colors:
+vim.api.nvim_set_hl(0, &#39;MCursor&#39;, { reverse = true }) vim.api.nvim_set_hl(0, &#39;MCursorVisual&#39;, { link = &#39;Visual&#39; }) reverse is the safe pick. Linking to Cursor sounds right until you remember how many colorschemes leave Cursor invisible in the terminal.
+If you share a config with a machine still on 0.12:
+if vim.api.nvim_mcursor then -- ... end Things that will bite you Two cursors on one line do edit at their own columns, for column-local operators:
+Q4l x then x abcdef │ bcdf │ cd But an edit that shifts columns shifts them relative to each other, and linewise operators aren&rsquo;t deduplicated for same-line cursors yet, so dd there runs once per cursor.
+The rest of the list:
+g-, g+ and :earlier end the session, and gQ can&rsquo;t bring the cursors back. :e! and autoread reloads clear the cursors and the gQ snapshot. Undo restores text, not registers. g&lt;C-a&gt; inserts before the character at the cursor&rsquo;s column, and $ stops on the last character, so appending numbers to line ends needs nvim_mcursor() at an exact byte column. Q is quietly unavailable inside a macro, and qQ starts a recording. iw and cw are still word objects. They won&rsquo;t split camelCase. Use :%s///g for substrings. Ex commands don&rsquo;t cascade. Terminals Nvim asks for the Kitty multiple-cursors protocol at startup and only uses it if the reply advertises cursor shape 29. When it does, you get real terminal cursors instead of MCursor cell highlights, including in unfocused splits. To force the fallback:
+require(&#39;vim._core.mcursor&#39;).tty_cursors(false) `,url:"https://www.functor.me/posts/neovim-mcursor/"},"https://www.functor.me/posts/":{title:"Posts",tags:[],content:"",url:"https://www.functor.me/posts/"},"https://www.functor.me/posts/a-better-indent-line-implementation/":{title:"A Better Indent Line Implementation",tags:[],content:`I Built Another Indent Guide So I made indentmini.nvim a while back. Minimal indent guide plugin, pretty fast, people seem to like it. It works by using nvim_set_decoration_provider to draw virtual text on every visible line during each redraw cycle. I spent a ton of time optimizing it — bit-packing line data into integers, calling Neovim&rsquo;s C functions through FFI, all that fun stuff.
+But the whole time there was this thing nagging me. Neovim already has leadmultispace in listchars. You set it to something like ┆··· (guide char
+spaces) and Neovim renders indent guides on every line that has leading whitespace. For free. At the C level. No plugin needed. The only thing it can&rsquo;t do is blank lines. Blank lines have no text, so there&rsquo;s no leading whitespace to replace. And that&rsquo;s literally the only gap.
+So I thought — what if the plugin just&hellip; handled blank lines? And nothing else?
+How It Works Non-blank lines: One autocmd sets leadmultispace when a buffer is opened or shiftwidth changes. Done. The plugin never touches these lines again.
+local function guides(bufnr) if vim.list_contains(opt.exclude_filetype, vim.bo.filetype) then return end local sw = get_step(bufnr) local indent_char = opt.char .. (&#39; &#39;):rep(sw - 1) vim.opt_local.listchars:append({ leadmultispace = indent_char }) end Blank lines: A decoration provider runs on_win to figure out what indent each blank line should have, then on_line draws the guides with ephemeral extmarks.
+That&rsquo;s the whole plugin. Non-blank lines are Neovim&rsquo;s problem. Blank lines are mine.
+Figuring Out Blank Line Indents This is the only interesting part. A blank line has no text, so you have to figure out its indent from surrounding context. Two approaches depending on what&rsquo;s available.
+If TreeSitter is active, just ask the syntax tree. Get the node at the blank line, walk up to its parent, grab the parent&rsquo;s indent and add one level:
+local node = ts.get_node({ bufnr = bufnr, pos = { row, 0 } }) local parent = node:parent() local p_srow = parent:range() indent = buf_get_indent(bufnr, p_srow + 1) + step If there&rsquo;s no TreeSitter, search up and down for the nearest non-blank lines and take the max:
+local up = search_nearest(c, row - 1, UP, bufnr) local down = search_nearest(c, row + 1, DOWN, bufnr) indent = math.max(up, down) Why max? Picture this:
+if (true) { // indent 4 // blank — up=4, down=8 foo(); // indent 8 } The blank line is inside the block, so it should show guides up to the deeper level. Max gets that right.
+The search function handles both directions with a single implementation — just pass -1 or 1. And there&rsquo;s a nonblank cache so every line&rsquo;s indent gets computed at most once. First pass through the viewport caches all non-blank line indents. When searching for blank line context, the lookup hits the cache and returns immediately. Even lines outside the viewport get cached on first access so adjacent blank lines don&rsquo;t repeat the work.
+local function search_nearest(c, row, direction, bufnr) local r = row while r &gt;= 0 and r &lt; c.count do if c.nonblank[r] then return c.nonblank[r] end local text = buf_get_line(bufnr, r) if not is_blank(text) then local indent = buf_get_indent(bufnr, r + 1) c.nonblank[r] = indent return indent end r = r + direction end return 0 end Rendering Blank Lines The on_line callback is short. Non-blank line? Return immediately. Blank line? Read the precomputed indent, loop through levels, place extmarks:
+on_line = function(_, winid, bufnr, row) local c = ctx[winid] if not c or not c.blank[row] then return end local indent = c.indent[row] if not indent or indent &lt;= 0 then return end for level = opt.minlevel, math.floor(indent / step) do local col = (level - 1) * step api.nvim_buf_set_extmark(bufnr, ns, row, 0, { virt_text = { { opt.char, opt.hl } }, virt_text_pos = &#39;overlay&#39;, ephemeral = true, virt_text_win_col = col - c.leftcol, }) end end Since blank lines have zero length, you can&rsquo;t use column offsets — virt_text_win_col positions the guide visually. Subtracting leftcol handles horizontal scrolling.
+FFI I use LuaJIT FFI to call Neovim internals directly — ml_get_buf for line text, get_sw_value for shiftwidth. Way faster than the Lua API for hot paths. Used get_indent_buf for computing indentation to support multiple windows.
+indentmini vs This indentmini renders every line — it uses a snapshot system with bit-packed data, handles all the edge cases around mixed tabs/spaces, supports only_current mode for highlighting just the current block, all that. It&rsquo;s a proper plugin.
+This new thing is more of an experiment. Push as much as possible onto Neovim&rsquo;s native rendering and only fill in the gap. Less code, less work per redraw, but also fewer features. Different tradeoffs.
+The code is up on GitHub if you want to poke at it.
+`,url:"https://www.functor.me/posts/a-better-indent-line-implementation/"},"https://www.functor.me/posts/thought_fp/":{title:"When Loops Become Math: How Functional Thinking Changed My C++",tags:[],content:`Last week, I was staring at two pieces of code a friend had sent me, asking which one I preferred. They looked like this:
+// Version A double calculate_mean(const vector&lt;double&gt;&amp; data) { double sum = 0.0; for (const auto&amp; x : data) { sum += x; } return sum / data.size(); } // Version B double calculate_stddev(const vector&lt;double&gt;&amp; data) { double sum = 0.0; double mean = calculate_mean(data); for (const auto&amp; x : data) { sum += (x - mean) * (x - mean); } return sqrt(sum / data.size()); } I looked at them for a solid five seconds before it hit me: these two loops were fundamentally the same mathematical pattern! But in the code, that pattern was buried under for loops and accumulation variables.
+Seeing with Math Eyes In math, we&rsquo;d write these calculations as:
+mean=1n∑i=1nxi \\text{mean} = \\frac{1}{n} \\sum_{i=1}^n x_i mean=n1​i=1∑n​xi​stddev=1n∑i=1n(xi−μ)2 \\text{stddev} = \\sqrt{\\frac{1}{n} \\sum_{i=1}^n (x_i - \\mu)^2} stddev=n1​i=1∑n​(xi​−μ)2​See that $\\sum$ symbol? That&rsquo;s our abstraction point. In functional programming, this is called a fold (or reduce), defined as:
+fold(f,z,[x1,x2,...,xn])=f(f(f(z,x1),x2),...,xn) \\text{fold}(f, z, [x_1, x_2, ..., x_n]) = f(f(f(z, x_1), x_2), ..., x_n) fold(f,z,[x1​,x2​,...,xn​])=f(f(f(z,x1​),x2​),...,xn​)Looking at my code with this new perspective:
+template&lt;typename T, typename BinaryOp&gt; T fold(const vector&lt;T&gt;&amp; vec, T init, BinaryOp op) { T result = init; for (const auto&amp; x : vec) { result = op(result, x); } return result; } Now both calculations become:
+double mean = fold(data, 0.0, plus&lt;double&gt;{}) / data.size(); double variance = fold(data, 0.0, [mean](double acc, double x) { return acc + (x - mean) * (x - mean); }) / data.size(); The Real Breakthrough: Seeing Deeper Patterns I started noticing this pattern everywhere. Take this convex hull algorithm I&rsquo;d written:
+vector&lt;Point&gt; find_convex_hull(const vector&lt;Point&gt;&amp; points) { vector&lt;Point&gt; hull; for (size_t i = 0; i &lt; points.size(); ++i) { for (size_t j = 0; j &lt; points.size(); ++j) { if (i == j) continue; bool all_on_same_side = true; for (size_t k = 0; k &lt; points.size(); ++k) { if (k == i || k == j) continue; if (!is_on_same_side(points[i], points[j], points[k])) { all_on_same_side = false; break; } } if (all_on_same_side) { hull.push_back(points[i]); hull.push_back(points[j]); } } } return remove_duplicates(hull); } Three nested loops! But with functional thinking, I saw predicate logic:
+A point pair (i,j) belongs to the convex hull boundary if and only if all other points are on the same side of the line segment (i,j).
+Mathematically: (i,j)∈hull ⟺ ∀k≠i,j:same_side(i,j,k) (i,j) \\in \\text{hull} \\iff \\forall k \\neq i,j : \\text{same\\_side}(i,j,k) (i,j)∈hull⟺∀k=i,j:same_side(i,j,k)In C++, this becomes:
+vector&lt;Point&gt; find_convex_hull_fp(const vector&lt;Point&gt;&amp; points) { auto pairs = cartesian_product(points, points); auto is_hull_edge = [&amp;](const pair&lt;Point, Point&gt;&amp; edge) { return all_of(points.begin(), points.end(), [&amp;](const Point&amp; p) { return &amp;p == &amp;edge.first || &amp;p == &amp;edge.second || is_on_same_side(edge.first, edge.second, p); }); }; return filter(pairs, is_hull_edge) | transform([](auto&amp;&amp; p) { return vector{p.first, p.second}; }) | flatten() | unique(); } Why This Matters: You Can Actually Prove Things Here&rsquo;s the cool part: functional code is easier to reason about.
+With the original code, proving correctness meant:
+Tracking three loop variables Understanding when the break happens Verifying when hull gets updated With the functional version:
+cartesian_product generates all point pairs (obvious) is_hull_edge is a direct translation of the mathematical definition The composition uses standard, well-understood operations I can even write tests that verify mathematical properties:
+// Convex hull property: all points should be inside the hull TEST(ConvexHull, AllPointsInsideHull) { auto points = generate_random_points(100); auto hull = find_convex_hull_fp(points); for (const auto&amp; p : points) { ASSERT_TRUE(is_point_inside_convex_polygon(p, hull)); } } Category Theory Sneaks In Recently, I was writing a config parser with multiple operations that could fail:
+optional&lt;int&gt; parse_timeout(const string&amp; str); optional&lt;string&gt; parse_hostname(const string&amp; str); optional&lt;Config&gt; create_config(int timeout, const string&amp; host); The traditional way:
+optional&lt;Config&gt; parse_config(const string&amp; timeout_str, const string&amp; host_str) { auto timeout = parse_timeout(timeout_str); if (!timeout) return nullopt; auto host = parse_hostname(host_str); if (!host) return nullopt; return create_config(*timeout, *host); } The functional way uses a pattern (some people call it a monad, but I just call it useful):
+template&lt;typename T, typename Func&gt; auto and_then(const optional&lt;T&gt;&amp; opt, Func f) -&gt; decltype(f(opt.value())) { if (!opt) return decltype(f(opt.value()))(); return f(*opt); } optional&lt;Config&gt; parse_config_fp(const string&amp; timeout_str, const string&amp; host_str) { return and_then(parse_timeout(timeout_str), [&amp;](int timeout) { return and_then(parse_hostname(host_str), [&amp;](const string&amp; host) { return create_config(timeout, host); }); }); } Mathematically, this is composition in the Kleisli category: f:A→M(B),g:B→M(C)g∘Kf:A→M(C) f: A \\to M(B), \\quad g: B \\to M(C) \\\\ g \\circ_K f: A \\to M(C) f:A→M(B),g:B→M(C)g∘K​f:A→M(C)Performance? Actually Better People say functional code is slow. Modern C++ compilers are smart:
+// Hand-written &#34;optimized&#34; version double sum_squares(const vector&lt;double&gt;&amp; data) { double sum = 0.0; for (const auto&amp; x : data) { sum += x * x; } return sum; } // Functional version double sum_squares_fp(const vector&lt;double&gt;&amp; data) { return fold(data, 0.0, [](double acc, double x) { return acc + x * x; }); } With -O3, GCC generates identical assembly for both. The functional version is actually safer—no loop variables, no bounds checking worries.
+My New Toolkit Here&rsquo;s what functional thinking added to my C++ toolbox:
+map/filter/reduce - The basics for working with collections Function composition - compose(f, g)(x) = f(g(x)) Currying - curry(f)(a)(b) = f(a, b) Lazy evaluation - Using generator or ranges::view Like currying for configuration:
+auto create_server = curry([](int port, const string&amp; host, Config config) { return Server{port, host, config}; }); auto create_local_server = create_server(8080, &#34;localhost&#34;); auto server = create_local_server(config); The Mindset Shift Functional programming taught me something important: code is math, and the compiler is my proof assistant.
+Before: I wrote loops thinking &ldquo;do this repeatedly&rdquo;. Now: I write fold thinking &ldquo;apply this associative operation&rdquo;.
+Before: I wrote conditionals thinking &ldquo;if this, then that&rdquo;. Now: I write filter thinking &ldquo;select elements satisfying this predicate&rdquo;.
+This mindset lets me write code that&rsquo;s easier to prove correct. Last week I found a bug and mentally traced it:
+Given: filter(is_even, [1,2,3,4]) = [2,4] Given: map(square, [2,4]) = [4,16] Given: fold(add, 0, [4,16]) = 20 Therefore: sum of squares of even numbers = 20 Writing it down like that was the proof.
+Functional C++ in the Real World This is how I write production code now:
+// HTTP request processing pipeline auto handle_request = compose( validate_request, authenticate, parse_body&lt;Order&gt;, process_order, create_response ); // Or with ranges auto valid_orders = requests | views::filter(is_valid_order) | views::transform(parse_order) | views::filter([](const Order&amp; o) { return o.total &gt; 100.0; }) | views::transform(apply_discount) | ranges::to&lt;vector&gt;(); This isn&rsquo;t &ldquo;functional C++&quot;—it&rsquo;s just C++. But it&rsquo;s C++ written with functional thinking.
+Finally When I started seeing loops through mathematical eyes, they stopped being loops and became instances of algebraic structures. That perspective lets me write code that&rsquo;s cleaner, more correct, and honestly more fun to write.
+Maybe that&rsquo;s the end goal of programming: code stops being instructions and becomes executable mathematics.
+`,url:"https://www.functor.me/posts/thought_fp/"},"https://www.functor.me/tags/color-theory/":{title:"Color-Theory",tags:[],content:"",url:"https://www.functor.me/tags/color-theory/"},"https://www.functor.me/tags/neovim/":{title:"Neovim",tags:[],content:"",url:"https://www.functor.me/tags/neovim/"},"https://www.functor.me/tags/oklab/":{title:"Oklab",tags:[],content:"",url:"https://www.functor.me/tags/oklab/"},"https://www.functor.me/posts/oklab_design/":{title:"Stop Guessing Hex Codes: A Better Way to Pick Theme Colors",tags:["neovim","oklab","color-theory"],content:`I&rsquo;ve probably made some different Neovim themes over the years. Each time I thought &ldquo;this is the one&rdquo; and each time, a month later, I&rsquo;d be tweaking colors again because something just felt&hellip; off.
+The problem? I was doing what everyone does—picking colors by eye, converting between RGB and HSL, hoping the math would somehow make sense. Spoiler: it doesn&rsquo;t.
+Then I found Oklab and everything got way easier.
+RGB/HSL Are Kinda Broken for This Here&rsquo;s the thing: in RGB, changing red from 200 to 210 might look like a tiny shift, but changing blue from 200 to 210 could be a massive difference. HSL is better but still weird—adjusting saturation can make some colors way brighter and others barely change.
+You end up with this:
+-- Wait, which one is brighter? 🤷 local color1 = &#34;#c5895b&#34; local color2 = &#34;#a87d52&#34; No idea without actually looking at them. And if you want to make color1 &ldquo;just a bit dimmer&rdquo;? Good luck.
+Enter Oklab: Colors That Actually Make Sense Oklab is a &ldquo;perceptually uniform&rdquo; color space. Translation: move a color 0.1 units and it looks 0.1 units different. Predictably.
+It has three channels:
+L (0-1): Brightness. 0 = black, 1 = white, simple. a (-0.4 to +0.4): Red ↔ Green b (-0.4 to +0.4): Yellow ↔ Blue Want an orange that&rsquo;s 68% bright? Easy:
+oklab_to_srgb(0.68, 0.055, 0.065) -- L=0.68, slightly red, slightly yellow = orange Want it brighter? Change the first number:
+oklab_to_srgb(0.72, 0.055, 0.065) -- Same hue, 4% brighter That&rsquo;s it. No guessing.
+Implementation The conversion from Oklab to RGB goes through a few steps:
+Step 1: Oklab → LMS (cone response) [lms]=[10.39630.21581−0.1056−0.06391−0.0895−1.2915][Lab] \\begin{bmatrix} l \\\\ m \\\\ s \\end{bmatrix} = \\begin{bmatrix} 1 &amp; 0.3963 &amp; 0.2158 \\\\ 1 &amp; -0.1056 &amp; -0.0639 \\\\ 1 &amp; -0.0895 &amp; -1.2915 \\end{bmatrix} \\begin{bmatrix} L \\\\ a \\\\ b \\end{bmatrix} ​lms​​=​111​0.3963−0.1056−0.0895​0.2158−0.0639−1.2915​​​Lab​​Step 2: Inverse cube root LMSlinear=[l3,m3,s3]T \\text{LMS}_{\\text{linear}} = [l^3, m^3, s^3]^T LMSlinear​=[l3,m3,s3]TStep 3: LMS → Linear RGB [RGB]=[4.0767−3.30770.2310−1.26842.6098−0.3413−0.0042−0.70341.7076][l3m3s3] \\begin{bmatrix} R \\\\ G \\\\ B \\end{bmatrix} = \\begin{bmatrix} 4.0767 &amp; -3.3077 &amp; 0.2310 \\\\ -1.2684 &amp; 2.6098 &amp; -0.3413 \\\\ -0.0042 &amp; -0.7034 &amp; 1.7076 \\end{bmatrix} \\begin{bmatrix} l^3 \\\\ m^3 \\\\ s^3 \\end{bmatrix} ​RGB​​=​4.0767−1.2684−0.0042​−3.30772.6098−0.7034​0.2310−0.34131.7076​​​l3m3s3​​Step 4: Gamma correction (sRGB) CsRGB={12.92×Clinearif Clinear≤0.00313081.055×Clinear1/2.4−0.055otherwise C_{\\text{sRGB}} = \\begin{cases} 12.92 \\times C_{\\text{linear}} &amp; \\text{if } C_{\\text{linear}} \\leq 0.0031308 \\\\ 1.055 \\times C_{\\text{linear}}^{1/2.4} - 0.055 &amp; \\text{otherwise} \\end{cases} CsRGB​={12.92×Clinear​1.055×Clinear1/2.4​−0.055​if Clinear​≤0.0031308otherwise​Here&rsquo;s the implementation:
+local function oklab_to_linear_rgb(L, a, b) -- Transform Oklab to LMS (cone response) local l = L + 0.3963377774 * a + 0.2158037573 * b local m = L - 0.1055613458 * a - 0.0638541728 * b local s = L - 0.0894841775 * a - 1.2914855480 * b -- Apply inverse cube root local l3, m3, s3 = l * l * l, m * m * m, s * s * s -- LMS to linear RGB local r = 4.0767416621 * l3 - 3.3077115913 * m3 + 0.2309699292 * s3 local g = -1.2684380046 * l3 + 2.6097574011 * m3 - 0.3413193965 * s3 local b_out = -0.0041960863 * l3 - 0.7034186147 * m3 + 1.7076147010 * s3 return r, g, b_out end local function linear_to_srgb_component(c) if c &lt;= 0.0031308 then return c * 12.92 else return 1.055 * (c ^ (1 / 2.4)) - 0.055 end end local function oklab_to_srgb(L, a, b) local r, g, b_comp = oklab_to_linear_rgb(L, a, b) r = linear_to_srgb_component(r) g = linear_to_srgb_component(g) b_comp = linear_to_srgb_component(b_comp) -- Convert to 8-bit and clamp r = math.floor(math.max(0, math.min(1, r)) * 255 + 0.5) g = math.floor(math.max(0, math.min(1, g)) * 255 + 0.5) b_comp = math.floor(math.max(0, math.min(1, b_comp)) * 255 + 0.5) return string.format(&#39;#%02x%02x%02x&#39;, r, g, b_comp) end Those magic numbers come from the Oklab spec. Just copy-paste and it works.
+Designing a Palette Here&rsquo;s how I actually use this. Instead of random hex codes, I think in terms of brightness and hue.
+Background and foreground first:
+local colors = {} -- Dark but not pure black (L=0.24, basically neutral) colors.bg = oklab_to_srgb(0.24, 0.001, 0.006) -- Bright text (L=0.74, also basically neutral) colors.fg = oklab_to_srgb(0.74, 0.0, 0.008) Then decide on a brightness hierarchy.
+There are two common approaches:
+Style 1: Structure-First
+Brighten keywords, functions, types - emphasize code structure Dim data (strings, numbers) - they&rsquo;re secondary Example: structure at L=0.68, data at L=0.64 Style 2: Data-First (Tonsky&rsquo;s philosophy)
+Dim keywords (low brightness + low saturation) - they&rsquo;re just syntactic noise Brighten function definitions, strings, numbers - that&rsquo;s your actual code Example: keywords at L=0.60, data at L=0.68-0.70 How to Pick a/b Values (Hue) Here&rsquo;s a quick reference for common colors in Oklab space:
+-- Red: a &gt; 0, b near 0 or slightly positive oklab_to_srgb(L, 0.08, 0.04) -- orange-red oklab_to_srgb(L, 0.10, 0.02) -- pure red oklab_to_srgb(L, 0.10, -0.02) -- magenta-red -- Orange: a &gt; 0, b &gt; 0, roughly equal oklab_to_srgb(L, 0.055, 0.065) -- typical orange oklab_to_srgb(L, 0.05, 0.07) -- more yellow-orange -- Yellow: a ≈ 0, b &gt; 0 oklab_to_srgb(L, 0.02, 0.08) -- yellow-orange oklab_to_srgb(L, 0.0, 0.08) -- pure yellow oklab_to_srgb(L, -0.02, 0.08) -- yellow-green -- Green: a &lt; 0, b &gt; 0 oklab_to_srgb(L, -0.05, 0.06) -- typical green oklab_to_srgb(L, -0.08, 0.04) -- deeper green -- Cyan: a &lt; 0, b &lt; 0, |a| &gt; |b| oklab_to_srgb(L, -0.055, -0.01) -- cyan oklab_to_srgb(L, -0.06, -0.03) -- more blue-cyan -- Blue: a &lt; 0, b &lt; 0, |b| &gt; |a| oklab_to_srgb(L, -0.02, -0.06) -- typical blue oklab_to_srgb(L, -0.01, -0.08) -- deeper blue -- Violet/Purple: a &gt; 0, b &lt; 0 oklab_to_srgb(L, 0.05, -0.04) -- violet oklab_to_srgb(L, 0.08, -0.06) -- purple Saturation control: saturation=a2+b2\\text{saturation} = \\sqrt{a^2 + b^2}saturation=a2+b2​
+s &lt; 0.05: very muted, almost gray s ≈ 0.08: moderate, comfortable for long sessions s &gt; 0.10: vivid, can be fatiguing So if you want a &ldquo;medium orange at 68% brightness with moderate saturation around 0.08&rdquo;:
+-- Start with the hue ratio you want (orange ≈ equal a and b) -- Then scale to get saturation ≈ 0.08 local orange = oklab_to_srgb(0.68, 0.055, 0.065) -- sqrt(0.055² + 0.065²) ≈ 0.085 Blending Colors Sometimes you need a subtle background color—like for diagnostic messages. You want it to be related to the error color but way more subtle.
+Here&rsquo;s my blend function:
+local function hex_to_rgb(hex) hex = hex:gsub(&#39;#&#39;, &#39;&#39;) return { tonumber(hex:sub(1, 2), 16), tonumber(hex:sub(3, 4), 16), tonumber(hex:sub(5, 6), 16), } end local function rgb_to_hex(c) return string.format(&#39;#%02x%02x%02x&#39;, c[1], c[2], c[3]) end local function blend(fg, bg, t) local a, b = hex_to_rgb(fg), hex_to_rgb(bg) local c = { math.floor(a[1] * (1 - t) + b[1] * t + 0.5), math.floor(a[2] * (1 - t) + b[2] * t + 0.5), math.floor(a[3] * (1 - t) + b[3] * t + 0.5), } return rgb_to_hex(c) end Use it like this:
+local red = oklab_to_srgb(0.66, 0.08, 0.04) local bg = oklab_to_srgb(0.24, 0.001, 0.006) -- Red error text on a very subtle reddish background vim.api.nvim_set_hl(0, &#39;DiagnosticVirtualTextError&#39;, { fg = red, bg = blend(red, bg, 0.65) -- 65% background, 35% red }) The t parameter controls the mix. 0.0 = pure foreground color, 1.0 = pure background, 0.65 = mostly background with a hint of the foreground.
+This is way better than manually picking a &ldquo;light red&rdquo; background that might not even match.
+Putting It Together Just some quick examples of how to use this:
+-- Background and foreground local bg = oklab_to_srgb(0.24, 0.001, 0.006) local fg = oklab_to_srgb(0.74, 0.0, 0.008) -- Make a few colors local orange = oklab_to_srgb(0.68, 0.055, 0.065) local blue = oklab_to_srgb(0.68, -0.02, -0.06) local green = oklab_to_srgb(0.64, -0.05, 0.06) local red = oklab_to_srgb(0.66, 0.08, 0.04) -- Use them vim.api.nvim_set_hl(0, &#39;Normal&#39;, { fg = fg, bg = bg }) vim.api.nvim_set_hl(0, &#39;Keyword&#39;, { fg = orange }) vim.api.nvim_set_hl(0, &#39;Function&#39;, { fg = blue }) vim.api.nvim_set_hl(0, &#39;String&#39;, { fg = green }) vim.api.nvim_set_hl(0, &#39;DiagnosticError&#39;, { fg = red }) -- Blend for subtle backgrounds vim.api.nvim_set_hl(0, &#39;DiagnosticVirtualTextError&#39;, { bg = blend(red, bg, 0.65) }) That&rsquo;s pretty much it. Pick some L values, tweak the a/b until it looks right, done.
+Why This Actually Helps Before Oklab:
+&ldquo;This orange looks too bright&hellip; let me try #c58960&hellip; no wait #b87a55&hellip; hmm maybe #ca8e62?&rdquo; One hour later, still tweaking After Oklab:
+&ldquo;Too bright? Change L from 0.68 to 0.65&rdquo; Done in 30 seconds The real win is systematic adjustments:
+Make everything 5% brighter? Add 0.05 to all L values Reduce saturation? Scale down all a/b values by 20% Switch from data-first to structure-first? Just swap the L values You&rsquo;re not guessing anymore. You&rsquo;re tuning a system.
+Some Practical Tips Testing colors quickly:
+local test = oklab_to_srgb(0.68, 0.055, 0.065) print(test) -- prints: #c5895b Adjusting systematically:
+-- Make everything 5% brighter colors.orange = oklab_to_srgb(0.73, 0.055, 0.065) -- was 0.68 -- Reduce saturation by 20% colors.orange = oklab_to_srgb(0.68, 0.044, 0.052) -- was (0.055, 0.065) -- Warm up the whole palette colors.orange = oklab_to_srgb(0.68, 0.055, 0.075) -- increase b value When not to use Oklab: If you&rsquo;re trying to match an existing hex code exactly, just use the hex. Oklab is for designing colors, not copying them.
+References Oklab spec: https://bottosson.github.io/posts/oklab/ (this is where all those magic numbers come from) That&rsquo;s it. No need to make this more complicated than it is. Pick some L values for brightness, tweak a/b until the hues look right, and you&rsquo;re done.
+`,url:"https://www.functor.me/posts/oklab_design/"},"https://www.functor.me/tags/":{title:"Tags",tags:[],content:"",url:"https://www.functor.me/tags/"},"https://www.functor.me/categories/":{title:"Categories",tags:[],content:"",url:"https://www.functor.me/categories/"}}</script></footer></body></html>
