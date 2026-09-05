@@ -3,6 +3,7 @@ date = '2026-09-04T15:38:16+08:00'
 draft = false
 title = "Neovim's New Multicursor Support"
 toc = true
+tags = ["neovim", "multicursor"]
 +++
 
 Multiple cursors landed in Neovim core on September 1. PR
