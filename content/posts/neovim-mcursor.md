@@ -5,13 +5,34 @@ title = "Neovim's New Multicursor Support"
 toc = true
 +++
 
-Multiple cursors landed in Neovim core on September 1. PR [#41587](https://github.com/neovim/neovim/pull/41587), It ships in 0.13, so today you need nightly.
+Multiple cursors landed in Neovim core on September 1. PR
+[#41587](https://github.com/neovim/neovim/pull/41587), It ships in 0.13, so
+today you need nightly.
 
-`Q` drops a cursor. `1Q` drops one on every search match. `<C-l>` clears them. Everything you already know about Vim keeps working. That's most of it.
+`Q` drops a cursor. `1Q` drops one on every search match. `<C-l>` clears them.
+Everything you already know about Vim keeps working. That's most of it.
+
+## Reading the examples
+
+Every block below is the screen. Steps are separated by a line starting with `-`
+and the keys that got you there.
+
+`│` is a cursor, sitting just left of the character it's on, so `│abc` means the
+cursor is on the `a`. Past EOL it sits after the last character. Every cursor
+looks the same, including the one you're actually driving — Neovim calls that
+one the primary, and where the difference matters the note says so. Two cursors
+in the same cell draw one bar, same as the real thing.
+
+`[...]` is a visual selection and `␣` is a space worth pointing at. Where a
+step's cursor positions don't matter, the screen just shows text.
 
 ## How it works
 
-This isn't keystroke replay. Each action you take gets captured as an **atom**: the resolved, post-mapping key sequence for one semantic thing, the same material dot-repeat runs on. `x` is captured as `dl`. `viweex` is captured as `viweed`. Then every extra cursor replays that atom in its own context, which is why a visual sequence gets per-cursor extents instead of a fixed-size reselect.
+This isn't keystroke replay. Each action you take gets captured as an **atom**:
+the resolved, post-mapping key sequence for one semantic thing, the same
+material dot-repeat runs on. `x` is captured as `dl`. `viweex` is captured as
+`viweed`. Then every extra cursor replays that atom in its own context, which is
+why a visual sequence gets per-cursor extents instead of a fixed-size reselect.
 
 A few things follow from that:
 
@@ -47,81 +68,210 @@ Turn on `showcmd` and the count shows up there as `2×`, or `=2×` in follow-mod
 The cursor starts at line 1 column 1 unless the keys say otherwise.
 
 ```
-QjQjx
+│aaa
+ bbb
+ ccc
 
-aaa   │   aa
-bbb   │   bb
-ccc   │   cc
+- Q          nothing moves: the new cursor is exactly where you already are
+
+│aaa
+ bbb
+ ccc
+
+- j          you move down, it doesn't
+
+│aaa
+│bbb
+ ccc
+
+- Q          again, no visible change until you move
+
+│aaa
+│bbb
+ ccc
+
+- j
+
+│aaa
+│bbb
+│ccc
+
+- x          the primary deletes first, then each cursor replays "dl"
+
+│aa
+│bb
+│cc
 ```
 
-It's a toggle. Press it on a cursor and that cursor goes away; take out the last one and the session ends.
+It's a toggle. Press it on a cursor and that cursor goes away.
 
 ```
-QjQk      2 cursors, primary back on line 1
-Q         removes the cursor under the primary, 1 left
-x
+│aaa
+ bbb
+ ccc
 
-aaa   │   aa
-bbb   │   bb
+- QjQjQ      one on every line
+
+│aaa
+│bbb
+│ccc
+
+- k          up to line 2, standing on a cursor
+
+│aaa
+│bbb
+│ccc
+
+- Q          that one's gone, but you're still standing there
+
+│aaa
+│bbb
+│ccc
+
+- G          now you can see it
+
+│aaa
+ bbb
+│ccc
+
+- x
+
+│aa
+ bbb
+│cc
 ```
 
-If a cursor is sitting on the primary, the edit happens once and the pair merges.
+Take out the last one and the session ends. Same thing happens implicitly when a
+cursor is sitting where you are: the edit runs once and the pair merges.
 
 ```
-Qx
+│ab
 
-ab   │   b        one deletion, 0 cursors left
+- Q          a cursor, right under you
+
+│ab
+
+- x          one deletion, not two, and no cursors left
+
+│b
 ```
 
 In operator-pending mode `Q` throws the operator away and places nothing.
 
 ```
-dQ        the d is gone, no cursor
-wx
+│one two
 
-one two   │   one wo
+- dQ         the d is gone, and no cursor either
+
+│one two
+
+- w          so this is just a motion
+
+ one │two
+
+- x
+
+ one │wo
 ```
 
 You can't use it inside a macro, recording or executing. It just beeps.
 
 ```
-qq Q q    no cursor (the Q gets recorded)
-@q        no cursor either
-Q         works
+qq Q q       nothing placed (the Q still gets recorded)
+@q           nothing placed
+Q            works
 ```
 
 And watch out for `qQ`, which is `q` starting a recording into register `Q`.
 
 ## [count]Q
 
-A cursor at every match of the last search pattern, including the one under the primary. The primary doesn't move.
+A cursor at every match of the last search pattern, including the one under the
+primary. The primary doesn't move.
 
 ```
-gg0*1Q cwXXX<Esc>
+│foo bar foo
+ baz foo qux
+ foobar foo
 
-foo bar foo   │   XXX bar XXX
-baz foo qux   │   baz XXX qux
-foobar foo    │   foobar XXX
+- *          whole-word search, primary jumps to the next match
+
+ foo bar │foo
+ baz foo qux
+ foobar foo
+
+- 1Q         a cursor at every match. "foobar" isn't a whole word, so it misses.
+
+│foo bar │foo
+ baz │foo qux
+ foobar │foo
+
+- cwXXX<Esc>   the one you're standing on merges away, so nothing gets edited twice
+
+XX│X bar XX│X
+ baz XX│X qux
+ foobar XX│X
 ```
 
-`*` is whole-word, so `foobar` misses. Four cursors before the edit, three after: the one on top of the primary merges away in the first cascade.
-
-Any search works.
+Any search works, and several matches on one line are fine.
 
 ```
-gg0/ab<CR>1Q x
+│ab ab ab
+ xx ab
 
-ab ab ab   │   b b b
-xx ab      │   xx b
+- /ab<CR>
+
+ ab │ab ab
+ xx ab
+
+- 1Q
+
+│ab │ab │ab
+ xx │ab
+
+- x
+
+│b │b │b
+ xx │b
 ```
 
-Placement runs through the real search engine, so your case options behave exactly like they do for `n`.
+Placement runs through the real search engine, so your case options behave
+exactly like they do for `n`.
 
 ```
-:set smartcase                       :set ignorecase
-gg0/Foo<CR>1Q x                      gg0/foo<CR>1Q gUiw
+:set ignorecase
 
-Foo foo Foo   │   oo foo oo          Foo foo FOO   │   FOO FOO FOO
+│Foo foo FOO
+
+- /foo<CR>
+
+ Foo │foo FOO
+
+- 1Q         all three
+
+│Foo │foo │FOO
+
+- gUiw
+
+│FOO │FOO │FOO
+```
+
+```
+:set smartcase
+
+│Foo foo Foo
+
+- /Foo<CR>   the capital F forces case-sensitivity
+
+ Foo foo │Foo
+
+- 1Q         only the two "Foo"s
+
+│Foo foo │Foo
+
+- x
+
+│oo foo │oo
 ```
 
 No previous search, no cursors (E35).
@@ -129,63 +279,171 @@ No previous search, no cursors (E35).
 The two placement styles mix.
 
 ```
-gg0*1Q    2 cursors on the two "foo"
-0fbQ      3 cursors, adding "bar"
-$x        the primary edits a fourth position
+│foo bar foo
 
-foo bar foo   │   oo ar o
+- *
+
+ foo bar │foo
+
+- 1Q
+
+│foo bar │foo
+
+- 0fb        over to "bar"
+
+│foo │bar │foo
+
+- Q          now "bar" is a cursor too, not just where you happen to be
+
+│foo │bar │foo
+
+- $          and you go edit a fourth position
+
+│foo │bar fo│o
+
+- x
+
+ oo ar o
 ```
 
 ## {Visual}Q
 
-Visual mode ends, the primary lands on the first selected line, and every selected line gets a cursor at the primary's screen column. Follow-mode comes on.
+Visual mode ends, the primary lands on the first selected line, and every
+selected line gets a cursor at the primary's screen column. Follow-mode comes
+on.
 
 ```
-gg0ll V2j Q iX<Esc>
+│aaaa
+ bbbb
+ cc
+ dddd
 
-aaaa   │   aaXaa
-bbbb   │   bbXbb
-cc     │   ccX          short line: the cursor sits past EOL
-dddd   │   dddd
+- gg0ll
+
+ aa│aa
+ bbbb
+ cc
+ dddd
+
+- V2j
+
+[aaaa]
+[bbbb]
+[cc]
+ dddd
+
+- Q          you land on the first selected line, one cursor per line
+
+ aa│aa
+ bb│bb
+ cc│         short line: the cursor sits past EOL
+ dddd
+
+- iX<Esc>
+
+ aa│Xaa
+ bb│Xbb
+ cc│X
+ dddd
 ```
 
 Follow-mode is on, so the next motion takes everything with it.
 
 ```
-jx
+- j
 
-aaXaa   │   aaXaa
-bbXbb   │   bbbb
-ccX     │   cc
-dddd    │   ddd
+ aaXaa
+ bb│Xbb
+ cc│X
+ dd│dd
+
+- x
+
+ aaXaa
+ bb│bb
+ cc│
+ dd│d
 ```
 
 Screen column, not byte column. A multibyte character earlier on one line won't throw off the cursors on the others.
 
 ```
-gg0ll vjQ x
+│é123
+ abcdef
 
-é123     │   é13
-abcdef   │   abdef
+- gg0ll      two screen columns right, onto "2"
+
+ é1│23
+ abcdef
+
+- vjQ
+
+ é1│23
+ ab│cdef     same screen column, different byte column
+
+- x
+
+ é1│3
+ ab│def
 ```
 
 ## Mouse
 
-`<C-LeftMouse>` toggles a cursor where you click, without moving the primary or pulling you into another window. Ctrl-click an existing cursor to remove it. Unlike `Q` it leaves follow-mode alone, and it's a no-op in insert mode. Middle-click paste is still one paste at the click point.
+`<C-LeftMouse>` toggles a cursor where you click, without moving the primary or pulling you into another window.
+
+```
+│aaa
+ bbb
+ ccc
+
+- <C-LeftMouse> on line 3
+
+│aaa
+ bbb
+│ccc
+
+- x
+
+│aa
+ bbb
+│cc
+
+- <C-LeftMouse> on line 3 again
+
+│aa
+ bbb
+ cc
+```
+
+Unlike `Q` it leaves follow-mode alone, and it's a no-op in insert mode.
+Middle-click paste is still one paste at the click point.
 
 ## :g and :cdo
 
 `Q` is a normal-mode command, so anything that runs normal-mode commands can place cursors.
 
 ```
-:g/foo/normal! Q
-A!<Esc>
+│foo a
+ bar b
+ foo c
+ baz d
+ foo e
 
-foo a   │   foo a!
-bar b   │   bar b
-foo c   │   foo c!
-baz d   │   baz d
-foo e   │   foo e!
+- :g/foo/normal! Q      a cursor per match, and :g leaves you on the last one
+
+│foo a
+ bar b
+│foo c
+ baz d
+│foo e
+
+- A!<Esc>
+
+ foo a│!
+ bar b
+ foo c│!
+ baz d
+ foo e│!
 ```
 
 Put motions in front of the `Q` to pick the column.
@@ -199,21 +457,41 @@ Quickfix works the same, except a range there addresses items, not lines.
 
 ```
 qflist on lines 1, 2, 4
-:cdo normal! Q      3 cursors
-3G0                 move the primary off the last item
-x
 
-aaa   │   aa
-bbb   │   bb
-ccc   │   cc          the primary's own edit
-ddd   │   dd
+│aaa
+ bbb
+ ccc
+ ddd
 
-:2,3cdo normal! Q   2 cursors, items 2 and 3
+- :cdo normal! Q
+
+│aaa
+│bbb
+ ccc
+│ddd
+
+- 3G0        step off the last item, or it gets edited twice
+
+│aaa
+│bbb
+│ccc
+│ddd
+
+- x
+
+│aa
+│bb
+│cc
+│dd
 ```
+
+`:2,3cdo normal! Q` gives you 2 cursors, on items 2 and 3.
 
 ## Lua
 
-`nvim_mcursor(buf, {row, col})` takes a (1,0)-indexed position and hands back the number of extra cursors. Calling it on an existing cursor is a no-op, not a toggle. Hidden buffers are fine.
+`nvim_mcursor(buf, {row, col})` takes a (1,0)-indexed position and hands back
+the number of extra cursors. Calling it on an existing cursor is a no-op, not a
+toggle. Hidden buffers are fine.
 
 ```lua
 for _, m in ipairs(vim.fn.matchbufline('%', [[\<TODO\>]], 1, '$')) do
@@ -225,29 +503,89 @@ Bad input gets you `Invalid cursor line: out of range`, `Invalid 'pos': expected
 
 # Clearing them
 
-`<C-l>` clears the buffer's cursors on top of its usual `nohlsearch` and `diffupdate`. It's a default mapping, so if you wrap it you need to remap, not feed it noremap.
+`<C-l>` clears the buffer's cursors on top of its usual `nohlsearch` and
+`diffupdate`. It's a default mapping, so if you wrap it you need to remap, not
+feed it noremap.
 
 Clearing takes a snapshot, and `gQ` brings it back, same idea as `gv`.
 
 ```
-QjQ      cursors on lines 1 and 2
-<C-l>    0 cursors
-gQ       2 cursors
-Gx
+│aaa
+ bbb
+ ccc
+ ddd
 
-aaa   │   aa
-bbb   │   bb
-ccc   │   ccc
-ddd   │   dd
+- QjQ
+
+│aaa
+│bbb
+ ccc
+ ddd
+
+- <C-l>
+
+ aaa
+│bbb
+ ccc
+ ddd
+
+- gQ
+
+│aaa
+│bbb
+ ccc
+ ddd
+
+- G
+
+│aaa
+│bbb
+ ccc
+│ddd
+
+- x
+
+│aa
+│bb
+ ccc
+│dd
 ```
 
 The snapshot rides on extmarks, so edits in between shift it.
 
 ```
-<C-l> ggO<Esc> gQ     the restored cursors moved down a line
+│aa
+│bb
+ ccc
+│dd
+
+- <C-l>
+
+ aa
+ bb
+ ccc
+│dd
+
+- ggO<Esc>   a new line on top
+
+│
+ aa
+ bb
+ ccc
+ dd
+
+- gQ         the restored cursors moved down with the text
+
+│
+│aa
+│bb
+ ccc
+ dd
 ```
 
-`:edit!` takes out the cursors and the snapshot together. Clearing part of the namespace removes those cursors without ending the session, so the rest keep follow-mode and the registers don't join yet.
+`:edit!` takes out the cursors and the snapshot together. Clearing part of the
+namespace removes those cursors without ending the session, so the rest keep
+follow-mode and the registers don't join yet.
 
 From Lua, clearing the namespace is the same operation, snapshot and all.
 
@@ -255,217 +593,501 @@ From Lua, clearing the namespace is the same operation, snapshot and all.
 vim.api.nvim_buf_clear_namespace(0, vim.api.nvim_create_namespace('nvim.multicursor'), 0, -1)
 ```
 
-`<C-c>` interrupts a cascade in flight. What got done is still one undo block and no line ends up half-edited. It doesn't clear anything.
+`<C-c>` interrupts a cascade in flight. What got done is still one undo block
+and no line ends up half-edited. It doesn't clear anything.
 
 # Normal mode
 
 ## Operators
 
 ```
-QjQjdw
+QjQj
 
-hello world   │   world
-foo bar       │   bar
-one two       │   two
+│hello world
+│foo bar
+│one two
+
+- dw
+
+│world
+│bar
+│two
 ```
 
 ```
-QjQj2x
+QjQj
 
-aaaa   │   aa
-bbbb   │   bb
-cccc   │   cc
+│aaaa
+│bbbb
+│cccc
+
+- 2x
+
+│aa
+│bb
+│cc
 ```
 
 ```
-Q2jQ2jdd
+Q2jQ2j
 
-a1   │   a2
-a2   │   b2
-b1   │   c2
-b2   │
-c1   │
-c2   │
+│a1
+ a2
+│b1
+ b2
+│c1
+ c2
+
+- dd
+
+│a2
+│b2
+│c2
+```
+
+`D` and `C`, from column 2:
+
+```
+gg0ll Qj
+
+ on│e two
+ th│ree four
+
+- D
+
+ o│n
+ t│h
 ```
 
 ```
-gg0ll QjD              gg0ll QjCX<Esc>
+gg0ll Qj
 
-one two      │   on    one two      │   onX
-three four   │   th    three four   │   thX
+ on│e two
+ th│ree four
+
+- CX<Esc>
+
+ on│X
+ th│X
 ```
 
 ```
-Qj2clXY<Esc>           Qj~~
+Qj
 
-abcd   │   XYcd        abc   │   ABc
-efgh   │   XYgh        def   │   DEf
+│abcd
+│efgh
+
+- 2clXY<Esc>
+
+X│Ycd
+X│Ygh
+```
+
+```
+Qj
+
+│abc
+│def
+
+- ~~         toggle case, twice, advancing each time
+
+AB│c
+DE│f
 ```
 
 Backwards:
 
 ```
-gg$ Qj$cT_M<Esc>       gg$ Qj$d4h
+gg$ Qj$
 
-x_abcY    │   x_MY     abcdef   │   af
-w_defgZ   │   w_MZ     ghijkl   │   gl
-```
+ x_abc│Y
+ w_defg│Z
 
-Counted objects, and objects that seek forward:
+- cT_M<Esc>
 
-```
-Qjc2awX<Esc>                     gg0l Qjci(X<Esc>
-
-one two three   │   Xthree       a()b   │   a(X)b
-foo bar baz     │   Xbaz         c()d   │   c(X)d
+ x_│MY
+ w_│MZ
 ```
 
 ```
-Qjci"NEW<Esc>
+gg$ Qj$
 
-x "aa" y    │   x "NEW" y
-z "bbb" w   │   z "NEW" w
+ abcde│f
+ ghijk│l
+
+- d4h
+
+ a│f
+ g│l
 ```
 
-Operators that eat a payload character:
+Counted objects:
 
 ```
-Qjdf,                  Qj2rZ                  QjgrZ
+Qj
 
-ab,cd   │   cd         abc   │   ZZc          abc   │   Zbc
-wxy,z   │   z          def   │   ZZf          def   │   Zef
+│one two three
+│foo bar baz
+
+- c2awX<Esc>
+
+│Xthree
+│Xbaz
+```
+
+Objects that seek forward find their own target per cursor:
+
+```
+gg0l Qj
+
+ a│()b
+ c│()d
+
+- ci(X<Esc>
+
+ a(│X)b
+ c(│X)d
+```
+
+```
+Qj
+
+│x "aa" y
+│z "bbb" w
+
+- ci"NEW<Esc>
+
+ x "NE│W" y
+ z "NE│W" w
+```
+
+Operators that eat a payload character carry it along:
+
+```
+Qj
+
+│ab,cd
+│wxy,z
+
+- df,
+
+│cd
+│z
+```
+
+```
+Qj
+
+│abc
+│def
+
+- 2rZ
+
+Z│Zc
+Z│Zf
+```
+
+```
+Qj
+
+│abc
+│def
+
+- grZ
+
+│Zbc
+│Zef
 ```
 
 `r<CR>` terminates itself, no `<Esc>`:
 
 ```
-gg0l Qjr<CR>
+gg0l Qj
 
-abcd   │   a
-efgh   │   cd
-       │   e
-       │   gh
+ a│bcd
+ e│fgh
+
+- r<CR>
+
+ a
+│cd
+ e
+│gh
 ```
 
 A search as the operator's motion travels with the atom, and each cursor finds its own match:
 
 ```
-Qjd/find<CR>
+Qj
 
-aaa find end   │   find end
-bbb find end   │   find end
+│aaa find end
+│bbb find end
+
+- d/find<CR>
+
+│find end
+│find end
 ```
 
 Multibyte:
 
 ```
-Qjx
+Qj
 
-éàü      │   àü
-日本語   │   本語
+│éàü
+│日本語
+
+- x
+
+│àü
+│本語
 ```
 
 Cursors end up wherever the operator left them, so the next key acts per region:
 
 ```
-gg0l QjQjdiw           then x
+gg0l QjQj
 
-foo bar   │    bar     │   bar
-baz qux   │    qux     │   qux
-aaa bbb   │    bbb     │   bbb
+ f│oo bar
+ b│az qux
+ a│aa bbb
+
+- diw        each cursor is left where its word was
+
+│␣bar
+│␣qux
+│␣bbb
+
+- x
+
+│bar
+│qux
+│bbb
 ```
 
 ```
-gg0l QjguiW            then x
+gg0l Qj
 
-FOO BAR   │   foo BAR  │   oo BAR
-BAZ QUX   │   baz QUX  │   az QUX
+ F│OO BAR
+ B│AZ QUX
+
+- guiW       cursor lands at the region start
+
+│foo BAR
+│baz QUX
+
+- x
+
+│oo BAR
+│az QUX
 ```
 
 Options apply per cursor:
 
 ```
-:set autoindent                  :set shiftwidth=2
-QjccX<Esc>                       Qj>>
+:set autoindent
+Qj
 
-␣␣aaa       │   ␣␣X             foo   │   ␣␣foo
-␣␣␣␣␣␣bbb   │   ␣␣␣␣␣␣X         bar   │   ␣␣bar
+␣␣│aaa
+␣␣␣␣␣␣│bbb
+
+- ccX<Esc>   each line keeps its own indent
+
+␣␣│X
+␣␣␣␣␣␣│X
+```
+
+```
+:set shiftwidth=2
+Qj
+
+│foo
+│bar
+
+- >>
+
+␣␣│foo
+␣␣│bar
 ```
 
 `<C-a>` and `<C-x>` cascade like anything else:
 
 ```
-Qj<C-x>            then <C-a>
+Qj
 
-x = 5   │   x = 4      │   x = 5
-y = 5   │   y = 4      │   y = 5
+│x = 5
+│y = 5
+
+- <C-x>
+
+ x = │4
+ y = │4
+
+- <C-a>
+
+ x = │5
+ y = │5
 ```
 
 ## Chaining
 
-Positions update after each cascade:
+Positions update after each cascade, so you can just keep going.
 
 ```
-QjQ jx             then x
+QjQ
 
-AAAA   │   AAA        │   AA
-BBBB   │   BBB        │   BB
-CCCC   │   CCC        │   CC
+│AAAA
+│BBBB
+ CCCC
+
+- j
+
+│AAAA
+│BBBB
+│CCCC
+
+- x
+
+│AAA
+│BBB
+│CCC
+
+- x
+
+│AA
+│BB
+│CC
 ```
 
 Anything that inserts lines shifts the cursors below it, primary included:
 
 ```
-QjQj oX<Esc>
+QjQj
 
-aaa   │   aaa
-bbb   │   X
-ccc   │   bbb
-      │   X
-      │   ccc
-      │   X
+│aaa
+│bbb
+│ccc
+
+- oX<Esc>
+
+ aaa
+│X
+ bbb
+│X
+ ccc
+│X
 ```
 
 Typeahead behind the cascading key survives:
 
 ```
-Qj xyy      then p
+Qj
 
-abc   │   bc          │   bc
-def   │   ef          │   bc
-                      │   ef
-                      │   ef
+│abc
+│def
+
+- xyy        "x" cascades, the queued "yy" survives and cascades too
+
+│bc
+│ef
+
+- p          each cursor pastes what it yanked
+
+ bc
+│bc
+ ef
+│ef
 ```
 
 ## Dot-repeat
 
 ```
-QjQj x  .
+QjQj
 
-aaa   │   aa   │   a
-bbb   │   bb   │   b
-ccc   │   cc   │   c
+│aaa
+│bbb
+│ccc
+
+- x
+
+│aa
+│bb
+│cc
+
+- .
+
+│a
+│b
+│c
 ```
 
 An edit you made *before* placing cursors is still what `.` repeats:
 
 ```
-gg0x        aaa/bbb/ccc  ->  aa/bbb/ccc
-QjQj
-.
+│aaa
+ bbb
+ ccc
 
-aa    │   a
-bbb   │   bb
-ccc   │   cc
+- x
+
+│aa
+ bbb
+ ccc
+
+- QjQj
+
+│aa
+│bbb
+│ccc
+
+- .
+
+│a
+│bb
+│cc
 ```
 
-Inserts and changes repeat too, including across a follow-mode move:
+Inserts and changes repeat too:
 
 ```
-Qj iZ<Esc> .           Qj cwX<Esc> q= w q= .
+Qj
 
-aaa   │   ZZaaa        one two   │   X X
-bbb   │   ZZbbb        one two   │   X X
+│aaa
+│bbb
+
+- iZ<Esc>
+
+│Zaaa
+│Zbbb
+
+- .
+
+Z│Zaaa
+Z│Zbbb
+```
+
+Including across a follow-mode move:
+
+```
+Qj
+
+│one two
+│one two
+
+- cwX<Esc>
+
+│X two
+│X two
+
+- q= w q=    every cursor onto its own second word
+
+ X │two
+ X │two
+
+- .
+
+ X │X
+ X │X
 ```
 
 # Follow mode
@@ -473,79 +1095,187 @@ bbb   │   ZZbbb        one two   │   X X
 Off by default: only the primary moves.
 
 ```
-Q j          no cascade, the cursor stays on line 1
-q= ll x      now both move
+│abcd
+ efgh
 
-abcd   │   abd
-efgh   │   efh
+- Q
+
+│abcd
+ efgh
+
+- j          no cascade: you move, the cursor doesn't
+
+│abcd
+│efgh
+
+- q= ll      now both move
+
+ ab│cd
+ ef│gh
+
+- x
+
+ ab│d
+ ef│h
 ```
 
 `q=` toggles. A count forces instead, so `1q=` always turns it on and `2q=` always turns it off.
 
 ```
-q= h x          off again: only the primary moves
-1q= 1q= h x     forced on, both move
-2q= 2q= h x     forced off
+q= h x           off again: only the primary moves
+1q= 1q= h x      forced on, both move
+2q= 2q= h x      forced off
 ```
 
 `$` sends each cursor to its own end of line:
 
 ```
-Qj q= $ x
+Qj q=
 
-abc     │   ab
-defgh   │   defg
+│abc
+│defgh
+
+- $
+
+ ab│c
+ defg│h
+
+- x
+
+ a│b
+ def│g
 ```
 
 Vertical, display and arrow motions all follow:
 
 ```
-Q3j q= j x        then k x        then gj x        then gk x
+Q 3j q=
 
-a1   │   a1   │   1    │   1    │
-a2   │   2    │   2    │        │
-a3   │   a3   │   a3   │   a3   │   a3
-b1   │   b1   │   1    │   1    │
-b2   │   2    │   2    │        │
-b3   │   b3   │   b3   │   b3   │   b3
+│a1
+ a2
+ a3
+│b1
+ b2
+ b3
+
+- j x
+
+ a1
+│2
+ a3
+ b1
+│2
+ b3
+
+- k x
+
+│1
+ 2
+ a3
+│1
+ 2
+ b3
+
+- gj x
+
+ 1
+│
+ a3
+ 1
+│
+ b3
+
+- gk x       both lines are empty now
+
+│
+
+ a3
+│
+
+ b3
 ```
 
 Each cursor keeps its own curswant over short lines:
 
 ```
-gg04l Q 3jhh      primary at (4,2), cursor at (1,4)
-q= jj q= x
+gg04l Q 3jhh
 
-ABCDEF   │   ABCDEF
-xy       │   xy
-GHIJKL   │   GHIJL
-MNOPQR   │   MNOPQR
-zw       │   zw
-STUVWX   │   STVWX
+ ABCD│EF
+ xy
+ GHIJKL
+ MN│OPQR
+ zw
+ STUVWX
+
+- q= jj q=   the short lines don't reset anybody's column
+
+ ABCDEF
+ xy
+ GHIJ│KL
+ MNOPQR
+ zw
+ ST│UVWX
+
+- x
+
+ ABCDEF
+ xy
+ GHIJ│L
+ MNOPQR
+ zw
+ ST│VWX
 ```
 
 Mapped and `<expr>`-mapped motions follow:
 
 ```
 :nnoremap j gj
-Q2j q= j x
+Q2j q=
 
-a1   │   a1
-a2   │   2
-b1   │   b1
-b2   │   2
+│a1
+ a2
+│b1
+ b2
+
+- j
+
+ a1
+│a2
+ b1
+│b2
+
+- x
+
+ a1
+│2
+ b1
+│2
 ```
 
-Jumps don't follow. `<C-o>` and `` ` `` move the primary alone. Scrolling never follows either way, so `<C-d>` is primary-only, and a later edit still cascades to the off-screen cursors while the viewport stays where it was.
+Jumps don't follow. `<C-o>` and `` ` `` move the primary alone. Scrolling never
+follows either way, so `<C-d>` is primary-only, and a later edit still cascades
+to the off-screen cursors while the viewport stays where it was.
 
 Cursors that converge merge, and if they all merge the session ends and follow-mode resets:
 
 ```
-QjQ q= G q= x
+QjQ q=
 
-aaa   │   aaa
-bbb   │   bbb
-ccc   │   cc          one deletion, not three
+│aaa
+│bbb
+ ccc
+
+- G          everybody lands on line 3
+
+ aaa
+ bbb
+│ccc
+
+- x          one deletion, not three
+
+ aaa
+ bbb
+│cc
 ```
 
 `Q` ends follow-mode. `<C-LeftMouse>` doesn't. `]C` and `[C` don't drag the others.
@@ -556,14 +1286,20 @@ A mapping that edits cascades its motions too, even with follow-mode off:
 
 ```
 :nnoremap gj i<C-j><Esc>k$
-gg04l QjQj gj
+gg04l QjQj
 
-aaa bbb   │   aaa␣
-ccc ddd   │   bbb
-eee fff   │   ccc␣
-          │   ddd
-          │   eee␣
-          │   fff
+ aaa │bbb
+ ccc │ddd
+ eee │fff
+
+- gj         split at the cursor, then k$ back to the end of the first half
+
+ aaa│␣
+ bbb
+ ccc│␣
+ ddd
+ eee│␣
+ fff
 ```
 
 # Insert mode
@@ -571,52 +1307,102 @@ eee fff   │   ccc␣
 Text shows up at the other cursors as you type it, not at `<Esc>`.
 
 ```
-QjQj I# <Esc>
+QjQj
 
-puts "one"     │   # puts "one"
-puts "two"     │   # puts "two"
-puts "three"   │   # puts "three"
+│puts "one"
+│puts "two"
+│puts "three"
+
+- I#         already there, still in insert mode
+
+#│puts "one"
+#│puts "two"
+#│puts "three"
+
+- ␣<Esc>
+
+# puts "one"
+# puts "two"
+# puts "three"
 ```
 
 Cursor moves inside the session cascade live and resolve per cursor:
 
 ```
-QjQj Aab<Left><Left>X       (still in insert mode)
+QjQj
 
-alpha one     │   alpha oneXab
-beta two      │   beta twoXab
-gamma three   │   gamma threeXab
+│alpha one
+│beta two
+│gamma three
 
-<Esc> AZ<Home>Y<Esc>        <Home> is each line's own start
+- Aab        still in insert mode
 
-              │   Yalpha oneXabZ
-              │   Ybeta twoXabZ
-              │   Ygamma threeXabZ
+ alpha oneab│
+ beta twoab│
+ gamma threeab│
 
-A<S-Left>W<Esc>             word-wise, per cursor
+- <Left><Left>X
 
-              │   Yalpha WoneXabZ
-              │   Ybeta WtwoXabZ
-              │   Ygamma WthreeXabZ
+ alpha oneX│ab
+ beta twoX│ab
+ gamma threeX│ab
+
+- <Esc> AZ<Home>Y<Esc>     <Home> is each line's own start
+
+ Yalpha oneXabZ
+ Ybeta twoXabZ
+ Ygamma threeXabZ
+
+- A<S-Left>W<Esc>          word-wise, per cursor
+
+ Yalpha WoneXabZ
+ Ybeta WtwoXabZ
+ Ygamma WthreeXabZ
 ```
 
 `<C-g>U` cascades and doesn't split undo:
 
 ```
-Qj i12<C-g>U<Left>3<Esc>      then u
+Qj
 
-aa   │   132aa      │   aa
-bb   │   132bb      │   bb
+│aa
+│bb
+
+- i12<C-g>U<Left>3<Esc>
+
+1│32aa
+1│32bb
+
+- u          one block, not two
+
+│aa
+│bb
 ```
 
 An absolute jump splits the session and re-anchors:
 
 ```
-j0Q j0Q gg$ ix<C-Home>y<Esc>
+ alpha
+ beta
+ gamma
 
-alpha   │   yalphxa
-beta    │   xybeta
-gamma   │   xygamma
+- j0Q j0Q gg$
+
+ alph│a
+│beta
+│gamma
+
+- ix
+
+ alphx│a
+ x│beta
+ x│gamma
+
+- <C-Home>y  the jump re-anchors, the previews stay
+
+ y│alphxa
+ xy│beta
+ xy│gamma
 ```
 
 `<C-c>` ends the session like `<Esc>` does. The text and the cursors both survive.
@@ -624,227 +1410,573 @@ gamma   │   xygamma
 Deleting:
 
 ```
-Qj iXY<BS>Z<Esc>           gg0l Qji<BS>Z<Esc>
+Qj
 
-aaa   │   XZaaa            abc   │   Zbc
-bbb   │   XZbbb            def   │   Zef
+│aaa
+│bbb
+
+- iXY<BS>Z<Esc>
+
+X│Zaaa
+X│Zbbb
+```
+
+```
+gg0l Qj
+
+ a│bc
+ d│ef
+
+- i<BS>Z<Esc>    <BS> eats past where the insert started
+
+│Zbc
+│Zef
 ```
 
 `<BS>` at column 0 joins with the line above:
 
 ```
-ggj0 Q2ji<BS><Esc>
+ggj0 Q2j
 
-aa   │   aabb
-bb   │   ccdd
-cc   │
-dd   │
+ aa
+│bb
+ cc
+│dd
+
+- i<BS><Esc>
+
+ aa│bb
+ cc│dd
 ```
 
 `<CR>` splits:
 
 ```
-gg02l QjiAB<CR>CD<Esc>
+gg02l Qj
 
-aaXbb   │   aaAB
-ccXdd   │   CDXbb
-        │   ccAB
-        │   CDXdd
+ aa│Xbb
+ cc│Xdd
+
+- iAB<CR>CD<Esc>
+
+ aaAB
+ C│DXbb
+ ccAB
+ C│DXdd
 ```
 
 Entry commands:
 
 ```
-Q2jOX<Esc>          QjaZ<Esc>          gg$ Qj$IX<Esc>
+Q2j
 
-aaa   │   X         abc   │   aZbc     ␣␣aa     │   ␣␣Xaa
-bbb   │   aaa       def   │   dZef     ␣␣␣␣bb   │   ␣␣␣␣Xbb
-ccc   │   bbb
-      │   X
-      │   ccc
+│aaa
+ bbb
+│ccc
+
+- OX<Esc>
+
+│X
+ aaa
+ bbb
+│X
+ ccc
+```
+
+```
+Qj
+
+│abc
+│def
+
+- aZ<Esc>
+
+a│Zbc
+d│Zef
+```
+
+```
+gg$ Qj$
+
+ ␣␣a│a
+ ␣␣␣␣b│b
+
+- IX<Esc>    each line's own first non-blank
+
+ ␣␣│Xaa
+ ␣␣␣␣│Xbb
 ```
 
 Insert-mode commands:
 
 ```
-Qjifoo bar<C-w>X<Esc>       Qji<C-v>u00e9<Esc>      Qj3iZ<Esc>
+Qj
 
-zz   │   foo Xzz            aaa   │   éaaa          aaa   │   ZZZaaa
-yy   │   foo Xyy            bbb   │   ébbb          bbb   │   ZZZbbb
+│zz
+│yy
+
+- ifoo bar<C-w>X<Esc>
+
+ foo │Xzz
+ foo │Xyy
+```
+
+```
+Qj
+
+│aaa
+│bbb
+
+- i<C-v>u00e9<Esc>
+
+│éaaa
+│ébbb
+```
+
+```
+Qj
+
+│aaa
+│bbb
+
+- 3iZ<Esc>
+
+ZZ│Zaaa
+ZZ│Zbbb
 ```
 
 Replace mode, including `<BS>` putting back what it overwrote:
 
 ```
-QjRXY<Esc>                  QjRXY<BS><BS><Esc>
+Qj
 
-abcdef   │   XYcdef         abcdef   │   abcdef
-ghijkl   │   XYijkl         ghijkl   │   ghijkl
+│abcdef
+│ghijkl
+
+- RXY<Esc>
+
+X│Ycdef
+X│Yijkl
+
+- u  then  RXY<BS><BS><Esc>
+
+│abcdef
+│ghijkl
 ```
 
 Abbreviations and `autoindent`:
 
 ```
-:iabbrev teh the            :set autoindent
-Qjiteh <Esc>                QjoX<Esc>
+:iabbrev teh the
+Qj
 
-aaa   │   the aaa           ␣␣aa       │   ␣␣aa
-bbb   │   the bbb           ␣␣␣␣␣␣bb   │   ␣␣X
-                                       │   ␣␣␣␣␣␣bb
-                                       │   ␣␣␣␣␣␣X
+│aaa
+│bbb
+
+- iteh <Esc>
+
+ the│ aaa
+ the│ bbb
+```
+
+```
+:set autoindent
+Qj
+
+␣␣│aa
+␣␣␣␣␣␣│bb
+
+- oX<Esc>
+
+ ␣␣aa
+ ␣␣│X
+ ␣␣␣␣␣␣bb
+ ␣␣␣␣␣␣│X
 ```
 
 A replayed `<C-u>` on a less-indented line has nothing to eat, and won't backspace through the line boundary:
 
 ```
 :set autoindent
-QjQj o<C-u><Tab>yay<Esc>
+QjQj
 
-␣␣␣␣indented aa   │   ␣␣␣␣indented aa
-flat bb           │   →yay
-␣␣␣␣indented cc   │   flat bb
-                  │   →yay
-                  │   ␣␣␣␣indented cc
-                  │   →yay
+│␣␣␣␣indented aa
+│flat bb
+│␣␣␣␣indented cc
+
+- o<C-u><Tab>yay<Esc>
+
+ ␣␣␣␣indented aa
+ →ya│y
+ flat bb
+ →ya│y
+ ␣␣␣␣indented cc
+ →ya│y
 ```
 
 `ea` under follow-mode:
 
 ```
-Qj q= ea!<Esc> q=
+Qj q=
 
-one two      │   one! two
-three four   │   three! four
+│one two
+│three four
+
+- ea!<Esc>
+
+ one│! two
+ three│! four
 ```
 
-Completion works. The cascade pauses while a popup is up and the other cursors catch up when it closes, so accepting a candidate lands everywhere:
+Completion works. The cascade pauses while a popup is up and the other cursors
+catch up when it closes, so accepting a candidate lands everywhere:
 
 ```
-2gg Q j A<C-n><Esc>
+ wombat
+│wo
+ wo
 
-wombat   │   wombat
-wo       │   wombat
-wo       │   wombat
+- 2gg Q j
+
+ wombat
+│wo
+│wo
+
+- A<C-n>     popup up, cascade paused
+
+ wombat
+│wombat
+│wombat
+
+- <Esc>
+
+ wombat
+ wombat
+ wombat
 ```
 
 Same for `autocomplete` and for a plugin driving `complete()` from an `InsertCharPre` handler.
 
-Autocommand counts match what you'd get with one cursor. `InsertEnter` and `InsertLeave` fire once. `TextChangedI` fires once per typed character, not once per cursor. `TextChanged` fires once for the session. `InsertCharPre` fires once per character, and whatever it does to `v:char` lands at every cursor. `textwidth` wraps per cursor.
+Autocommand counts match what you'd get with one cursor. `InsertEnter` and
+`InsertLeave` fire once. `TextChangedI` fires once per typed character, not once
+per cursor. `TextChanged` fires once for the session. `InsertCharPre` fires once
+per character, and whatever it does to `v:char` lands at every cursor.
+`textwidth` wraps per cursor.
 
 Insertion points past EOL get drawn as virtual cells, so `A` at three cursors shows you three carets.
 
 # Visual mode
 
-Each cursor shows its own selection, previewed live, with the display cursor at each selection end. `o` swaps it to the other end. Charwise, linewise and blockwise all render.
+Each cursor shows its own selection, previewed live, with the display cursor at
+each selection end. `o` swaps it to the other end. Charwise, linewise and
+blockwise all render.
 
 The whole keysequence replays, so the extents are per-cursor:
 
 ```
-Qj viweex
+Qj
 
-one two three x   │   ␣x
-aa bb cc d        │   ␣d
+│one two three x
+│aa bb cc d
+
+- viw
+
+[one] two three x
+[aa] bb cc d
+
+- ee         two more words, each cursor stretching over its own text
+
+[one two three] x
+[aa bb cc] d
+
+- x
+
+ ␣x
+ ␣d
 ```
 
 ```
-Qjviwr X                   Q4jVjd
+Qj
 
-one two   │   XXX two      a   │   c
-ab cd     │   XX cd        b   │   d
-                           c   │
-                           d   │
-                           e   │
-                           f   │
+│one two
+│ab cd
+
+- viw
+
+[one] two
+[ab] cd
+
+- rX
+
+│XXX two
+│XX cd
+```
+
+```
+Q4j
+
+│a
+ b
+ c
+ d
+│e
+ f
+
+- Vj
+
+[a]
+[b]
+ c
+ d
+[e]
+[f]
+
+- d
+
+│c
+│d
 ```
 
 Blockwise:
 
 ```
-Q2j<C-v>jcX<Esc>     Q2j<C-v>jIX<Esc>     Q2j<C-v>jA!<Esc>
+Q2j
 
-ab   │   Xb          ab   │   Xab         ab   │   a!b
-cd   │   Xd          cd   │   Xcd         cd   │   c!d
-ef   │   Xf          ef   │   Xef         ef   │   e!f
-gh   │   Xh          gh   │   Xgh         gh   │   g!h
+│ab
+ cd
+│ef
+ gh
+
+- <C-v>j
+
+[a]b
+[c]d
+[e]f
+[g]h
+
+- cX<Esc>
+
+│Xb
+ Xd
+│Xf
+ Xh
+```
+
+Same block, `I` inserts before it and `A` appends after it:
+
+```
+[a]b                   [a]b
+[c]d                   [c]d
+[e]f                   [e]f
+[g]h                   [g]h
+
+- IX<Esc>              - A!<Esc>
+
+│Xab                   a│!b
+ Xcd                   c!d
+│Xef                   e│!f
+ Xgh                   g!h
 ```
 
 Payload motions inside the selection:
 
 ```
-Qjvf,d                     Qjv/two<CR>d
+Qj
 
-abcd,ef   │   ef           one two   │   wo
-wxyz,gh   │   gh           one two   │   wo
+│abcd,ef
+│wxyz,gh
+
+- vf,
+
+[abcd,]ef
+[wxyz,]gh
+
+- d
+
+│ef
+│gh
 ```
 
-`<Esc>` puts every cursor on its own selection end, which is a handy way to reposition without turning on follow-mode:
+```
+Qj
+
+│one two
+│one two
+
+- v/two<CR>
+
+[one t]wo
+[one t]wo
+
+- d
+
+│wo
+│wo
+```
+
+`<Esc>` puts every cursor on its own selection end, which is a handy way to
+reposition without turning on follow-mode:
 
 ```
-gg04l QjQj viw<Esc>x       then 0viwe<Esc>x
+gg04l QjQj
 
-aaa bbb ccc   │   aaa bb ccc   │   aaa bb cc
-ddd eee fff   │   ddd ee fff   │   ddd ee ff
-ggg hhh iii   │   ggg hh iii   │   ggg h iii
+ aaa │bbb ccc
+ ddd │eee fff
+ ggg │hhh iii
+
+- viw
+
+ aaa [bbb] ccc
+ ddd [eee] fff
+ ggg [hhh] iii
+
+- <Esc>      every cursor lands on its own selection end
+
+ aaa bb│b ccc
+ ddd ee│e fff
+ ggg hh│h iii
+
+- x
+
+ aaa b│b ccc
+ ddd e│e fff
+ ggg h│h iii
 ```
 
-A selection changed by scrolling the viewport (`V<C-e>` at the window edge) isn't replayable, so it edits the primary only.
+Again from column 0, this time stretching one word further. The `0` is
+primary-only, the `viwe` replays everywhere:
+
+```
+- 0
+
+ aaa b│b ccc
+ ddd e│e fff
+│ggg hh iii
+
+- viwe
+
+ aaa [bb ccc]
+ ddd [ee fff]
+[ggg hh] iii
+
+- <Esc>x
+
+ aaa bb c│c
+ ddd ee f│f
+ ggg h│␣iii
+```
+
+A selection changed by scrolling the viewport (`V<C-e>` at the window edge)
+isn't replayable, so it edits the primary only.
 
 # Registers
 
 Every cursor reads and writes its own.
 
 ```
-Qj yy p
+Qj
 
-aaa   │   aaa
-bbb   │   aaa
-      │   bbb
-      │   bbb
+│aaa
+│bbb
+
+- yy         buffer unchanged, two yanks into two registers
+
+- p
+
+ aaa
+│aaa
+ bbb
+│bbb
 ```
 
 Swap two words everywhere:
 
 ```
-Qj q= dW E p q=
+Qj q=
 
-one two      │   twoone␣
-three four   │   fourthree␣
+│one two
+│three four
+
+- dW         each cursor's first word into its own register
+
+│two
+│four
+
+- E          to the end of what's left
+
+ tw│o
+ fou│r
+
+- p
+
+ two│one␣
+ four│three␣
 ```
 
 Paste each cursor's own yank over its own word:
 
 ```
-Qj yiw q= w q= viwp
+Qj
 
-aaa X   │   aaa aaa
-bbb Y   │   bbb bbb
+│aaa X
+│bbb Y
+
+- yiw
+
+- q= w q=
+
+ aaa │X
+ bbb │Y
+
+- viwp
+
+ aaa aa│a
+ bbb bb│b
 ```
 
 Jagged line ends, each cursor on its own register:
 
 ```
-gg$Q j$ x        then p
+gg$Q j$
 
-abc   │   ab     │   abc
-de    │   d      │   de
+ ab│c
+ d│e
+
+- x
+
+ a│b
+ │d
+
+- p
+
+ ab│c
+ d│e
 ```
 
 Once the last cursor goes, the per-cursor values join in document order, linewise:
 
 ```
-Qj0Q j0 yiw       buffer unchanged; " is "baz" during the session
-<C-l>             " is now  foo\nbar\nbaz\n , type V
+Qj0Q j0
 
-foo x
-bar y
-baz z
+│foo x
+│bar y
+│baz z
+
+- yiw        buffer unchanged; " is "baz" while the session is alive
+
+- <C-l>      " is now  foo\nbar\nbaz\n , type V
 ```
 
 Named registers join the same way, and one nobody touched is left alone:
 
 ```
 :let @z = 'PRESET'
-Qj0 "ayiw <C-l>
+Qj0
+
+│foo
+│bar
+
+- "ayiw  then  <C-l>
 
 @a  ->  foo\nbar\n
 @z  ->  PRESET
@@ -853,86 +1985,227 @@ Qj0 "ayiw <C-l>
 Last write wins:
 
 ```
-Qj0 yl x <C-l>
+Qj0
 
-aa    →   @"  is  a\nb\n     the deletes, not the yanks
-bb
+│aa
+│bb
+
+- yl  then  x  then  <C-l>
+
+@"  is  a\nb\n      the deletes, not the yanks
 ```
 
-A cursor whose replays never wrote a register contributes nothing, instead of folding in the stale pre-session value.
+A cursor whose replays never wrote a register contributes nothing, instead of
+folding in the stale pre-session value.
 
-`TextYankPost` fires per cursor with that cursor's contents. The primary fires first and isn't a replay, which `nvim__mcursor_cascading()` will tell you. The primary's registers are the ones that stick.
+`TextYankPost` fires per cursor with that cursor's contents. The primary fires
+first and isn't a replay, which `nvim__mcursor_cascading()` will tell you. The
+primary's registers are the ones that stick.
 
-Under `clipboard=unnamedplus` the provider syncs once for the primary's own edit and once for the whole cascade, not once per cursor, and what reaches the clipboard is the primary's.
+Under `clipboard=unnamedplus` the provider syncs once for the primary's own edit
+and once for the whole cascade, not once per cursor, and what reaches the
+clipboard is the primary's.
 
 # Undo
 
-One `u` reverts a whole cascade. `<C-r>` puts the cursors back where the edit left them, rather than wherever splice adjustment would have drifted them:
+One `u` reverts a whole cascade. `<C-r>` puts the cursors back where the edit
+left them, rather than wherever splice adjustment would have drifted them:
 
 ```
-QjQj$ IX <Esc>       cursors at column 1
-u                    cursors back at column 0
-<C-r>                cursors at column 1 again
-x
+QjQj$
 
-aaa   │   X aaa   │   Xaaa
-bbb   │   X bbb   │   Xbbb
-ccc   │   X ccc   │   Xccc
+│aaa
+│bbb
+ cc│c
+
+- IX <Esc>   cursors at column 1, on the space
+
+ X│ aaa
+ X│ bbb
+ X│ ccc
+
+- u          text back, cursors back at column 0
+
+│aaa
+│bbb
+│ccc
+
+- <C-r>      column 1 again, not column 2
+
+ X│ aaa
+ X│ bbb
+ X│ ccc
+
+- x
+
+ X│aaa
+ X│bbb
+ X│ccc
 ```
 
 Each cascade is a step, and a count counts cascades:
 
 ```
-Q jx x          abc/def  ->  bc/ef  ->  c/f
-u               bc/ef
-u               abc/def
-<C-r><C-r>      c/f
-2u              abc/def
+Q
+
+│abc
+ def
+
+- jx
+
+│bc
+│ef
+
+- x
+
+│c
+│f
+
+- u
+
+│bc
+│ef
+
+- u
+
+│abc
+│def
+
+- <C-r><C-r>
+
+│c
+│f
+
+- 2u
+
+│abc
+│def
 ```
 
 `Q` is placement, not an edit, so the tree runs straight through the point where you placed cursors:
 
 ```
-gg0x   xxx/yyy  ->  xx/yyy
-Q jx            ->  x/yy
-u               ->  xx/yyy
-u               ->  xxx/yyy
+│xxx
+ yyy
+
+- x
+
+│xx
+ yyy
+
+- Q j x
+
+│x
+│yy
+
+- u
+
+│xx
+│yyy
+
+- u
+
+│xxx
+│yyy
 ```
 
 A cascaded macro is one block:
 
 ```
 :let @q = "iX\<Esc>"
-Qj @q        then u        then <C-r>
+Qj
 
-aaa   │   Xaaa   │   aaa   │   Xaaa
-bbb   │   Xbbb   │   bbb   │   Xbbb
+│aaa
+│bbb
+
+- @q
+
+│Xaaa
+│Xbbb
+
+- u
+
+│aaa
+│bbb
+
+- <C-r>
+
+│Xaaa
+│Xbbb
 ```
 
-A mapped undo or redo doesn't cascade. Undo is buffer-global, so cascading it would undo once per cursor and blow straight past the start of the session:
+A mapped undo or redo doesn't cascade. Undo is buffer-global, so cascading it
+would undo once per cursor and blow straight past the start of the session:
 
 ```
 :nnoremap <silent> u :<C-u>undo<CR>
-QjQj x       aaa/bbb/ccc  ->  aa/bb/cc
-u            aaa/bbb/ccc      one undo, not three
+QjQj
+
+│aaa
+│bbb
+│ccc
+
+- x
+
+│aa
+│bb
+│cc
+
+- u          one undo, not three
+
+│aaa
+│bbb
+│ccc
 ```
 
 Undo restores text, never registers. The per-cursor values survive it, so exiting still joins them:
 
 ```
-Qj0 diw      "foo x"/"bar y"  ->  " x"/" y"
-u                              ->  "foo x"/"bar y"
-             @"  is still  bar
-<C-l>        @"  is  foo\nbar\n
+Qj0
+
+│foo x
+│bar y
+
+- diw
+
+│␣x
+│␣y
+
+- u          text back, registers untouched: @" is still "bar"
+
+│foo x
+│bar y
+
+- <C-l>      @"  is  foo\nbar\n
 ```
 
 `g-`, `g+` and `:earlier` drop every cursor and end the session:
 
 ```
-Q jx         aaa/bbb  ->  aa/bb    1 cursor
-g-           aaa/bbb                0 cursors
-g+           aa/bb                  still 0
-Q            new session
+Q
+
+│aaa
+ bbb
+
+- jx
+
+│aa
+│bb
+
+- g-         1 cursor becomes 0
+
+ aaa
+│bbb
+
+- g+         still 0
+
+ aa
+│bb
+
+- Q          new session, cursor where you are
+
+ aa
+│bb
 ```
 
 # Macros
@@ -940,33 +2213,65 @@ Q            new session
 `@` cascades:
 
 ```
-gg0qqxq      record "x"; line 1 becomes "aa"
-jQ j0 @q     then @@
+gg0qqxq      record "x" into q; line 1 becomes "aa"
 
-aaa   │   aa   │   aa
-bbb   │   bb   │   b
-ccc   │   cc   │   c
+│aa
+ bbb
+ ccc
+
+- jQ j0
+
+ aa
+│bbb
+│ccc
+
+- @q
+
+ aa
+│bb
+│cc
+
+- @@
+
+ aa
+│b
+│c
 ```
 
 So does a macro with an insert session in it:
 
 ```
 gg0qwA!<Esc>q
-jQ j0 @w
 
-aaa   │   aaa!
-bbb   │   bbb!
-ccc   │   ccc!
+ aaa!
+ bbb
+ ccc
+
+- jQ j0
+
+ aaa!
+│bbb
+│ccc
+
+- @w
+
+ aaa!
+│bbb!
+│ccc!
 ```
 
 A count applies at each cursor:
 
 ```
-2@q      the "x" macro, twice per cursor
+ aaaa
+│bbbb
+│cccc
 
-aaaa   │   aaaa
-bbbb   │   bb
-cccc   │   cc
+- 2@q        the "x" macro, twice per cursor
+
+ aaaa
+│bb
+│cc
 ```
 
 A macro typed where there are no cursors cascades in whatever buffer it navigates into, same as a mapping.
@@ -974,69 +2279,123 @@ A macro typed where there are no cursors cascades in whatever buffer it navigate
 # Numbering
 
 ```
-Qj0Qj0 g<C-a>          Qj0 5g<C-a>
+Qj0Qj0
 
-a   │   1a             a   │   5a
-b   │   2b             b   │   6b
-c   │   3c
+│a
+│b
+│c
+
+- g<C-a>
+
+ 1a
+ 2b
+ 3c
 ```
 
-The primary counts as a slot. If it's sitting on a cursor the pair shares one:
+```
+Qj0
+
+│a
+│b
+
+- 5g<C-a>
+
+ 5a
+ 6b
+```
+
+One bar, one number. Two cursors stacked in the same cell still only get one:
 
 ```
-QjQj gg0 g<C-a>        2 cursors survive
+QjQj gg0     back to line 1, where a cursor already is
 
-x   │   1x
-y   │   2y
-z   │   z
+│x
+│y
+ z
+
+- g<C-a>     two bars on screen, two numbers
+
+ 1x
+ 2y
+ z
 ```
 
 The number goes in at the cursor's column, before whatever is there:
 
 ```
-Qj g<C-a>
+Qj
 
-x = 5   │   x = 15
-y = 5   │   y = 25
+ x = │5
+ y = │5
+
+- g<C-a>
+
+ x = 15
+ y = 25
 ```
 
 Through a mapping it applies once, not once per cursor:
 
 ```
 :nnoremap ,n g<C-a>
-QjQj ,n
+QjQj
 
-a   │   1a
-b   │   2b
-c   │   3c
+│a
+│b
+│c
+
+- ,n
+
+ 1a
+ 2b
+ 3c
 ```
 
 With no cursors it isn't a command and beeps. Plain `<C-a>` still increments.
 
-Start, step and format live on the function behind it. Private module, so pin your version or wrap it in `pcall`:
+Start, step and format live on the function behind it. Private module, so pin
+your version or wrap it in `pcall`:
 
 ```lua
 require('vim._core.mcursor').number(10, 2, '%d) ')
 ```
 
 ```
-Qj0Qj0 then the call above
+Qj0Qj0
 
-x   │   10) x
-x   │   12) x
-x   │   14) x
+│x
+│x
+│x
+
+- the call above
+
+ 10) x
+ 12) x
+ 14) x
 ```
 
 # Jumping between cursors
 
-`]C` and `[C` cycle in position order, wrapping, with a count. They'll scroll the viewport to reach an off-screen cursor, and they never drag the other cursors along, even in follow-mode. No cursors, no move, just a beep.
+`]C` and `[C` cycle in position order, wrapping, with a count. They'll scroll
+the viewport to reach an off-screen cursor, and they never drag the other
+cursors along, even in follow-mode. No cursors, no move, just a beep.
 
 ```
-Q2jllQ gg0j       cursors at (1,0) and (3,2), primary on line 2
-]C                (3,2)
-]C                (1,0)   wrapped
-2]C               (1,0)
-[C                (3,2)
+Q2jllQ gg0j
+
+│aaa
+│bbb         you're here, on line 2
+ cc│c
+
+- ]C    ->   line 3, column 2
+
+│aaa
+ bbb
+ cc│c
+
+- ]C    ->   line 1, column 0, wrapped
+- 2]C   ->   line 1, column 0, two hops and back
+- [C    ->   line 3, column 2
 ```
 
 Pair that with the `Q` toggle and you get select-all-then-deselect:
@@ -1050,33 +2409,48 @@ ciw...    edit the rest
 
 # Folds
 
-The primary keeps normal fold behavior. Replays don't: they act on the per-cursor line inside the fold, and the fold stays closed.
+The primary keeps normal fold behavior. Replays don't: they act on the
+per-cursor line inside the fold, and the fold stays closed.
 
 Primary outside the fold:
 
 ```
-3G0Q :2,4fold gg0 x       then dd
+3G0Q  then  :2,4fold  then  gg0
 
-aaa   │   aa    │   bbb        primary deletes line 1
-bbb   │   bbb   │   ddd        the cursor deletes only line 3, inside the fold
-ccc   │   cc    │
-ddd   │   ddd   │
+│aaa
++--  3 lines: bbb·············      lines 2-4, the cursor is on line 3
+
+- x
+
+│aa
++--  3 lines: bbb·············
+
+- dd         primary deletes line 1; the cursor deletes only line 3
+
++--  2 lines: bbb·············      what's left is bbb and ddd
 ```
 
 Primary inside the fold:
 
 ```
-4jQ gg :2,3fold 2G dd
+4jQ  then  gg  then  :2,3fold  then  2G
 
-aaa   │   aaa        primary is in the closed fold: its dd takes the whole fold
-bbb   │   ddd
-ccc   │   fff        the cursor on line 5 deletes only its own line
-ddd   │
-eee   │
-fff   │
+ aaa
++--  2 lines: bbb·············      the primary is in here
+ ddd
+ eee
+│fff
+
+- dd         the primary takes the whole fold, the cursor takes one line
+
+ aaa
+ ddd
+│fff
 ```
 
-Follow-mode motions ignore closed folds too, so a replayed `j` steps into one. A mapping that turns fold semantics back on mid-cascade (`zN` then `dd`) doesn't change that.
+Follow-mode motions ignore closed folds too, so a replayed `j` steps into one. A
+mapping that turns fold semantics back on mid-cascade (`zN` then `dd`) doesn't
+change that.
 
 Fold operators cascade; fold toggles don't:
 
@@ -1090,37 +2464,64 @@ za                 only the primary's fold toggles
 Ex commands. The atom gets emitted with `type = "excmd"` and never replayed:
 
 ```
-Qj :s/o/O/<CR>
+Qj
 
-foo   │   foo
-foo   │   fOo
+│foo
+│foo
+
+- :s/o/O/<CR>
+
+ foo
+ f│Oo
 ```
 
 `:normal!`, and anything else programmatic:
 
 ```
 Qj
-:normal! x        primary only
-x                 typed: cascades
 
-aaa   │   aaa   │   aa
-bbb   │   bb    │   b
+│aaa
+│bbb
+
+- :normal! x     primary only
+
+│aaa
+│bb
+
+- x              typed, so it cascades
+
+│aa
+│b
 ```
 
 API edits shift the cursors but are primary-only themselves:
 
 ```
 QjQj
-:lua vim.api.nvim_buf_set_lines(0, 0, 0, true, { 'zzz' })
-x
 
-aaa   │   zzz   │   zzz
-bbb   │   aaa   │   aa
-ccc   │   bbb   │   bb
-      │   ccc   │   cc
+│aaa
+│bbb
+│ccc
+
+- :lua vim.api.nvim_buf_set_lines(0, 0, 0, true, { 'zzz' })
+
+ zzz
+│aaa
+│bbb
+│ccc
+
+- x
+
+ zzz
+│aa
+│bb
+│cc
 ```
 
-Also undo and redo, fold toggles, an operator with no effect (an aborted `ysa[` won't drag every cursor onto the same bracket), and an atom captured in one buffer that resolves in another (a mapping ending in `:bnext` doesn't cascade into where it lands).
+Also undo and redo, fold toggles, an operator with no effect (an aborted `ysa[`
+won't drag every cursor onto the same bracket), and an atom captured in one
+buffer that resolves in another (a mapping ending in `:bnext` doesn't cascade
+into where it lands).
 
 # Buffers
 
@@ -1128,19 +2529,38 @@ Cursor sets are per-buffer. A cascade pauses while you're elsewhere and picks up
 
 ```
 :set hidden
-Qj                aaa/bbb, 1 cursor
-:enew  gg0x       xxx  ->  xx , no cascade into the other buffer
-:buffer #         1 cursor still there
-2G0x              aa/bb
+Qj
+
+│aaa
+│bbb
+
+- :enew  gg0x    a different buffer, no cascade into the old one
+
+│xx
+
+- :buffer #      the cursor was an extmark, it survived
+
+│aaa
+│bbb
+
+- 2G0x
+
+│aa
+│bb
 ```
 
-Edits cascade from any window showing the buffer, so `:split` and editing from the new window is fine. Cursors die with their buffer, and `nvim_mcursor()` will happily place them in a hidden one.
+Edits cascade from any window showing the buffer, so `:split` and editing from
+the new window is fine. Cursors die with their buffer, and `nvim_mcursor()` will
+happily place them in a hidden one.
 
 # Advanced
 
 ## Occurrence operator
 
-This is the thing issue #21334 was asking for. An `operatorfunc` puts a cursor on every occurrence of the word under the cursor within a motion, then your next edit cascades to all of them. They survive because a `g@` with no effect doesn't cascade.
+This is the thing issue #21334 was asking for. An `operatorfunc` puts a cursor
+on every occurrence of the word under the cursor within a motion, then your next
+edit cascades to all of them. They survive because a `g@` with no effect doesn't
+cascade.
 
 ```lua
 _G.occur_opfunc = function()
@@ -1159,11 +2579,18 @@ end, { expr = true })
 ```
 
 ```
-cursor on the first "text"
-coip ciwWORD<Esc>
+│text a text
+ b text c
 
-text a text   │   WORD a WORD
-b text c      │   b WORD c
+- coip       a cursor on every "text" in the paragraph
+
+│text a │text
+ b │text c
+
+- ciwWORD<Esc>
+
+ WORD a WORD
+ b WORD c
 ```
 
 `coi{`, `coap` and `co3j` all work the same way.
@@ -1188,12 +2615,23 @@ end)
 ```
 
 ```
-QjQj q- ^      every cursor moves to its first non-blank
-l              follow mode already ended: primary only
+QjQj
 
-␣␣aaa
-␣␣bbb
-␣␣ccc
+│␣␣aaa
+│␣␣bbb
+│␣␣ccc
+
+- q- ^       every cursor to its first non-blank
+
+ ␣␣│aaa
+ ␣␣│bbb
+ ␣␣│ccc
+
+- l          follow mode already ended, primary only
+
+ ␣␣│aaa
+ ␣␣│bbb
+ ␣␣a│aa
 ```
 
 ## Telling the primary apart in an autocommand
@@ -1253,7 +2691,9 @@ keep_cursors(function(line) return not line:match('^%s*//') end)
 
 ## Aligning columns
 
-Extmarks move with inserted text, so padding to a shared virtual column is short. Assumes one cursor per line, and skips the primary since it isn't an extmark.
+Extmarks move with inserted text, so padding to a shared virtual column is
+short. Assumes one cursor per line, and skips the primary since it isn't an
+extmark.
 
 ```lua
 local function align_cursors()
@@ -1282,15 +2722,24 @@ for _, item in ipairs(vim.fn.getqflist()) do
 end
 ```
 
-Quickfix items are 1-indexed on both axes, hence `col - 1`. Diagnostics are 0-indexed on both, so those want `lnum + 1` and a bare `col`.
+Quickfix items are 1-indexed on both axes, hence `col - 1`. Diagnostics are
+0-indexed on both, so those want `lnum + 1` and a bare `col`.
 
 ## CmdAtom
 
 One event per action, and cascade replays emit nothing.
 
-`type` is `motion`, `operator`, `insert`, `visual`, `mapping` or `excmd`. `lhs` is what you typed before resolution. `keys` is the resolved sequence in raw bytes: empty means it can't be replayed, nil means the capture was lossy and you should replay `lhs` with `feedkeys` mode `m` instead of `n`. `text` carries the payload, whether that's inserted text, a cmdline or a search. `changed` and `moved` tell you whether the action edited or moved. `atoms` holds ordered subatoms, and it's only non-empty for a composite action.
+`type` is `motion`, `operator`, `insert`, `visual`, `mapping` or `excmd`. `lhs`
+is what you typed before resolution. `keys` is the resolved sequence in raw
+bytes: empty means it can't be replayed, nil means the capture was lossy and you
+should replay `lhs` with `feedkeys` mode `m` instead of `n`. `text` carries the
+payload, whether that's inserted text, a cmdline or a search. `changed` and
+`moved` tell you whether the action edited or moved. `atoms` holds ordered
+subatoms, and it's only non-empty for a composite action.
 
-`nnoremap gj i<C-j><Esc>k$` emits one `mapping` atom whose `atoms` are two inserts plus the motions `k` and `$`. `q=` gets recorded too, so a follow-mode stretch shows up as `q=`, `l`, `l`, `q=`.
+`nnoremap gj i<C-j><Esc>k$` emits one `mapping` atom whose `atoms` are two
+inserts plus the motions `k` and `$`. `q=` gets recorded too, so a follow-mode
+stretch shows up as `q=`, `l`, `l`, `q=`.
 
 The event is deferred, so schedule anything that reacts to it. A custom `.`:
 
@@ -1319,11 +2768,16 @@ vim.keymap.set('n', '.', function()
 end)
 ```
 
-That multicursor check is the important bit: a replay through `feedkeys` is programmatic and won't cascade. The version in `:h CmdAtom` also filters undo and redo out by comparing `undoseq` against a buffer-local high-water mark. `:h cmdatom-macro` keeps a ring of the last N atoms and turns them into an editable macro in the cmdwin.
+That multicursor check is the important bit: a replay through `feedkeys` is
+programmatic and won't cascade. The version in `:h CmdAtom` also filters undo
+and redo out by comparing `undoseq` against a buffer-local high-water mark. `:h
+cmdatom-macro` keeps a ring of the last N atoms and turns them into an editable
+macro in the cmdwin.
 
 # Keymaps
 
-`Q` used to replay the last recorded register, and `{Visual}Q` ran it per selected line. Both are gone. If you miss them:
+`Q` used to replay the last recorded register, and `{Visual}Q` ran it per
+selected line. Both are gone. If you miss them:
 
 ```lua
 vim.keymap.set({ 'n', 'x' }, '<leader>q', 'Q', { remap = false })
@@ -1373,7 +2827,8 @@ vim.keymap.set('n', '<leader>me', function()
 end)
 ```
 
-Escape clears cursors when there are any. Clear the namespace directly rather than feeding `<C-l>`, which is a mapping and would need `remap = true` to fire:
+Escape clears cursors when there are any. Clear the namespace directly rather
+than feeding `<C-l>`, which is a mapping and would need `remap = true` to fire:
 
 ```lua
 vim.keymap.set('n', '<Esc>', function()
@@ -1393,7 +2848,8 @@ vim.api.nvim_set_hl(0, 'MCursor', { reverse = true })
 vim.api.nvim_set_hl(0, 'MCursorVisual', { link = 'Visual' })
 ```
 
-`reverse` is the safe pick. Linking to `Cursor` sounds right until you remember how many colorschemes leave `Cursor` invisible in the terminal.
+`reverse` is the safe pick. Linking to `Cursor` sounds right until you remember
+how many colorschemes leave `Cursor` invisible in the terminal.
 
 If you share a config with a machine still on 0.12:
 
@@ -1408,26 +2864,41 @@ end
 Two cursors on one line do edit at their own columns, for column-local operators:
 
 ```
-Q4l x        then x
+Q4l
 
-abcdef   │   bcdf   │   cd
+│abcd│ef
+
+- x          the primary deletes "e", then the cursor deletes "a"
+
+│bcd│f
+
+- x
+
+│c│d
 ```
 
-But an edit that shifts columns shifts them relative to each other, and linewise operators aren't deduplicated for same-line cursors yet, so `dd` there runs once per cursor.
+But an edit that shifts columns shifts them relative to each other, and linewise
+operators aren't deduplicated for same-line cursors yet, so `dd` there runs once
+per cursor.
 
 The rest of the list:
 
 - `g-`, `g+` and `:earlier` end the session, and `gQ` can't bring the cursors back.
 - `:e!` and `autoread` reloads clear the cursors and the `gQ` snapshot.
 - Undo restores text, not registers.
-- `g<C-a>` inserts before the character at the cursor's column, and `$` stops on the last character, so appending numbers to line ends needs `nvim_mcursor()` at an exact byte column.
+- `g<C-a>` inserts before the character at the cursor's column, and `$` stops on
+  the last character, so appending numbers to line ends needs `nvim_mcursor()`
+  at an exact byte column.
 - `Q` is quietly unavailable inside a macro, and `qQ` starts a recording.
 - `iw` and `cw` are still word objects. They won't split `camelCase`. Use `:%s///g` for substrings.
 - Ex commands don't cascade.
 
 # Terminals
 
-Nvim asks for the [Kitty multiple-cursors protocol](https://github.com/kovidgoyal/kitty/blob/master/docs/multiple-cursors-protocol.rst) at startup and only uses it if the reply advertises cursor shape 29. When it does, you get real terminal cursors instead of `MCursor` cell highlights, including in unfocused splits. To force the fallback:
+Nvim asks for the [Kitty multiple-cursors protocol](https://github.com/kovidgoyal/kitty/blob/master/docs/multiple-cursors-protocol.rst)
+at startup and only uses it if the reply advertises cursor shape 29. When it
+does, you get real terminal cursors instead of `MCursor` cell highlights,
+including in unfocused splits. To force the fallback:
 
 ```lua
 require('vim._core.mcursor').tty_cursors(false)
