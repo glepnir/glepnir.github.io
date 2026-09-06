@@ -3,12 +3,11 @@ date = '2026-09-04T15:38:16+08:00'
 draft = false
 title = "Neovim's New Multicursor Support"
 toc = true
-tags = ["neovim", "multicursor"]
 +++
 
 Multiple cursors landed in Neovim core on September 1. PR
-[#41587](https://github.com/neovim/neovim/pull/41587), It ships in 0.13, so
-today you need nightly.
+[#41587](https://github.com/neovim/neovim/pull/41587), titled "MC HAMMER". It
+ships in 0.13, so today you need nightly.
 
 `Q` drops a cursor. `1Q` drops one on every search match. `<C-l>` clears them.
 Everything you already know about Vim keeps working. That's most of it.
@@ -97,49 +96,45 @@ The cursor starts at line 1 column 1 unless the keys say otherwise.
 │bbb
 │ccc
 
-- x          the primary deletes first, then each cursor replays "dl"
+- x          your own edit runs first, then each cursor replays "dl"
 
 │aa
 │bb
 │cc
 ```
 
-It's a toggle. Press it on a cursor and that cursor goes away.
+It's a toggle. Press it on a cursor and that cursor goes away. Neither the drop
+nor the removal shows up on screen when you're standing on the spot, which is
+what the `2×` in `showcmd` is for.
 
 ```
 │aaa
  bbb
- ccc
 
-- QjQjQ      one on every line
-
-│aaa
-│bbb
-│ccc
-
-- k          up to line 2, standing on a cursor
-
-│aaa
-│bbb
-│ccc
-
-- Q          that one's gone, but you're still standing there
-
-│aaa
-│bbb
-│ccc
-
-- G          now you can see it
+- Q          a cursor, right under you
 
 │aaa
  bbb
-│ccc
+
+- Q          and gone again
+
+│aaa
+ bbb
+
+- QjQk       one on each line, then back up to line 1
+
+│aaa
+│bbb
+
+- Q          takes out the cursor under you. Still two bars: one of them is you.
+
+│aaa
+│bbb
 
 - x
 
 │aa
- bbb
-│cc
+│bb
 ```
 
 Take out the last one and the session ends. Same thing happens implicitly when a
@@ -254,7 +249,7 @@ exactly like they do for `n`.
 
 - gUiw
 
-│FOO │FOO │FOO
+ FOO FOO FOO
 ```
 
 ```
@@ -300,11 +295,11 @@ The two placement styles mix.
 
 - $          and you go edit a fourth position
 
-│foo │bar fo│o
+│foo │bar │fo│o
 
 - x
 
- oo ar o
+│oo │ar │o
 ```
 
 ## {Visual}Q
@@ -362,11 +357,12 @@ Follow-mode is on, so the next motion takes everything with it.
 
  aaXaa
  bb│bb
- cc│
+ c│c
  dd│d
 ```
 
-Screen column, not byte column. A multibyte character earlier on one line won't throw off the cursors on the others.
+Screen column, not byte column. A multibyte character earlier on one line won't
+throw off the cursors on the others.
 
 ```
 │é123
@@ -1063,8 +1059,8 @@ Qj
 
 - .
 
-Z│Zaaa
-Z│Zbbb
+│ZZaaa
+│ZZbbb
 ```
 
 Including across a follow-mode move:
@@ -1120,12 +1116,47 @@ Off by default: only the primary moves.
  ef│h
 ```
 
-`q=` toggles. A count forces instead, so `1q=` always turns it on and `2q=` always turns it off.
+`q=` toggles it, and a count forces instead: `1q=` always on, `2q=` always off. Picking up where that left off:
 
 ```
-q= h x           off again: only the primary moves
-1q= 1q= h x      forced on, both move
-2q= 2q= h x      forced off
+ ab│d
+ ef│h
+
+- q= h       off again, so only you move
+
+ ab│d
+ e│fh
+
+- x
+
+ a│b
+ e│h
+
+- 1q= 1q= h  forced on, both move
+
+│ab
+│eh
+
+- x
+
+│b
+│h
+
+- 2q= 2q=    forced off
+- A!<Esc>    edits cascade either way
+
+ b│!
+ h│!
+
+- h
+
+ b│!
+│h!
+
+- x
+
+│b
+│!
 ```
 
 `$` sends each cursor to its own end of line:
@@ -1253,6 +1284,31 @@ Q2j q=
 │2
 ```
 
+A mapping that moves the cursor without pressing a motion key follows too,
+whether it gets there through the API, a nested `:normal!` inside `<Cmd>`, or a
+plain `:call`. Which means matchit's `%` works:
+
+```
+:packadd matchit
+QjQj q=
+
+│(aa)
+│(bb)
+│(cc)
+
+- %          every cursor jumps to its own ")"
+
+ (aa│)
+ (bb│)
+ (cc│)
+
+- x
+
+ (a│a
+ (b│b
+ (c│c
+```
+
 Jumps don't follow. `<C-o>` and `` ` `` move the primary alone. Scrolling never
 follows either way, so `<C-d>` is primary-only, and a later edit still cascades
 to the off-screen cursors while the viewport stays where it was.
@@ -1301,6 +1357,38 @@ gg04l QjQj
  ddd
  eee│␣
  fff
+
+- x          the k$ moved every cursor, so the trailing spaces go
+
+ aa│a
+ bbb
+ cc│c
+ ddd
+ ee│e
+ fff
+```
+
+Same thing for a mapping that moves before it inserts:
+
+```
+:nnoremap i ^i
+gg0ll QjQj
+
+ aa│aa
+ bb│bb
+ cc│cc
+
+- iX         the ^ takes each cursor to its own first non-blank
+
+X│aaaa
+X│bbbb
+X│cccc
+
+- <Esc>
+
+│Xaaaa
+│Xbbbb
+│Xcccc
 ```
 
 # Insert mode
@@ -1446,8 +1534,8 @@ ggj0 Q2j
 
 - i<BS><Esc>
 
- aa│bb
- cc│dd
+ a│abb
+ c│cdd
 ```
 
 `<CR>` splits:
@@ -1558,8 +1646,15 @@ Qj
 
 X│Ycdef
 X│Yijkl
+```
 
-- u  then  RXY<BS><BS><Esc>
+```
+Qj
+
+│abcdef
+│ghijkl
+
+- RXY<BS><BS><Esc>   the <BS>s put the overwritten chars back
 
 │abcdef
 │ghijkl
@@ -1595,7 +1690,8 @@ Qj
  ␣␣␣␣␣␣│X
 ```
 
-A replayed `<C-u>` on a less-indented line has nothing to eat, and won't backspace through the line boundary:
+A replayed `<C-u>` on a less-indented line has nothing to eat, and won't
+backspace through the line boundary:
 
 ```
 :set autoindent
@@ -1633,27 +1729,21 @@ Completion works. The cascade pauses while a popup is up and the other cursors
 catch up when it closes, so accepting a candidate lands everywhere:
 
 ```
- wombat
-│wo
+│wombat
+ wo
  wo
 
-- 2gg Q j
+- 2gg Q j    a cursor on line 2, you on line 3
 
  wombat
 │wo
 │wo
 
-- A<C-n>     popup up, cascade paused
+- A<C-n><Esc>    the cursor catches up when the popup closes
 
  wombat
-│wombat
-│wombat
-
-- <Esc>
-
- wombat
- wombat
- wombat
+ womba│t
+ womba│t
 ```
 
 Same for `autocomplete` and for a plugin driving `complete()` from an `InsertCharPre` handler.
@@ -1664,7 +1754,8 @@ per cursor. `TextChanged` fires once for the session. `InsertCharPre` fires once
 per character, and whatever it does to `v:char` lands at every cursor.
 `textwidth` wraps per cursor.
 
-Insertion points past EOL get drawn as virtual cells, so `A` at three cursors shows you three carets.
+Insertion points past EOL get drawn as virtual cells, so `A` at three cursors
+shows you three carets.
 
 # Visual mode
 
@@ -1692,8 +1783,8 @@ Qj
 
 - x
 
- ␣x
- ␣d
+│␣x
+│␣d
 ```
 
 ```
@@ -1773,9 +1864,9 @@ Same block, `I` inserts before it and `A` appends after it:
 
 - IX<Esc>              - A!<Esc>
 
-│Xab                   a│!b
+│Xab                  │a!b
  Xcd                   c!d
-│Xef                   e│!f
+│Xef                  │e!f
  Xgh                   g!h
 ```
 
@@ -1837,11 +1928,11 @@ gg04l QjQj
  ddd ee│e fff
  ggg hh│h iii
 
-- x
+- x          the column doesn't move, so every cursor is now on a space
 
- aaa b│b ccc
- ddd e│e fff
- ggg h│h iii
+ aaa bb│␣ccc
+ ddd ee│␣fff
+ ggg hh│␣iii
 ```
 
 Again from column 0, this time stretching one word further. The `0` is
@@ -1850,14 +1941,14 @@ primary-only, the `viwe` replays everywhere:
 ```
 - 0
 
- aaa b│b ccc
- ddd e│e fff
+ aaa bb│␣ccc
+ ddd ee│␣fff
 │ggg hh iii
 
-- viwe
+- viwe       "iw" on a space is the space, then "e" takes the next word
 
- aaa [bb ccc]
- ddd [ee fff]
+ aaa bb[␣ccc]
+ ddd ee[␣fff]
 [ggg hh] iii
 
 - <Esc>x
@@ -1908,10 +1999,10 @@ Qj q=
  tw│o
  fou│r
 
-- p
+- p          charwise paste leaves each cursor on the last pasted char
 
- two│one␣
- four│three␣
+ twoone│␣
+ fourthree│␣
 ```
 
 Paste each cursor's own yank over its own word:
@@ -2009,8 +2100,10 @@ clipboard is the primary's.
 
 # Undo
 
-One `u` reverts a whole cascade. `<C-r>` puts the cursors back where the edit
-left them, rather than wherever splice adjustment would have drifted them:
+One `u` reverts a whole cascade. Undo and redo don't land in the same place
+though: undo sends you back to where the change started, redo puts every cursor
+back where the edit left it, rather than wherever splice adjustment would have
+drifted it.
 
 ```
 QjQj$
@@ -2025,13 +2118,14 @@ QjQj$
  X│ bbb
  X│ ccc
 
-- u          text back, cursors back at column 0
+- u          text back. The cursors go to column 0, you go back to where
+             you were standing when you started the change.
 
 │aaa
 │bbb
-│ccc
+ cc│c
 
-- <C-r>      column 1 again, not column 2
+- <C-r>      now everybody's at column 1, not column 2
 
  X│ aaa
  X│ bbb
@@ -2104,10 +2198,10 @@ Q
 │xx
 │yyy
 
-- u
+- u          the restored "x" is inserted in front of the cursor, pushing it
 
-│xxx
-│yyy
+│x│xx
+ yyy
 ```
 
 A cascaded macro is one block:
@@ -2193,12 +2287,12 @@ Q
 │aa
 │bb
 
-- g-         1 cursor becomes 0
+- g-         every cursor is dropped; the bar left is just you
 
  aaa
 │bbb
 
-- g+         still 0
+- g+         still none
 
  aa
 │bb
@@ -2244,7 +2338,7 @@ So does a macro with an insert session in it:
 ```
 gg0qwA!<Esc>q
 
- aaa!
+ aaa│!
  bbb
  ccc
 
@@ -2288,9 +2382,9 @@ Qj0Qj0
 
 - g<C-a>
 
- 1a
- 2b
- 3c
+ 1│a
+ 2│b
+ 3│c
 ```
 
 ```
@@ -2301,8 +2395,8 @@ Qj0
 
 - 5g<C-a>
 
- 5a
- 6b
+ 5│a
+ 6│b
 ```
 
 One bar, one number. Two cursors stacked in the same cell still only get one:
@@ -2316,8 +2410,8 @@ QjQj gg0     back to line 1, where a cursor already is
 
 - g<C-a>     two bars on screen, two numbers
 
- 1x
- 2y
+ 1│x
+ 2│y
  z
 ```
 
@@ -2331,8 +2425,8 @@ Qj
 
 - g<C-a>
 
- x = 15
- y = 25
+ x = 1│5
+ y = 2│5
 ```
 
 Through a mapping it applies once, not once per cursor:
@@ -2347,9 +2441,9 @@ QjQj
 
 - ,n
 
- 1a
- 2b
- 3c
+ 1│a
+ 2│b
+ 3│c
 ```
 
 With no cursors it isn't a command and beeps. Plain `<C-a>` still increments.
@@ -2370,33 +2464,46 @@ Qj0Qj0
 
 - the call above
 
- 10) x
- 12) x
- 14) x
+ 10) │x
+ 12) │x
+ 14) │x
 ```
 
 # Jumping between cursors
 
 `]C` and `[C` cycle in position order, wrapping, with a count. They'll scroll
 the viewport to reach an off-screen cursor, and they never drag the other
-cursors along, even in follow-mode. No cursors, no move, just a beep.
+cursors along, even in follow-mode. The jump leaves a cursor at the position you
+left, so walking the ring doesn't change the set of positions. No cursors, no
+move, just a beep.
 
 ```
 Q2jllQ gg0j
 
 │aaa
-│bbb         you're here, on line 2
+│bbb         you're here
  cc│c
+ ddd
 
-- ]C    ->   line 3, column 2
+- ]C    ->   line 3, column 2. A cursor stays behind on line 2, so
+             the screen doesn't change.
 
 │aaa
- bbb
+│bbb
  cc│c
+ ddd
 
 - ]C    ->   line 1, column 0, wrapped
-- 2]C   ->   line 1, column 0, two hops and back
-- [C    ->   line 3, column 2
+- 2]C   ->   line 3, column 2
+- [C    ->   line 2, column 0
+- [C    ->   line 1, column 0
+
+- x          three positions, three edits
+
+│aa
+│bb
+ c│c
+ ddd
 ```
 
 Pair that with the `Q` toggle and you get select-all-then-deselect:
@@ -2437,15 +2544,15 @@ Primary inside the fold:
 4jQ  then  gg  then  :2,3fold  then  2G
 
  aaa
-+--  2 lines: bbb·············      the primary is in here
++--  2 lines: bbb·············      you're in here
  ddd
- eee
-│fff
+│eee
+ fff
 
-- dd         the primary takes the whole fold, the cursor takes one line
+- dd         you take the whole fold, the cursor takes only its own line
 
  aaa
- ddd
+│ddd
 │fff
 ```
 
@@ -2470,10 +2577,10 @@ Qj
 │foo
 │foo
 
-- :s/o/O/<CR>
+- :s/o/O/<CR>    only your line
 
  foo
- f│Oo
+│fOo
 ```
 
 `:normal!`, and anything else programmatic:
@@ -2526,7 +2633,8 @@ into where it lands).
 
 # Buffers
 
-Cursor sets are per-buffer. A cascade pauses while you're elsewhere and picks up when you come back:
+Cursor sets are per-buffer. A cascade pauses while you're elsewhere and picks up
+when you come back:
 
 ```
 :set hidden
@@ -2590,8 +2698,8 @@ end, { expr = true })
 
 - ciwWORD<Esc>
 
- WORD a WORD
- b WORD c
+ WOR│D a WOR│D
+ b WOR│D c
 ```
 
 `coi{`, `coap` and `co3j` all work the same way.
@@ -2628,11 +2736,11 @@ QjQj
  ␣␣│bbb
  ␣␣│ccc
 
-- l          follow mode already ended, primary only
+- l          follow mode already ended, so only you move
 
  ␣␣│aaa
  ␣␣│bbb
- ␣␣a│aa
+ ␣␣c│cc
 ```
 
 ## Telling the primary apart in an autocommand
@@ -2869,7 +2977,7 @@ Q4l
 
 │abcd│ef
 
-- x          the primary deletes "e", then the cursor deletes "a"
+- x          you delete the "e", then the cursor deletes the "a"
 
 │bcd│f
 
