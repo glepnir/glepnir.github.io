@@ -6,7 +6,7 @@ toc = true
 +++
 
 Multiple cursors landed in Neovim core on September 1. PR
-[#41587](https://github.com/neovim/neovim/pull/41587), titled "MC HAMMER". It
+[#41587](https://github.com/neovim/neovim/pull/41587). It
 ships in 0.13, so today you need nightly.
 
 `Q` drops a cursor. `1Q` drops one on every search match. `<C-l>` clears them.
